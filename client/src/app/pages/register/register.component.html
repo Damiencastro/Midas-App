@@ -1,0 +1,89 @@
+<div class="h-screen flex items-center justify-center text-white" style="background-color:#242525">
+  <form class="shadow-md rounded-md p-5 bg-white w-1/5" (ngSubmit)="null" style="background-color:#1b1c1f" >
+
+<!-- Form Title -->
+    <div class="py-4">
+        <h1 class="font-bold text-left py-2">
+          Register
+        </h1>
+        <h6 class="text-slate-200 text-base">
+          Create your account
+        </h6>
+    </div>
+
+<!-- Form Entries -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label> Email</mat-label>
+      <input matInput placeholder="Email" name="email" [(ngModel)]="registerObj.email">
+      <mat-icon matPrefix>email</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>First Name</mat-label>
+      <input matInput placeholder="Full Name" name="fname" [(ngModel)]="registerObj.firstname">
+      <mat-icon matPrefix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Last Name</mat-label>
+      <input matInput placeholder="Full Name" name="lname" [(ngModel)]="registerObj.lastname">
+      <mat-icon matPrefix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Address</mat-label>
+      <input matInput placeholder="Address" name="address" [(ngModel)]="registerObj.address">
+      <mat-icon matPrefix>home</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Date of Birth</mat-label>
+      <input matInput placeholder="Date of Birth" name="dob" [(ngModel)]="registerObj.dob">
+      <mat-icon matPrefix>calendar_today</mat-icon>
+    </mat-form-field>
+
+    <!-- Password Match -->
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label> Password</mat-label>
+      <input matInput type="{{passwordHide ? 'password':'text'}}" placeholder="Password">
+      <mat-icon matPrefix>lock</mat-icon>
+      <mat-icon (click)="passwordHide = !passwordHide" matSuffix>{{passwordHide ?
+        'visibility_off':'visibility'}}</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Confirm Password</mat-label>
+      <input matInput type="{{confirmPasswordHide ? 'password':'text'}}"
+        placeholder="Confirm Password">
+      <mat-icon matPrefix>lock</mat-icon>
+      <mat-icon (click)="confirmPasswordHide = !confirmPasswordHide" matSuffix>{{confirmPasswordHide ?
+        'visibility_off':'visibility'}}</mat-icon>
+
+    </mat-form-field>
+<!-- Password Mismatch Error Message -->
+    <span class="text-red-600"
+      *ngIf="mismatch">
+      Passwords do not match.
+    </span>
+    <button type="submit" [disabled]="false" class="w-full border-collapse text-white border-black disabled:bg-amber-500 py-2
+    px-3 my-4 bg-amber-700 font-bold">
+      Register
+    </button>
+
+    <button type="reset" class="w-full border-collapse border-black disabled:bg-slate-400 py-2 px-3 bg-slate-700 text-white font-bold">
+      Cancel
+    </button>
+
+      <div class="my-4">
+
+        <span class="text-slate-100">
+          Already have an account?
+        </span>
+        <a href="" class="text-amber-700" [routerLink]="['/login']">Login</a>
+      </div>
+
+
+
+
+  </form>
+</div>
