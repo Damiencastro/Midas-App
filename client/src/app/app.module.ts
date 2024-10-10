@@ -31,6 +31,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common/http';
 
 
 
@@ -65,7 +66,9 @@ import {
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+
   ],
   providers: [
     provideClientHydration(),

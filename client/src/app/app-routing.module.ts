@@ -17,7 +17,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 export const routes: Routes = [
   {
-    path: 'home',
+    path: '',
     component: HomeComponent,
   },
   {
@@ -25,7 +25,7 @@ export const routes: Routes = [
     component: LoginComponent,
   },
   {
-    path: '',
+    path: 'register',
     component: RegisterComponent,
   },
   {
