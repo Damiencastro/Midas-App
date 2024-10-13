@@ -1,7 +1,7 @@
 <div class="border-slate-100 border-collapse p-3 fl gap-2"
   style="width: 80%; margin:auto; text-align: left; color: white; background-color:#242525">
   <div class="flex justify-end py-5">
-    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
+    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" (click)="clickAddUser()"
       class=" border-collapse text-white rounded-sm border-black py-2 px-2 my-1 bg-amber-700 font-bold" type="button">
       Add User
     </button>
@@ -11,32 +11,38 @@
   <table table class="text-left w-full border-collapse">
     <thead class="bg-grey-400" style="background-color: #1b1c1f;">
       <tr>
+        <th class="border-collapse p-2">User ID</th>
         <th class="border-collapse p-2">Username</th>
         <th class="border-collapse p-2">Email</th>
         <th class="border-collapse p-2">First Name</th>
         <th class="border-collapse p-2">Last Name</th>
-        <th class="border-collapse p-2">Address</th>
+        <th class="border-collapse p-2">Street</th>
+        <th class="border-collapse p-2">Zip</th>
+        <th class="border-collapse p-2">State</th>
         <th class="border-collapse p-2">Date Of Birth</th>
         <th class="border-collapse p-2">Edit</th>
         <th class="border-collapse p-2">Delete</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td class="border-collapse p-2">Username</td>
-        <td class="border-collapse p-2">Email</td>
-        <td class="border-collapser p-2">First Name</td>
-        <td class="border-collapsep-2">Last Name</td>
-        <td class="border-collapse p-2">Address</td>
-        <td class="border-collapse p-2">Date Of Birth</td>
+      <tr *ngFor="let row of userData">
+        <td class="border-collapse p-2">{{row.id}}</td>
+        <td class="border-collapse p-2">{{row.username}}</td>
+        <td class="border-collapse p-2">{{row.email}}</td>
+        <td class="border-collapser p-2">{{row.firstname}}</td>
+        <td class="border-collapsep-2">{{row.lastname}}</td>
+        <td class="border-collapse p-2">{{row.street}}</td>
+        <td class="border-collapse p-2">{{row.zip}}</td>
+        <td class="border-collapse p-2">{{row.state}}</td>
+        <td class="border-collapse p-2">DOB</td>
         <td class="border-collapse p-3">
-          <button
+          <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" (click)="onEdit(row)"
             class="w-full border-collapse rounded-sm text-white border-black py-1 px-1 my-1 bg-amber-700 font-bold">
             Edit
           </button>
         </td>
         <td class="border-collapse p-3">
-          <button
+          <button (click)="deleteUser(row)"
             class="w-full border-collapse rounded-sm text-white border-black py-1 px-1 my-1 bg-slate-700 font-bold">
             Delete
           </button>
@@ -59,7 +65,7 @@
         <h3 class="text-lg font-semibold text-gray-100 dark:text-white">
           Add New User
         </h3>
-        <button type="button"
+        <button type="button" id="cancel"
           class="text-gray-100 bg-transparent hover:bg-gray-200 hover:text-gray-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
           data-modal-toggle="crud-modal">
           <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -140,6 +146,19 @@
 
 
 
+        <div class="relative max-w-sm">
+          <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
+            </svg>
+          </div>
+          <input datepicker id="default-datepicker" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+        </div>
+
+
+
+
+
 
           <!-- Street Address -->
           <div class="col-span-6">
@@ -204,14 +223,19 @@
         </div>
 
 
-          <button type="submit" (click)="postUserDetails()"
+          <button type="submit" (click)="postUserDetails()" *ngIf="showAdd"
             class="w-full text-white bg-amber-600 hover:bg-amber-400 font-medium rounded-sm px-5 py-2.5 my-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             Add New User
+          </button>
+          <button type="submit" (click)="updateUserDetails()" *ngIf="showEdit"
+            class="w-full text-white bg-amber-600 hover:bg-amber-400 font-medium rounded-sm px-5 py-2.5 my-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Edit User
           </button>
           <button type="reset"
             class="w-full text-white bg-slate-600 hover:bg-slate-400 font-medium rounded-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             Clear Entry
           </button>
+
 
       </form>
     </div>

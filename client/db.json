@@ -1,13 +1,23 @@
-
-
 {
   "posts": [
-    { "id": "1", "title": "a title", "views": 100 },
-    { "id": "2", "title": "another title", "views": 200 }
+    {
+      "id": "f4ec",
+      "username": "OOlowofoyeku",
+      "firstname": "OluSegun",
+      "lastname": "Olowofoyeku",
+      "email": "ShaygunArt@gmail.com",
+      "phone": "4047909820",
+      "street": "123 Jeremiah way",
+      "zip": "30132",
+      "state": "Georgia"
+    }
+
   ],
-  "comments": [
-    { "id": "1", "text": "a comment about post 1", "postId": "1" },
-    { "id": "2", "text": "another comment about post 1", "postId": "1" }
+  "count": [
+    {
+      "count": 0,
+      "id": "8501"
+    }
   ],
   "profile": {
     "name": "typicode"

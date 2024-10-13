@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpClientModule, provideHttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { count } from 'console';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,24 @@ export class ApiService {
   constructor(private http : HttpClient) {}
 
   postUser(data : any){
-    return this.http.post<any>("http://localhost:3000/posts", data).pipe(map((res: any)=>{return res;}))
+
+    return this.http.post<any>("http://localhost:3000/posts/", data).pipe(map((res: any)=>{return res;}))
+
   }
 
-  getUser(data : any){
-    return this.http.get<any>("http://localhost:3000/posts").pipe(map((res: any)=>{return res;}))
+  getUser(){
+    return this.http.get<any>("http://localhost:3000/posts/").pipe(map((res: any)=>{return res;}))
+
   }
+
+  updateUser(data: any, id: number){
+    return this.http.put<any>("http://localhost:3000/posts/"+id, data).pipe(map((res: any)=>{return res;}))
+  }
+
+  deleteUser(id: number){
+    return this.http.delete<any>("http://localhost:3000/posts/"+id).pipe(map((res: any)=>{return res;}))
+  }
+
+
 
 }

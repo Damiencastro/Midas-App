@@ -24,6 +24,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
+import { map } from 'rxjs/operators';
+
 import {
   FormBuilder,
   FormGroup,
@@ -68,7 +70,6 @@ import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common
     MatIconModule,
     FormsModule,
     HttpClientModule,
-
   ],
   providers: [
     provideClientHydration(),
