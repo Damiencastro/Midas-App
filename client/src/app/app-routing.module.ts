@@ -14,6 +14,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { RoleFormComponent } from './components/role-form/role-form.component';
 import { RoleListComponent } from './components/role-list/role-list.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { EditUserComponent } from './pages/edit-user/edit-user.component';
+import { AddUserComponent } from './pages/add-user/add-user.component';
 
 export const routes: Routes = [
   {
@@ -29,9 +31,16 @@ export const routes: Routes = [
     component: RegisterComponent,
   },
   {
-    path: 'account/:id',
+    path: 'account',
     component: AccountComponent,
-    // canActivate: [authGuard],
+  },
+  {
+    path: 'edit-user',
+    component: EditUserComponent,
+  },
+  {
+    path: 'add-user',
+    component: AddUserComponent,
   },
   {
     path: 'forget-password',
@@ -44,12 +53,10 @@ export const routes: Routes = [
   {
     path: 'change-password',
     component: ChangePasswordComponent,
-    // canActivate: [authGuard],
   },
   {
     path: 'users',
     component: UsersComponent,
-    // canActivate: [roleGuard],
     data: {
       roles: ['Admin'],
     },
@@ -57,7 +64,6 @@ export const routes: Routes = [
   {
     path: 'roles',
     component: RoleComponent,
-    // canActivate: [roleGuard],
     data: {
       roles: ['Admin'],
     },

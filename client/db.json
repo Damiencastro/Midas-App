@@ -1,17 +1,96 @@
 {
   "posts": [
     {
-      "id": "f4ec",
-      "username": "OOlowofoyeku",
-      "firstname": "OluSegun",
+      "id": "588f",
+      "username": ";\";lOlowofoyeku",
+      "firstname": ";lkolkSegun",
+      "lastname": "\";lOlowofoyeku",
+      "email": "ShaygunArt@gmail.com",
+      "phone": "4047909820",
+      "street": "123 Jeremiah way",
+      "zip": "30132",
+      "state": "Georgia",
+      "password": ";\";lOlowofoyeku123",
+      "role": "Admin"
+    },
+    {
+      "id": "45c6",
+      "username": "SOlowofoyeku",
+      "firstname": "Segun",
       "lastname": "Olowofoyeku",
       "email": "ShaygunArt@gmail.com",
       "phone": "4047909820",
       "street": "123 Jeremiah way",
       "zip": "30132",
-      "state": "Georgia"
+      "state": "Georgia",
+      "password": "SOlowofoyeku123",
+      "role": "Admin"
+    },
+    {
+      "id": "a1dc",
+      "username": "MFurqan",
+      "firstname": "Mohd",
+      "lastname": "Furqan",
+      "email": "furqan@msrcosmos.com",
+      "phone": "90209904030999",
+      "street": "N/A",
+      "zip": "77510",
+      "state": "TX",
+      "password": "MFurqan123",
+      "role": "Admin"
+    },
+    {
+      "id": "e68b",
+      "username": "SOlowofoyeku",
+      "firstname": "Segun",
+      "lastname": "Olowofoyeku",
+      "email": "ShaygunArt@gmail.com",
+      "phone": "4047909820",
+      "street": "123 Jeremiah way",
+      "zip": "30132",
+      "state": "Georgia",
+      "password": "SOlowofoyeku123",
+      "role": "Admin"
+    },
+    {
+      "id": "4f1d",
+      "username": "Ss",
+      "firstname": "Segun",
+      "lastname": "s",
+      "email": "ShaygunArt@gmail.com",
+      "phone": "4047909820",
+      "street": "123 Jeremiah way",
+      "zip": "30132",
+      "state": "Georgia",
+      "password": "Ss123",
+      "role": "Admin"
+    },
+    {
+      "id": "f58a",
+      "username": "aOlowofoyeku",
+      "firstname": "as1111Segun",
+      "lastname": "Olowofoyeku",
+      "email": "ShaygunArt@gmail.com",
+      "phone": "4047909820",
+      "street": "123 Jeremiah way",
+      "zip": "30132",
+      "state": "Georgia",
+      "password": "sssssssssssssss",
+      "role": "Admin"
+    },
+    {
+      "id": "0a7c",
+      "username": "vOlowofoyeku",
+      "firstname": "vffffSegun",
+      "lastname": "Olowofoyeku",
+      "email": "ShaygunArt@gmail.com",
+      "phone": "4047909820",
+      "street": "123 Jeremiah way",
+      "zip": "30132",
+      "state": "Georgia",
+      "password": "vvvvvvvvvvvvvvvvvv",
+      "role": ";"
     }
-
   ],
   "count": [
     {

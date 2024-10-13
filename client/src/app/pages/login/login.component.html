@@ -1,48 +1,62 @@
-<div class="h-screen flex items-center justify-center" style="background-color:#242525; color: white;">
-  <form class="shadow-md rounded-md p-5 bg-white w-1/6" [formGroup]="form" (ngSubmit)="login()" style="background-color:#1b1c1f">
-    <div class="py-4">
-      <h1 class="font-bold py-2 text-2xl">
-        Login to <span class="font-bold text-amber-500 text-2xl">
-           MIDAS
-        </span>
-      </h1>
-      <!-- <h6 class="text-amber-600 text-base">
-        Login to your account
-      </h6> -->
+<div
+  class="overflow-y-auto overflow-x-hidden flex justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+  <div class="relative pb-4 w-full max-h-full " style="width: 40%; max-width:600px">
+    <!-- Modal content -->
+    <div class="relative rounded-lg shadow text-white" style="background-color: #1b1c1f;">
+      <!-- Modal header -->
+      <div class="flex items-center justify-between py-2 md:p-5 border-b rounded-t dark:border-gray-600">
+        <h3 class="text-lg font-semibold text-gray-100 dark:text-white">
+          LOGIN
+        </h3>
+        <a mat-button routerLink="">
+          <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+          </svg>
+        </a>
+      </div>
+      <!-- Modal body -->
+      <form class="p-4 md:p-5" [formGroup]="formValue" (ngSubmit)="login()">
+        <div class="grid grid-cols-6">
+
+          <!-- FirstName -->
+          <div class="col-span-6 gap-4 mb-4">
+            <label for="firstname" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">Username</label>
+            <input type="text" formControlName="username"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="Enter First Name" required="">
+          </div>
+
+
+
+
+
+          <div class="col-span-6 gap-4">
+            <label for="name" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">Password</label>
+          </div>
+          <div class="col-span-6 sm:col-span-5 gap-4 mb-4 mr-2">
+            <input type="{{passwordHide ? 'password':'text'}}" formControlName="password"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+              placeholder="*******" required="">
+          </div>
+          <div class="col-span-6 sm:col-span-1 pt-2 pl-6">
+            <mat-icon (click)="passwordHide = !passwordHide" matSuffix>{{passwordHide ? 'visibility_off':'visibility'}}</mat-icon>
+          </div>
+
+        </div>
+
+
+        <button type="submit"
+          class="w-full text-white bg-amber-600 hover:bg-amber-400 font-medium rounded-sm px-5 py-2.5 my-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Login
+        </button>
+        <button type="reset"
+          class="w-full text-white bg-slate-600 hover:bg-slate-400 font-medium rounded-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          Clear Entry
+        </button>
+
+
+      </form>
     </div>
-
-
-    <mat-form-field apperance="fill" class="w-full">
-      <mat-label>Email</mat-label>
-      <input matInput placeholder="Email" formControlName="email" />
-      <mat-icon matPrefix>email</mat-icon>
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="w-full">
-      <mat-label>Password</mat-label>
-      <input matInput type="{{ hide ? 'password' : 'text'}}" formControlName="password" placeholder="Password" />
-      <mat-icon matPrefix>lock</mat-icon>
-      <mat-icon (click)="hide = !hide" matSuffix>
-        {{ hide ? 'visibility_off':'visibility'}}
-      </mat-icon>
-    </mat-form-field>
-
-    <a routerLink="/forget-password">Forgot Password?</a>
-
-    <button type="submit" [disabled]="!form.valid"
-      class="w-full mt-4 border border-black disabled:bg-amber-400 py-2 px-3 my-3 bg-amber-600 text-white font-bold">
-      Login
-    </button>
-
-    <button type="reset" class="w-full border border-black disabled:bg-slate-400 py-2 px-3 bg-slate-700 text-white font-bold">
-      Cancel
-    </button>
-
-    <div class="my-5">
-      <span class="text-slate-100">
-        Don't have an account?
-      </span>
-      <a class="text-amber-600" [routerLink]="['/register']">Register Here</a>
-    </div>
-  </form>
+  </div>
 </div>

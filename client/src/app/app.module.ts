@@ -23,7 +23,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatInputModule } from '@angular/material/input';
+import { MatFormField, MatInputModule } from '@angular/material/input';
 import { map } from 'rxjs/operators';
 
 import {
@@ -34,6 +34,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common/http';
+import { EditUserComponent } from './pages/edit-user/edit-user.component';
+import { AddUserComponent } from './pages/add-user/add-user.component';
+import { ChartComponent } from './pages/chart/chart.component';
 
 
 
@@ -52,6 +55,9 @@ import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common
     NavbarComponent,
     RoleFormComponent,
     RoleListComponent,
+    EditUserComponent,
+    AddUserComponent,
+    ChartComponent,
   ],
   imports: [
     BrowserModule,
@@ -70,6 +76,7 @@ import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common
     MatIconModule,
     FormsModule,
     HttpClientModule,
+    MatFormField
   ],
   providers: [
     provideClientHydration(),

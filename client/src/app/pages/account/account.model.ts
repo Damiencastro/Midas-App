@@ -8,4 +8,6 @@ export class UserModel{
   street: string = '';
   zip: string = '';
   state: string = '';
+  password: string ='';
+  role: string =';'
 }
