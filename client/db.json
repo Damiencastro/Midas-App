@@ -24,20 +24,7 @@
       "zip": "77510",
       "state": "TX",
       "password": "MFurqan123",
-      "role": "Admin"
-    },
-    {
-      "id": "e68b",
-      "username": "SOlowofoyeku",
-      "firstname": "Segun",
-      "lastname": "Olowofoyeku",
-      "email": "ShaygunArt@gmail.com",
-      "phone": "4047909820",
-      "street": "123 Jeremiah way",
-      "zip": "30132",
-      "state": "Georgia",
-      "password": "SOlowofoyeku123",
-      "role": "Admin"
+      "role": "User"
     },
     {
       "id": "4f1d",
@@ -103,7 +90,7 @@
     {
       "id": "8d48",
       "chartName": "Demon Account",
-      "normalSide": 909900,
+      "normalSide": 9099000,
       "category": "2",
       "subCategory": "2",
       "initialBalance": 3236,
@@ -115,6 +102,40 @@
       "order": "Do it now",
       "statement": "They died",
       "comment": "IN the snow",
+      "deactivated": false
+    },
+    {
+      "id": "c25a",
+      "chartName": "6767567",
+      "normalSide": 75675675,
+      "category": "3",
+      "subCategory": "2",
+      "initialBalance": 567567,
+      "debit": 56756756,
+      "credit": 567567,
+      "balance": 567567,
+      "created": "2024-11-01",
+      "userId": "a1dc",
+      "order": "thfthft",
+      "statement": "dhxhfxc",
+      "comment": "ghfg",
+      "deactivated": false
+    },
+    {
+      "id": "c526",
+      "chartName": "Bank Of America",
+      "normalSide": 4400,
+      "category": "1",
+      "subCategory": "1",
+      "initialBalance": 50000,
+      "debit": 3029.29,
+      "credit": 884809,
+      "balance": 98849,
+      "created": "2024-10-03",
+      "userId": "45c6",
+      "order": "No order now",
+      "statement": "Created On a Sunday",
+      "comment": "This is a test",
       "deactivated": false
     }
   ],

@@ -26,6 +26,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormField, MatInputModule } from '@angular/material/input';
 import { map } from 'rxjs/operators';
 
+
 import {
   FormBuilder,
   FormGroup,
@@ -76,7 +77,8 @@ import { AccountProfileComponent } from './pages/account-profile/account-profile
     MatIconModule,
     FormsModule,
     HttpClientModule,
-    MatFormField
+    MatFormField,
+
   ],
   providers: [
     provideClientHydration(),
