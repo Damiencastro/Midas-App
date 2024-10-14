@@ -27,7 +27,7 @@
             </p>
           </div>
         </a>
-        <mat-menu #menu="matMenu">
+        <mat-menu #menu="matMenu" style="background-color: #121316">
           <!-- <button [routerLink]="['account',userDetail.id]" mat-menu-item> -->
           <button [routerLink]="['users']" mat-menu-item>
             <mat-icon>account_circle</mat-icon>
@@ -35,12 +35,16 @@
               View Profile
             </span>
           </button>
+
+          <!-- Logout -->
           <button (click)="logout()" mat-menu-item>
             <mat-icon>
               logout
             </mat-icon>
             <span>Logout</span>
           </button>
+
+          <!-- Change Password -->
           <button [routerLink]="['change-password']" mat-menu-item>
             <mat-icon>
               password
@@ -50,7 +54,10 @@
             </span>
           </button>
         </mat-menu>
-        <a *ngIf="userDetail.role.includes('Admin')" mat-button routerLink="/account" class="px-4">
+
+        <!-- Admin Options -->
+         <!-- Users -->
+        <a *ngIf="userDetail.role.includes('Admin') || userDetail.role.includes('Admin')" mat-button routerLink="/account" class="px-4">
           <!-- <mat-icon style="font-size:25px" class="pr-6"> -->
             <mat-icon>
             groups
@@ -58,8 +65,15 @@
           Users
         </a>
 
+        <!-- Accounts -->
+        <a *ngIf="userDetail.role.includes('Admin') || userDetail.role.includes('Manager') || userDetail.role.includes('Accountant')" mat-button routerLink="/chart" class="px-4">
+            <mat-icon>
+            paid
+          </mat-icon>
+          Accounts
+        </a>
+
         <a mat-button (click)="logout()" class="px-4">
-          <!-- <mat-icon style="font-size:25px" class="pr-6"> -->
             <mat-icon>
               logout
             </mat-icon>

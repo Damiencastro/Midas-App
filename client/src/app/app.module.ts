@@ -34,9 +34,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common/http';
-import { EditUserComponent } from './pages/edit-user/edit-user.component';
-import { AddUserComponent } from './pages/add-user/add-user.component';
 import { ChartComponent } from './pages/chart/chart.component';
+import { UserProfileComponent } from './pages/user-profile/user-profile.component';
+import { AccountProfileComponent } from './pages/account-profile/account-profile.component';
 
 
 
@@ -55,9 +55,9 @@ import { ChartComponent } from './pages/chart/chart.component';
     NavbarComponent,
     RoleFormComponent,
     RoleListComponent,
-    EditUserComponent,
-    AddUserComponent,
     ChartComponent,
+    UserProfileComponent,
+    AccountProfileComponent,
   ],
   imports: [
     BrowserModule,

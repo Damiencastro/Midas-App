@@ -1,19 +1,6 @@
 {
   "posts": [
     {
-      "id": "588f",
-      "username": ";\";lOlowofoyeku",
-      "firstname": ";lkolkSegun",
-      "lastname": "\";lOlowofoyeku",
-      "email": "ShaygunArt@gmail.com",
-      "phone": "4047909820",
-      "street": "123 Jeremiah way",
-      "zip": "30132",
-      "state": "Georgia",
-      "password": ";\";lOlowofoyeku123",
-      "role": "Admin"
-    },
-    {
       "id": "45c6",
       "username": "SOlowofoyeku",
       "firstname": "Segun",
@@ -89,13 +76,46 @@
       "zip": "30132",
       "state": "Georgia",
       "password": "vvvvvvvvvvvvvvvvvv",
-      "role": ";"
+      "role": "Accountant"
     }
   ],
-  "count": [
+  "usercount": {
+    "count": 0
+  },
+  "charts": [
     {
-      "count": 0,
-      "id": "8501"
+      "id": "a6f7",
+      "chartName": "Banking",
+      "normalSide": 400,
+      "category": "3",
+      "subCategory": "3",
+      "initialBalance": 231231,
+      "debit": 3432411211,
+      "credit": 21312312322,
+      "balance": 1231231,
+      "created": "2024-10-13",
+      "userId": "45c6",
+      "order": "Things",
+      "statement": "Do the stuff",
+      "comment": "Do all the stuff",
+      "deactivated": false
+    },
+    {
+      "id": "8d48",
+      "chartName": "Demon Account",
+      "normalSide": 909900,
+      "category": "2",
+      "subCategory": "2",
+      "initialBalance": 3236,
+      "debit": 567567567,
+      "credit": 567675,
+      "balance": 865676,
+      "created": "2024-10-13",
+      "userId": "4f1d",
+      "order": "Do it now",
+      "statement": "They died",
+      "comment": "IN the snow",
+      "deactivated": false
     }
   ],
   "profile": {

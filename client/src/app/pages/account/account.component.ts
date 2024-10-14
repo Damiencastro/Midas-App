@@ -34,6 +34,8 @@ export class AccountComponent implements OnInit{
   passwordHide: boolean = true;
   confirmPasswordHide: boolean = true;
 
+  public userDetail: UserModel = new UserModel();
+
 
 
   constructor(private formbuilder: FormBuilder, private api : ApiService, private AccountService: AccountService, private router: Router){
@@ -50,33 +52,25 @@ export class AccountComponent implements OnInit{
       zip: new FormControl("",),
       state: new FormControl("",),
       role: new FormControl("",),
+      dob: new FormControl("",),
     },)
   }
 
 
 
   ngOnInit(): void {
+    if (typeof window !== 'undefined') {
+      if (localStorage.getItem('user') != null) {
+        const temp = localStorage.getItem('user');
+        if (temp != null) {
+          this.userDetail = JSON.parse(temp);
+        }
+      }
+    }
 
-    //   this.formValue = this.formbuilder.group({
-    //     username: ['', [Validators.required]],
-    //     password: ['', [Validators.required, Validators.minLength(8)]],
-    //     confirmPassword: [''],
-    //     firstname: ['', [Validators.required]],
-    //     lastname: ['', [Validators.required]],
-    //     email: ['', [Validators.required], Validators.email,],
-    //     phone: [''],
-    //     street: [''],
-    //     zip: [''],
-    //     state: [''],
-    //     role: [''],
-    //   },
-    //   {
-    //     validator: this.passwordMatchValidator,
-    //   }
-
-    // );
       this.getAllUsers();
   }
+
   private passwordMatchValidator( control: AbstractControl): { [key: string]: boolean } | null {
     const password = control.get('password')?.value;
     const confirmPassword = control.get('confirmPassword')?.value;
@@ -124,13 +118,18 @@ export class AccountComponent implements OnInit{
   }
 
   makePass(): string{
-    return this.formValue.value.firstname.charAt(0)+this.formValue.value.lastname+"123";
+    //return this.formValue.value.firstname.charAt(0)+this.formValue.value.lastname+"123";
+    return "password123"
   }
 
   getAllUsers(){
       this.api.getUser().subscribe(res=>{
         this.userData = res;
       })
+  }
+
+  reloadPage(){
+    window.location.reload()
   }
 
 
@@ -142,6 +141,14 @@ export class AccountComponent implements OnInit{
     })
   }
 
+  createProfile(id: any, username: any){
+
+    this.api.profile(id, username);
+
+    this.router.navigate(['/user-profile'])
+    //this.reloadPage();
+  }
+
 
 
   onEdit(row: any){
@@ -150,35 +157,6 @@ export class AccountComponent implements OnInit{
     this.showEdit = true;
     this.showAdd = false;
 
-    // const temp = this.api.getUserById(row.id);
-    // if(temp!=null){
-
-    //     this.currentUserObj = temp;
-    //     this.formValue.controls['firstname'].setValue(this.currentUserObj.firstname);
-    //     this.formValue.controls['username'].setValue(this.currentUserObj.username);
-    //     this.formValue.controls['password'].setValue(this.currentUserObj.password);
-    //     this.formValue.controls['lastname'].setValue(this.currentUserObj.lastname);
-    //     this.formValue.controls['email'].setValue(this.currentUserObj.email);
-    //     this.formValue.controls['phone'].setValue(this.currentUserObj.phone);
-    //     this.formValue.controls['street'].setValue(this.currentUserObj.street);
-    //     this.formValue.controls['zip'].setValue(this.currentUserObj.zip);
-    //     this.formValue.controls['state'].setValue(this.currentUserObj.state);
-    //     this.formValue.controls['role'].setValue(this.currentUserObj.role);
-    // }
-    // else{
-    //   return;
-    //   // this.userModelObj.id = row.id;
-    //   // this.formValue.controls['firstname'].setValue(row.firstname);
-    //   // this.formValue.controls['username'].setValue(row.username);
-    //   // this.formValue.controls['password'].setValue(row.password);
-    //   // this.formValue.controls['lastname'].setValue(row.lastname);
-    //   // this.formValue.controls['email'].setValue(row.email);
-    //   // this.formValue.controls['phone'].setValue(row.phone);
-    //   // this.formValue.controls['street'].setValue(row.street);
-    //   // this.formValue.controls['zip'].setValue(row.zip);
-    //   // this.formValue.controls['state'].setValue(row.state);
-    //   // this.formValue.controls['role'].setValue(row.role);
-    // }
     this.userModelObj.id = row.id;
     this.formValue.controls['firstname'].setValue(row.firstname);
     this.formValue.controls['username'].setValue(row.username);

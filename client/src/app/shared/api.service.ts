@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { count } from 'console';
 import { Router, RouterModule, RouterLink } from '@angular/router';
 import { UserModel } from '../pages/account/account.model';
+import { ChartModel } from '../pages/chart/chart.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,11 +17,14 @@ export class ApiService {
   private loginModelObj: UserModel = new UserModel();
   private loggedoutModelObj: UserModel = new UserModel();
   private selectedObj: UserModel = new UserModel();
+  private profileModelObj: UserModel = new UserModel();
+  private accountProfileModelObj: UserModel = new UserModel();
+
 
   constructor(private http: HttpClient, private router: Router) { }
 
 
-
+// Puts logged account in local storage
   login(username: any, password: any) {
     this.http.get<any>("http://localhost:3000/posts/").subscribe(res => {
       const user = res.find((a: any) => {
@@ -50,6 +54,33 @@ export class ApiService {
     });
   }
 
+  // Puts Profile on local storage to show in profile page
+  profile(id: any, username: any) {
+    this.http.get<any>("http://localhost:3000/posts/").subscribe(res => {
+      const user = res.find((a: any) => {
+        return a.id === id && a.username === username
+      });
+      if (user) {
+        localStorage.setItem('profile', JSON.stringify(user));
+        const temp = localStorage.getItem('profile');
+        if (temp != null) {
+          const log = JSON.parse(temp);
+          this.profileModelObj = log;
+          //alert(this.profileModelObj.firstname + "'s profile has been generated");
+        }
+        else {
+          alert("User Profile does not exist");
+        }
+      }
+      else {
+        alert("User Profile does not exist");
+      }
+    });
+  }
+
+
+
+
   userDetail(): UserModel {
     return this.loginModelObj;
   }
@@ -61,24 +92,15 @@ export class ApiService {
     else if (this.loggedoutModelObj.role == "Manager") {
       return 2;
     }
-    else {
+    else if (this.loggedoutModelObj.role == "Accountant") {
       return 3;
+    }
+    else {
+      return 4;
     }
   }
 
-  updateUserPassword(id: any, password: any){
-    const temp = this.getUserById(id);
-    if(temp!=null){
-        this.selectedObj = temp;
-    }
-    else{
-      return;
-    }
-    this.selectedObj.password = password;
-    this.updateUser(this.selectedObj, this.selectedObj.id).subscribe(res=>{
-      alert("Password Updated Sucessfully!");
-    })
-  }
+
 
   isLoggedIn = (): boolean => {
     return this.logged;
@@ -98,6 +120,12 @@ export class ApiService {
   getUser() {
     return this.http.get<any>("http://localhost:3000/posts/").pipe(map((res: any) => { return res; }))
   }
+
+  getUserIdV2(id: number) {
+    return this.http.get<UserModel>("http://localhost:3000/posts/" + id).pipe(map((res: UserModel) => { return res; }))
+  }
+
+
   getUserById(id: number) {
     this.http.get<any>("http://localhost:3000/posts/").subscribe(res => {
       const user = res.find((a: any) => {
@@ -110,9 +138,7 @@ export class ApiService {
     });
   }
 
-  // getUsers(){
-  //   return this.http.get<any[]>("http://localhost:3000/posts/").pipe(map((res: any[])=>{return res;}))
-  // }
+
 
   updateUser(data: any, id: number) {
     return this.http.put<any>("http://localhost:3000/posts/" + id, data).pipe(map((res: any) => { return res; }))

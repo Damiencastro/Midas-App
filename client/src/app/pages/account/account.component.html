@@ -1,8 +1,8 @@
 <div class="border-slate-100 border-collapse p-3 fl gap-2"
   style="width: 80%; margin:auto; text-align: left; color: white; background-color:#242525">
   <div class="flex justify-end py-5">
-    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" (click)="clickAddUser()"
-      class=" border-collapse text-white rounded-sm border-black py-2 px-2 my-1 bg-amber-700 font-bold" type="button">
+    <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" (click)="clickAddUser()" [disabled]="!userDetail.role.includes('Admin')"
+      class="disabled:bg-amber-400 border-collapse text-white rounded-sm border-black py-2 px-2 my-1 bg-amber-700 font-bold" type="button">
       Add User
     </button>
   </div>
@@ -20,7 +20,8 @@
         <th class="border-collapse p-2">Street</th>
         <th class="border-collapse p-2">Zip</th>
         <th class="border-collapse p-2">State</th>
-        <th class="border-collapse p-2">Date Of Birth</th>
+        <!-- <th class="border-collapse p-2">Date Of Birth</th> -->
+        <th class="border-collapse p-2">Profile Page</th>
         <th class="border-collapse p-2">Edit</th>
         <th class="border-collapse p-2">Delete</th>
       </tr>
@@ -39,20 +40,25 @@
         <td class="border-collapse p-2">{{row.street}}</td>
         <td class="border-collapse p-2">{{row.zip}}</td>
         <td class="border-collapse p-2">{{row.state}}</td>
-        <td class="border-collapse p-2">DOB</td>
+        <!-- <td class="border-collapse p-2">DOB</td> -->
+        <td class="border-collapse p-2">
+          <a mat-button (click)="createProfile(row.id, row.username)">
+            View Profile
+          </a>
+        </td>
         <td class="border-collapse p-3">
 
           <!-- <button [routerLink]="['edit-user']" -->
 
-          <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" (click)="onEdit(row)"
-            class="w-full border-collapse rounded-sm text-white border-black py-1 px-1 my-1 bg-amber-700 font-bold">
+          <button data-modal-target="crud-modal" data-modal-toggle="crud-modal" (click)="onEdit(row)" [disabled]="!userDetail.role.includes('Admin')"
+            class="disabled:bg-amber-400 w-full border-collapse rounded-sm text-white border-black py-1 px-1 my-1 bg-amber-700 font-bold">
             Edit
           </button>
 
         </td>
         <td class="border-collapse p-3">
-          <button (click)="deleteUser(row)"
-            class="w-full border-collapse rounded-sm text-white border-black py-1 px-1 my-1 bg-slate-700 font-bold">
+          <button (click)="deleteUser(row)" [disabled]="!userDetail.role.includes('Admin')"
+            class="disabled:bg-slate-500 w-full border-collapse rounded-sm text-white border-black py-1 px-1 my-1 bg-slate-700 font-bold">
             Delete
           </button>
         </td>
@@ -100,7 +106,7 @@
             <label for="username" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">Username</label>
             <input type="text" formControlName="username"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Enter First Name" required="">
+              placeholder="Enter First Name" >
           </div>
 
           <!-- FirstName -->
@@ -109,7 +115,7 @@
               Name*</label>
             <input type="text" formControlName="firstname"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Enter First Name" required="">
+              placeholder="Enter First Name" >
 
               <div class="col-span-6 mt-1" *ngIf="formValue.controls['firstname'].invalid && formValue.controls['firstname'].touched || formValue.controls['firstname'].dirty">
                 <span class="text-red-600" *ngIf="formValue.controls['firstname'].errors?.['required']">
@@ -161,7 +167,7 @@
           <div class="col-span-6 sm:col-span-5 gap-0 mb-1 mr-2" *ngIf="true">
             <input type="{{passwordHide ? 'password':'text'}}" formControlName="password"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="*******" required="">
+              placeholder="*******" >
           </div>
           <div class="col-span-6 sm:col-span-1 pt-2 pl-1" *ngIf="true">
             <mat-icon (click)="passwordHide = !passwordHide" matSuffix>{{passwordHide ?
@@ -186,7 +192,7 @@
           <div class="col-span-6 sm:col-span-5 gap-0 mb-1 mr-2" *ngIf="true">
             <input type="{{confirmPasswordHide ? 'password':'text'}}" formControlName="confirmPassword"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="*******" required="">
+              placeholder="*******" >
           </div>
           <div class="col-span-6 sm:col-span-1 pt-2 pl-1" *ngIf="true">
             <mat-icon (click)="confirmPasswordHide = !confirmPasswordHide" matSuffix>{{confirmPasswordHide ?
@@ -216,45 +222,15 @@
             <label for="phone" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">Phone Number</label>
             <input type="text" formControlName="phone"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Enter Your E-mail Address" required="">
+              placeholder="Enter Your E-mail Address">
           </div>
 
           <div class="col-span-6">
-            <label for="dob" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">Date Of Birth</label>
-          </div>
-
-          <div class="col-span-6 sm:col-span-2">
-            <select id="month"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-              <option selected="">Month</option>
-              <option value="1">January</option>
-              <option value="2">February</option>
-              <option value="3">March</option>
-              <option value="4">April</option>
-              <option value="5">May</option>
-              <option value="6">June</option>
-              <option value="7">July</option>
-              <option value="8">August</option>
-              <option value="9">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
-            </select>
-          </div>
-
-          <div class="col-span-6 sm:col-span-2">
-            <input type="number" min="1" max="31" name="day" id="day"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Day" required="">
-          </div>
-
-          <div class="col-span-6 sm:col-span-2">
-            <input type="number" min="1920" max="2020" name="year" id="year"
+            <label for="date" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">Date Of Birth</label>
+            <input type="date" formControlName="dob"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Year" required="">
+              placeholder="Enter Your Date of Birth">
           </div>
-
-
 
           <!-- Street Address -->
           <div class="col-span-6">
@@ -262,21 +238,21 @@
               Address</label>
             <input type="text" formControlName="street"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Enter Your E-mail Address" required="">
+              placeholder="Enter Your E-mail Address">
           </div>
 
           <div class="col-span-6 sm:col-span-3">
             <label for="zip" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">Zip Code</label>
             <input type="text" formControlName="zip"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="Zip Code" required="">
+              placeholder="Zip Code">
           </div>
 
           <div class="col-span-6 sm:col-span-3">
             <label for="state" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">State</label>
             <input type="text" formControlName="state"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              placeholder="State" required="">
+              placeholder="State">
           </div>
 
         </div>

@@ -14,8 +14,9 @@ import { NavbarComponent } from './components/navbar/navbar.component';
 import { RoleFormComponent } from './components/role-form/role-form.component';
 import { RoleListComponent } from './components/role-list/role-list.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { EditUserComponent } from './pages/edit-user/edit-user.component';
-import { AddUserComponent } from './pages/add-user/add-user.component';
+import { ChartComponent } from './pages/chart/chart.component';
+import { UserProfileComponent } from './pages/user-profile/user-profile.component';
+import { AccountProfileComponent } from './pages/account-profile/account-profile.component';
 
 export const routes: Routes = [
   {
@@ -35,12 +36,16 @@ export const routes: Routes = [
     component: AccountComponent,
   },
   {
-    path: 'edit-user',
-    component: EditUserComponent,
+    path: 'user-profile',
+    component:UserProfileComponent,
   },
   {
-    path: 'add-user',
-    component: AddUserComponent,
+    path: 'account-profile',
+    component:AccountProfileComponent,
+  },
+  {
+    path: 'chart',
+    component: ChartComponent,
   },
   {
     path: 'forget-password',
