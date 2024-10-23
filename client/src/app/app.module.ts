@@ -9,7 +9,7 @@ import { AccountComponent } from './basicFunctionality/account-old/account.compo
 import { ChangePasswordComponent } from './basicFunctionality/change-password-old/change-password.component';
 import { ForgetPasswordComponent } from './basicFunctionality/forget-password-old/forget-password.component';
 import { HomeComponent } from './basicFunctionality/home-old/home.component';
-import { LoginComponent } from './basicFunctionality/login/login.component';
+import { LoginComponent } from './basicFunctionality/login-old/login.component';
 import { RegisterComponent } from './basicFunctionality/register-old/register.component';
 import { ResetPasswordComponent } from './basicFunctionality/reset-password-old/reset-password.component';
 import { RoleComponent } from './basicFunctionality/role-old/role.component';
