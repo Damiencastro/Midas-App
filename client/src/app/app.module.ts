@@ -39,6 +39,7 @@ import { ChartComponent } from './pages/chart/chart.component';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { AccountProfileComponent } from './pages/account-profile/account-profile.component';
 import { CalendarComponent } from './pages/calendar/calendar.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 
 
@@ -61,6 +62,7 @@ import { CalendarComponent } from './pages/calendar/calendar.component';
     UserProfileComponent,
     AccountProfileComponent,
     CalendarComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
