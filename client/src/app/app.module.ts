@@ -38,6 +38,7 @@ import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common
 import { ChartComponent } from './pages/chart/chart.component';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { AccountProfileComponent } from './pages/account-profile/account-profile.component';
+import { CalendarComponent } from './pages/calendar/calendar.component';
 
 
 
@@ -59,6 +60,7 @@ import { AccountProfileComponent } from './pages/account-profile/account-profile
     ChartComponent,
     UserProfileComponent,
     AccountProfileComponent,
+    CalendarComponent,
   ],
   imports: [
     BrowserModule,

@@ -17,6 +17,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { ChartComponent } from './pages/chart/chart.component';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { AccountProfileComponent } from './pages/account-profile/account-profile.component';
+import { CalendarComponent } from './pages/calendar/calendar.component';
 
 export const routes: Routes = [
   {
@@ -72,6 +73,10 @@ export const routes: Routes = [
     data: {
       roles: ['Admin'],
     },
+  },
+  {
+    path: 'calendar',
+    component: CalendarComponent,
   },
 ];
 

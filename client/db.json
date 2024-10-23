@@ -64,6 +64,19 @@
       "state": "Georgia",
       "password": "vvvvvvvvvvvvvvvvvv",
       "role": "Accountant"
+    },
+    {
+      "id": "ce17",
+      "username": "DCastro",
+      "firstname": "Damien",
+      "lastname": "Castro",
+      "email": "damienjcastro@gmail.com",
+      "phone": "8437016380",
+      "street": "101 Dublin Way",
+      "zip": "30132",
+      "state": "GA",
+      "password": "testPassword",
+      "role": "Admin"
     }
   ],
   "usercount": {
