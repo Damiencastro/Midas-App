@@ -11,7 +11,7 @@
       @if(isLoggedIn()){
       <h1 class="text-2xl">
         You are logged in as <span class="font-bold bg-amber-500 rounded-md p-2 text-white">
-          {{userDetail.firstname}} {{userDetail.lastname}}
+          {{userService.user.firstname}} {{userService.user.lastname}}
         </span>
       </h1>
       }

@@ -29,14 +29,23 @@ export class UserService {
   }
 
   create(auth: Auth) {
-    createUserWithEmailAndPassword(auth, this.user.username, this.user.password)
+    createUserWithEmailAndPassword(auth, (this.user.username + "@midas-app.com"), this.user.password)
       .then((userCredential) => {
         const user = userCredential.user;
+        console.log(userCredential);
       })
       .catch((error) => {
         console.error(error);
       })
 
     
+  }
+
+  isLoggedIn(auth: Auth): boolean {
+    return auth.currentUser !== null;
+  }
+
+  getRole(auth: Auth): number {
+    return this.user.role;
   }
 }

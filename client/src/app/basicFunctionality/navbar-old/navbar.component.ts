@@ -7,69 +7,39 @@ import { LoginComponent } from '../login-old/login.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ApiService } from '../../services/api.service';
 import { UserModel } from '../../models/user.model';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { UserService } from '../../services/user.service';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent{
 
-  public userDetail: UserModel = new UserModel();
-  public reset: UserModel = new UserModel();
+  public userService = inject(UserService);
 
+  constructor(private router: Router, private auth: Auth) { }
 
-  constructor(private api: ApiService, private router: Router) { }
-
-  ngOnInit(): void {
-    if (typeof window !== 'undefined') {
-      if (localStorage.getItem('user') != null) {
-        const temp = localStorage.getItem('user');
-        if (temp != null) {
-          this.userDetail = JSON.parse(temp);
-        }
-      }
-    }
-  }
+  
 
   isLoggedIn = (): boolean => {
 
-    if (typeof window !== 'undefined') {
-      if (localStorage.getItem('user') != null) {
-        const temp = localStorage.getItem('user');
-        if (temp != null) {
-          this.userDetail = JSON.parse(temp);
-          return true;
-        }
-        else {
-          return false;
-        }
-      }
-      else {
-        return false;
-      }
-    }
-    else {
-      return false;
-    }
+    return this.userService.isLoggedIn(this.auth);
 
   }
 
   logout = () => {
-    if (localStorage.getItem('user') != null) {
-      localStorage.removeItem('user');
-    }
-    this.userDetail = this.reset;
+    this.userService.logout(this.auth);
 
     this.router.navigate(['/login']);
   };
 
   getRole(): number {
-    return this.api.getRole();
+    return this.userService.getRole(this.auth);
   }
 
 

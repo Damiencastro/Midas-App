@@ -20,7 +20,7 @@
       <hr class="py-4 border-gray-100">
       <div class="grid grid-cols-2 gap-4">
         <div class="text-gray-100 font-bold">Full Name</div>
-        <div class="text-gray-300 font-medium">{{userDetail.firstname | titlecase}} {{userDetail.lastname | titlecase}}</div>
+        <div class="text-gray-300 font-medium">{{userService.user.firstname | titlecase}} {{userService.user.lastname | titlecase}}</div>
 <!-- 
         <div class="text-gray-100 font-bold">Email</div>
         <div class="text-gray-300 font-medium">{{userDetail.email}}</div> -->
@@ -29,11 +29,11 @@
           Role
         </div>
 
-        <div class="text-gray-300 font-medium">{{userDetail.role}}</div>
+        <div class="text-gray-300 font-medium">{{userService.user.role}}</div>
         <div class="text-gray-100 font-bold">
           Phone
         </div>
-        <div class="text-gray-300 font-medium">{{userDetail.phone || '-'}}</div>
+        <div class="text-gray-300 font-medium">{{userService.user.phone || '-'}}</div>
 
       </div>
     </div>

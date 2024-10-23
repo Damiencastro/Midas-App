@@ -1,7 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { UserModel } from '../../models/user.model';
 import { Router, RouterLink } from '@angular/router';
-import { ApiService } from '../../services/api.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { error } from 'console';
 import { UserService } from '../../services/user.service';
@@ -31,14 +30,13 @@ export class RegisterComponent {
   currentId: number = 0;
 
 
-  constructor(private formbuilder: FormBuilder, private api: ApiService, private router: Router, private auth: Auth) {
+  constructor(private formbuilder: FormBuilder, private router: Router, private auth: Auth) {
     this.formValue = new FormGroup({
       username: new FormControl("",),
       password: new FormControl("", [Validators.required, Validators.minLength(8)]),
       confirmPassword: new FormControl("", [Validators.required],),
       firstname: new FormControl("", [Validators.required]),
       lastname: new FormControl("", [Validators.required]),
-      email: new FormControl("", [Validators.required, Validators.email]),
       phone: new FormControl("",),
       street: new FormControl("",),
       zip: new FormControl("",),
@@ -47,27 +45,6 @@ export class RegisterComponent {
     },)
   }
 
-  // ngOnInit(): void {
-
-  // //   this.formValue = this.formbuilder.group({
-  // //     username: [''],
-  // //     password: ['', [Validators.required, Validators.minLength(8)]],
-  // //     confirmPassword: [''],
-  // //     firstname: ['', [Validators.required]],
-  // //     lastname: ['', [Validators.required]],
-  // //     email: ['', [Validators.required], Validators.email,],
-  // //     phone: [''],
-  // //     street: [''],
-  // //     zip: [''],
-  // //     state: [''],
-  // //     role: [''],
-  // //   },
-
-
-  // // );
-
-  //   this.getAllUsers();
-  // }
 
 
   submitApplication() {
@@ -85,44 +62,11 @@ export class RegisterComponent {
     this.userService.user.password = this.formValue.value.password;
 
     this.userService.create(this.auth);
-    
-
-
-    // Now that we have the details, we need to send that to the user
-
-    // this.api.postUser(this.userService.user).subscribe(res => {
-    //   console.log(res);
-    //   alert("User has been successfully added!")
-    //   let ref = document.getElementById('cancel');
-    //   ref?.click();
-    //   this.formValue.reset();
-    //   this.getAllUsers();
-    //   this.router.navigate(['login']);
-
-    // }, err => {
-    //   alert("Error Try Again!")
-    // }
-    // )
-
-
-
   }
 
   makeUserName(): string {
     return this.formValue.value.firstname.charAt(0) + this.formValue.value.lastname;
   }
-
-  makePass(): string {
-    return this.formValue.value.firstname.charAt(0) + this.formValue.value.lastname + "123";
-  }
-
-  // getAllUsers() {
-  //   this.api.getUser().subscribe(res => {
-  //     this.userData = res;
-  //   })
-  // }
-
-
 
 }
 

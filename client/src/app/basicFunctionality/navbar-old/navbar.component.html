@@ -22,10 +22,10 @@
           <img src="assets/Male Icon.png" class="py-10" style="max-width: 40px; margin:auto">
           <div class="text-white flex flex-col pr-5">
             <h1 class="p-0 m-0 font-medium">
-              {{userDetail.firstname}} {{userDetail.lastname}}
+              {{userService.user.firstname}} {{userService.user.lastname}}
             </h1>
             <p class="p-0 pt-1 m-0 font-medium text-xs">
-              {{userDetail.role}}
+              {{userService.user.role}}
             </p>
           </div>
         </a>
@@ -59,7 +59,7 @@
 
         <!-- Admin Options -->
          <!-- Users -->
-        <a *ngIf="userDetail.role.includes('Admin') || userDetail.role.includes('Admin')" mat-button routerLink="/account" class="px-4">
+        <a *ngIf="userService.user.role > 0" mat-button routerLink="/account" class="px-4">
           <!-- <mat-icon style="font-size:25px" class="pr-6"> -->
             <mat-icon>
             groups
@@ -68,7 +68,7 @@
         </a>
 
         <!-- Accounts -->
-        <a *ngIf="userDetail.role.includes('Admin') || userDetail.role.includes('Manager') || userDetail.role.includes('Accountant')" mat-button routerLink="/chart" class="px-4">
+        <a *ngIf="userService.user.role > 0" mat-button routerLink="/chart" class="px-4">
             <mat-icon>
             paid
           </mat-icon>

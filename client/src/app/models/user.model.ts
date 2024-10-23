@@ -8,5 +8,5 @@ export class UserModel{
   zip: string = '';
   state: string = '';
   password: string ='';
-  role: string ='';
+  role: number = 0;
 }

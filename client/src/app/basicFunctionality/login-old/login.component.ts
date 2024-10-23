@@ -1,5 +1,4 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ApiService } from '../../services/api.service';
 import { Router, RouterModule, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import {
@@ -10,24 +9,26 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Auth } from '@angular/fire/auth';
+import { UserLinkingService } from '../../services/user-linking-services.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
 
-  user = inject(UserService);
+  userService = inject(UserService);
+  userLinkingService = inject(UserLinkingService);
   formValue !: FormGroup;
   userData !: any;
   passwordHide: boolean = true;
-  private userKey = 'userKey';
 
-  constructor(private formbuilder: FormBuilder, private api : ApiService, private router: Router, private http: HttpClient, private auth: Auth){}
+  constructor(private formbuilder: FormBuilder, private router: Router, private http: HttpClient, private auth: Auth){}
 
   login() {
-        this.user.login(this.auth, this.formValue.value.username, this.formValue.value.password);
+        this.userService.login(this.auth, this.formValue.value.username, this.formValue.value.password);
+        this.userLinkingService.link(this.userService);
         //this.api.login(this.formValue.value.username, this.formValue.value.password);
 
   }

@@ -7,7 +7,6 @@ import { LoginComponent } from '../login-old/login.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ApiService } from '../../services/api.service';
 import { UserModel } from '../../models/user.model';
 
 @Component({
@@ -22,20 +21,8 @@ export class AccountProfileComponent{
 
 
 
-  constructor(private api: ApiService, private router: Router) { }
+  constructor(private router: Router) { }
 
-  // ngOnInit(): void {
-
-  //   if (typeof window !== 'undefined') {
-  //     if (localStorage.getItem('a-profile') != null) {
-  //       const temp = localStorage.getItem('a-profile');
-  //       if (temp != null) {
-  //         this.chartDetail = JSON.parse(temp);
-  //       }
-  //     }
-  //   }
-  // }
-
-
+  
 }
 

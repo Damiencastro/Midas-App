@@ -7,32 +7,23 @@ import { LoginComponent } from '../login-old/login.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ApiService } from '../../services/api.service';
 import { UserModel } from '../../models/user.model';
+import { UserService } from '../../services/user.service';
+import { Auth } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss'
 })
-export class UserProfileComponent   implements OnInit {
+export class UserProfileComponent {
 
-  public profileDetail: UserModel = new UserModel();
-  public reset: UserModel = new UserModel();
+  public userService = inject(UserService);
   public routerLink: RouterLink = inject(RouterLink);
 
-  constructor(private api: ApiService, private router: Router) { }
+  constructor(private router: Router, private auth: Auth) { }
 
-  ngOnInit(): void {
-    if (typeof window !== 'undefined') {
-      if (localStorage.getItem('profile') != null) {
-        const temp = localStorage.getItem('profile');
-        if (temp != null) {
-          this.profileDetail = JSON.parse(temp);
-        }
-      }
-    }
-  }
+  
 
 
 }
