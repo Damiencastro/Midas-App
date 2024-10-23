@@ -8,7 +8,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
-import { UserModel } from '../account-old/account.model';
+import { UserModel } from '../../models/user.model';
 
 @Component({
   selector: 'app-user-profile',
@@ -19,7 +19,7 @@ export class UserProfileComponent   implements OnInit {
 
   public profileDetail: UserModel = new UserModel();
   public reset: UserModel = new UserModel();
-  
+  public routerLink: RouterLink = inject(RouterLink);
 
   constructor(private api: ApiService, private router: Router) { }
 

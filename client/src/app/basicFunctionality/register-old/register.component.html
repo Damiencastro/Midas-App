@@ -67,7 +67,7 @@
 
 
           <!-- Email -->
-          <div class="col-span-6">
+          <!-- <div class="col-span-6">
             <label for="email" class="block mb-2 text-sm font-medium text-gray-100 dark:text-white">Email
               Address</label>
             <input type="email" formControlName="email"
@@ -81,8 +81,8 @@
                 <span class="text-red-600" *ngIf="formValue.controls['email'].errors?.['email']">
                   You must a valid e-mail address!
                 </span>
-              </div>
-          </div>
+              </div>    Damien: Commented this out as the user should only provide first/last name and password, then the username is created from that.
+          </div> --> 
 
 
           <!-- Password -->
@@ -213,7 +213,7 @@
         </div>
 
 
-        <button type="submit" [disabled]="!formValue.valid" (click)="postUserDetails()"
+        <button type="submit" [disabled]="!formValue.valid" (click)="submitApplication()"
           class="disabled:bg-amber-300 w-full text-white bg-amber-600 hover:bg-amber-400 font-medium rounded-sm px-5 py-2.5 my-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
           Register
         </button>

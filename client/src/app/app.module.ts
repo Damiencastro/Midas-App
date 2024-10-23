@@ -5,7 +5,6 @@ import { Component, OnInit, inject } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AccountComponent } from './basicFunctionality/account-old/account.component';
 import { ChangePasswordComponent } from './basicFunctionality/change-password-old/change-password.component';
 import { ForgetPasswordComponent } from './basicFunctionality/forget-password-old/forget-password.component';
 import { HomeComponent } from './basicFunctionality/home-old/home.component';
@@ -33,7 +32,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common/http';
-import { ChartComponent } from './basicFunctionality/chart-old/chart.component';
 import { UserProfileComponent } from './basicFunctionality/user-profile-old/user-profile.component';
 import { AccountProfileComponent } from './basicFunctionality/account-profile-old/account-profile.component';
 import { CalendarComponent } from './basicFunctionality/calendar/calendar.component';
@@ -48,7 +46,6 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 @NgModule({
   declarations: [
     AppComponent,
-    AccountComponent,
     ChangePasswordComponent,
     ForgetPasswordComponent,
     HomeComponent,
@@ -58,7 +55,6 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
     RoleComponent,
     UsersComponent,
     NavbarComponent,
-    ChartComponent,
     UserProfileComponent,
     AccountProfileComponent,
     CalendarComponent,

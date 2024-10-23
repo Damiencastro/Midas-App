@@ -3,7 +3,6 @@ export class UserModel{
   username: string = '';
   firstname: string = '';
   lastname: string = '';
-  email: string = '';
   phone: string = '';
   street: string = '';
   zip: string = '';

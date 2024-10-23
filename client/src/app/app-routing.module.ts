@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
-import { AccountComponent } from './basicFunctionality/account-old/account.component';
 import { ChangePasswordComponent } from './basicFunctionality/change-password-old/change-password.component';
 import { ForgetPasswordComponent } from './basicFunctionality/forget-password-old/forget-password.component';
 import { HomeComponent } from './basicFunctionality/home-old/home.component';
@@ -12,7 +11,6 @@ import { RoleComponent } from './basicFunctionality/role-old/role.component';
 import { UsersComponent } from './basicFunctionality/users-old/users.component';
 import { NavbarComponent } from './basicFunctionality/navbar-old/navbar.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { ChartComponent } from './basicFunctionality/chart-old/chart.component';
 import { UserProfileComponent } from './basicFunctionality/user-profile-old/user-profile.component';
 import { AccountProfileComponent } from './basicFunctionality/account-profile-old/account-profile.component';
 import { CalendarComponent } from './basicFunctionality/calendar/calendar.component';
@@ -40,7 +38,7 @@ export const routes: Routes = [
   },
   {
     path: 'account',
-    component: AccountComponent,
+    component: HomeComponent, //Stand-in for fixing the account component
   },
   {
     path: 'user-profile',
@@ -49,10 +47,6 @@ export const routes: Routes = [
   {
     path: 'account-profile',
     component:AccountProfileComponent,
-  },
-  {
-    path: 'chart',
-    component: ChartComponent,
   },
   {
     path: 'forget-password',
