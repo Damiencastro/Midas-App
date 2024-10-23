@@ -8,14 +8,16 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ApiService } from '../../services/api.service';
-import { UserModel } from '../account/account.model';
+import { UserModel } from '../account-old/account.model';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.scss'
 })
-export class UsersComponent  implements OnInit {
+export class NavbarComponent implements OnInit {
 
   public userDetail: UserModel = new UserModel();
   public reset: UserModel = new UserModel();
@@ -69,4 +71,7 @@ export class UsersComponent  implements OnInit {
   getRole(): number {
     return this.api.getRole();
   }
+
+
+
 }

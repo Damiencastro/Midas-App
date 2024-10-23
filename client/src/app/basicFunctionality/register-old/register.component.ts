@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { UserModel } from '../account/account.model';
+import { UserModel } from '../account-old/account.model';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';

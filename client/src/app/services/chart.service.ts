@@ -3,8 +3,8 @@ import { HttpClient, HttpClientModule, provideHttpClient, withFetch } from '@ang
 import { map } from 'rxjs/operators';
 import { count } from 'console';
 import { Router, RouterModule, RouterLink } from '@angular/router';
-import { ChartModel } from '../basicFunctionality/chart/chart.model';
-import { UserModel } from '../basicFunctionality/account/account.model';
+import { ChartModel } from '../basicFunctionality/chart-old/chart.model';
+import { UserModel } from '../basicFunctionality/account-old/account.model';
 import { ApiService } from './api.service';
 
 @Injectable({

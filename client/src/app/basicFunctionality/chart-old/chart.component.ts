@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
 
 import { ApiService } from '../../services/api.service';
-import { UserModel } from '../account/account.model';
-import { Users } from '../account/account';
+import { UserModel } from '../account-old/account.model';
+import { Users } from '../account-old/account';
 
 import { ChartService } from '../../services/chart.service';
 import { ChartModel } from './chart.model';
 
-import { AccountService } from '../account/account.service';
+import { AccountService } from '../account-old/account.service';
 import { initFlowbite } from 'flowbite';
 import { Router, RouterLink } from '@angular/router';
 
