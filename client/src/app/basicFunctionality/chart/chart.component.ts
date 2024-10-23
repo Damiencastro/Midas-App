@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, FormControl } from '@angular/forms';
 
-import { ApiService } from '../../shared/api.service';
+import { ApiService } from '../../services/api.service';
 import { UserModel } from '../account/account.model';
 import { Users } from '../account/account';
 
-import { ChartService } from '../../shared/chart.service';
+import { ChartService } from '../../services/chart.service';
 import { ChartModel } from './chart.model';
 
 import { AccountService } from '../account/account.service';
@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 
-import { LoginComponent } from '../../pages/login/login.component';
+import { LoginComponent } from '../login/login.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 

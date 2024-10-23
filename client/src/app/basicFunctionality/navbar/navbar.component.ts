@@ -3,12 +3,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
-import { LoginComponent } from '../../pages/login/login.component';
+import { LoginComponent } from '../login/login.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ApiService } from '../../shared/api.service';
-import { UserModel } from '../../pages/account/account.model';
+import { ApiService } from '../../services/api.service';
+import { UserModel } from '../account/account.model';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 

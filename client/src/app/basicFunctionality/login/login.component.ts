@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { UserModel } from '../account/account.model';
-import { ApiService } from '../../shared/api.service';
+import { ApiService } from '../../services/api.service';
 import { Router, RouterModule, RouterLink } from '@angular/router';
 import {
   FormBuilder,

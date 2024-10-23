@@ -5,18 +5,16 @@ import { Component, OnInit, inject } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AccountComponent } from './pages/account/account.component';
-import { ChangePasswordComponent } from './pages/change-password/change-password.component';
-import { ForgetPasswordComponent } from './pages/forget-password/forget-password.component';
-import { HomeComponent } from './pages/home/home.component';
-import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
-import { RoleComponent } from './pages/role/role.component';
-import { UsersComponent } from './pages/users/users.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { RoleFormComponent } from './components/role-form/role-form.component';
-import { RoleListComponent } from './components/role-list/role-list.component';
+import { AccountComponent } from './basicFunctionality/account/account.component';
+import { ChangePasswordComponent } from './basicFunctionality/change-password/change-password.component';
+import { ForgetPasswordComponent } from './basicFunctionality/forget-password/forget-password.component';
+import { HomeComponent } from './basicFunctionality/home/home.component';
+import { LoginComponent } from './basicFunctionality/login/login.component';
+import { RegisterComponent } from './basicFunctionality/register/register.component';
+import { ResetPasswordComponent } from './basicFunctionality/reset-password/reset-password.component';
+import { RoleComponent } from './basicFunctionality/role/role.component';
+import { UsersComponent } from './basicFunctionality/users/users.component';
+import { NavbarComponent } from './basicFunctionality/navbar/navbar.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -35,11 +33,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common/http';
-import { ChartComponent } from './pages/chart/chart.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
-import { AccountProfileComponent } from './pages/account-profile/account-profile.component';
-import { CalendarComponent } from './pages/calendar/calendar.component';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { ChartComponent } from './basicFunctionality/chart/chart.component';
+import { UserProfileComponent } from './basicFunctionality/user-profile/user-profile.component';
+import { AccountProfileComponent } from './basicFunctionality/account-profile/account-profile.component';
+import { CalendarComponent } from './basicFunctionality/calendar/calendar.component';
+import { DashboardComponent } from './basicFunctionality/dashboard/dashboard.component';
+import { UserApplicationFormComponent } from './userComponents/user-application-form/user-application-form.component';
+import { ApplicationReviewComponent } from './userComponents/application-review/application-review.component';
 
 
 
@@ -56,13 +56,13 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
     RoleComponent,
     UsersComponent,
     NavbarComponent,
-    RoleFormComponent,
-    RoleListComponent,
     ChartComponent,
     UserProfileComponent,
     AccountProfileComponent,
     CalendarComponent,
     DashboardComponent,
+    UserApplicationFormComponent,
+    ApplicationReviewComponent,
   ],
   imports: [
     BrowserModule,
@@ -86,7 +86,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
   ],
   providers: [
     provideClientHydration(),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+
   ],
   bootstrap: [AppComponent]
 })
