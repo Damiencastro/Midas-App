@@ -10,7 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserModel } from '../../models/user.model';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/UserService/user.service';
 import { Auth } from '@angular/fire/auth';
 
 @Component({
@@ -26,21 +26,6 @@ export class NavbarComponent{
 
   
 
-  isLoggedIn = (): boolean => {
-
-    return this.userService.isLoggedIn(this.auth);
-
-  }
-
-  logout = () => {
-    this.userService.logout(this.auth);
-
-    this.router.navigate(['/login']);
-  };
-
-  getRole(): number {
-    return this.userService.getRole(this.auth);
-  }
 
 
 

@@ -8,7 +8,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserModel } from '../../models/user.model';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/UserService/user.service';
 import { Auth } from '@angular/fire/auth';
 
 @Component({
@@ -22,19 +22,13 @@ export class UsersComponent {
   constructor(private router: Router, private auth: Auth) { }
 
 
-  isLoggedIn = (): boolean => {
-
-    return this.userService.isLoggedIn(this.auth);
-
-  }
+  
 
   logout = () => {
-    this.userService.logout(this.auth);
+    this.userService.logout();
 
     this.router.navigate(['/login']);
   };
 
-  getRole(): number {
-    return this.userService.getRole(this.auth);
-  }
+  
 }

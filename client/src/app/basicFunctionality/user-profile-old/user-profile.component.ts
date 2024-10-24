@@ -8,7 +8,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserModel } from '../../models/user.model';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/UserService/user.service';
 import { Auth } from '@angular/fire/auth';
 
 @Component({

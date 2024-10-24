@@ -3,29 +3,32 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { ChangePasswordComponent } from './basicFunctionality/change-password-old/change-password.component';
 import { ForgetPasswordComponent } from './basicFunctionality/forget-password-old/forget-password.component';
-import { HomeComponent } from './basicFunctionality/home-old/home.component';
 import { LoginComponent } from './basicFunctionality/login-old/login.component';
 import { RegisterComponent } from './basicFunctionality/register-old/register.component';
 import { ResetPasswordComponent } from './basicFunctionality/reset-password-old/reset-password.component';
-import { RoleComponent } from './basicFunctionality/role-old/role.component';
 import { UsersComponent } from './basicFunctionality/users-old/users.component';
 import { NavbarComponent } from './basicFunctionality/navbar-old/navbar.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { UserProfileComponent } from './basicFunctionality/user-profile-old/user-profile.component';
-import { AccountProfileComponent } from './basicFunctionality/account-profile-old/account-profile.component';
 import { CalendarComponent } from './basicFunctionality/calendar/calendar.component';
 import { DashboardComponent } from './basicFunctionality/dashboard/dashboard.component';
+import { AuthGuardService } from './services/auth-guard/auth-guard.service';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    component: LoginComponent,
   },
   {
     path: '',
     component: DashboardComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: '',
+    component: LoginComponent,
     data: {
-      roles : ['Admin', 'Manager', 'Accountant'],
+      roles : ['Guest']
     }
   },
   {
@@ -37,16 +40,8 @@ export const routes: Routes = [
     component: RegisterComponent,
   },
   {
-    path: 'account',
-    component: HomeComponent, //Stand-in for fixing the account component
-  },
-  {
     path: 'user-profile',
     component:UserProfileComponent,
-  },
-  {
-    path: 'account-profile',
-    component:AccountProfileComponent,
   },
   {
     path: 'forget-password',
@@ -63,13 +58,6 @@ export const routes: Routes = [
   {
     path: 'users',
     component: UsersComponent,
-    data: {
-      roles: ['Admin'],
-    },
-  },
-  {
-    path: 'roles',
-    component: RoleComponent,
     data: {
       roles: ['Admin'],
     },

@@ -1,25 +1,31 @@
 
-<div tabindex="1" aria-hidden="true"
+<div tabindex="1" aria-hidden="true" data-testid="register-modal"
   class="overflow-y-auto overflow-x-hidden flex m-10 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-  <div class="relative pb-4 w-full max-h-full " style="width: 40%; max-width:600px">
+  <div class="relative pb-4 w-full max-h-full " style="width: 40%; max-width:600px" data-testid="register-box-modal">
+    <div *ngIf="error$ | async as errorMessage" 
+        class="error-message" data-testid="register-box-error-messsage"
+        style="background-color: #FEE2E2; color: #991B1B; padding: 12px; border-radius: 4px; margin-top: 8px; display:block">
+        {{ errorMessage }}
+      </div>
     <!-- Modal content -->
-    <div class="relative rounded-lg shadow text-white" style="background-color: #1b1c1f;">
+    <div class="relative rounded-lg shadow text-white" style="background-color: #1b1c1f;" data-testid="register-box-modal-inner">
       <!-- Modal header -->
-      <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-        <h3 class="text-lg font-semibold text-gray-100 dark:text-white">
+      <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600" data-testid="register-box-title">
+        <h3 class="text-lg font-semibold text-gray-100 dark:text-white" data-testid="register-box-title-text">
           Register
         </h3>
 
-        <button type="button" id="cancel"
+        <button type="button" id="cancel" data-testid="register-box-modal-close-button-x"
           class="text-gray-100 bg-transparent hover:bg-gray-200 hover:text-gray-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
           data-modal-toggle="crud-modal">
           <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" data-testid="register-box-close-button-x-svg"/>
           </svg>
           <span class="sr-only">Close modal</span>
         </button>
       </div>
+      
       <!-- Modal body -->
       <form class="p-4 md:p-5" [formGroup]="formValue">
         <div class="grid gap-3 mb-4 grid-cols-6">

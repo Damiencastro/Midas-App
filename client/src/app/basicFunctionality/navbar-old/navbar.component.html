@@ -10,7 +10,7 @@
     <span>|</span>
     <div class="p-3 my-5"><a routerLink="/" class="text-white font-bold text-1xl" style="text-decoration:none">Journalizing</a></div>
 
-    @if(isLoggedIn()){
+    @if(userService.isLoggedIn$){
 
     <div class="ml-auto">
       <div class="flex gap-2 items-center">
@@ -22,10 +22,10 @@
           <img src="assets/Male Icon.png" class="py-10" style="max-width: 40px; margin:auto">
           <div class="text-white flex flex-col pr-5">
             <h1 class="p-0 m-0 font-medium">
-              {{userService.user.firstname}} {{userService.user.lastname}}
+              {{userService.displayName$}}
             </h1>
             <p class="p-0 pt-1 m-0 font-medium text-xs">
-              {{userService.user.role}}
+              {{userService.viewRole$}}
             </p>
           </div>
         </a>
@@ -39,7 +39,7 @@
           </button>
 
           <!-- Logout -->
-          <button (click)="logout()" mat-menu-item>
+          <button (click)="userService.logout()" mat-menu-item>
             <mat-icon>
               logout
             </mat-icon>
@@ -59,7 +59,7 @@
 
         <!-- Admin Options -->
          <!-- Users -->
-        <a *ngIf="userService.user.role > 0" mat-button routerLink="/account" class="px-4">
+        <a *ngIf="userService.userIsAuthorized$" mat-button routerLink="/account" class="px-4">
           <!-- <mat-icon style="font-size:25px" class="pr-6"> -->
             <mat-icon>
             groups
@@ -68,14 +68,14 @@
         </a>
 
         <!-- Accounts -->
-        <a *ngIf="userService.user.role > 0" mat-button routerLink="/chart" class="px-4">
+        <a *ngIf="userService.userIsAuthorized$" mat-button routerLink="/chart" class="px-4">
             <mat-icon>
             paid
           </mat-icon>
           Accounts
         </a>
 
-        <a mat-button (click)="logout()" class="px-4">
+        <a mat-button (click)="userService.logout()" class="px-4">
             <mat-icon>
               logout
             </mat-icon>

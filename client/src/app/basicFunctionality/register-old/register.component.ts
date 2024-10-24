@@ -3,8 +3,9 @@ import { UserModel } from '../../models/user.model';
 import { Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { error } from 'console';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../services/UserService/user.service';
 import { Auth, getAuth } from '@angular/fire/auth';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 
 @Component({
@@ -27,7 +28,12 @@ export class RegisterComponent {
   userData !: any;
   showAdd!: boolean;
   showEdit!: boolean;
-  currentId: number = 0;
+  currentId: string = '';
+  
+  private readonly errorSubject = new BehaviorSubject<string | null>(null);
+
+  readonly error$ = this.errorSubject.asObservable();
+
 
 
   constructor(private formbuilder: FormBuilder, private router: Router, private auth: Auth) {
@@ -48,20 +54,45 @@ export class RegisterComponent {
 
 
   submitApplication() {
-    // this.userModelObj.id = this.currentId;
-    // this.currentId++;
+    
+    this.errorSubject.next(null);
+    
+    this.userService.application({
+      id: this.currentId,
+      username: this.makeUserName(),
+      firstname: this.formValue.value.firstname,
+      lastname: this.formValue.value.lastname,
+      phone: this.formValue.value.phone,
+      street: this.formValue.value.street,
+      zip: this.formValue.value.zip,
+      state: this.formValue.value.state,
+      password: this.formValue.value.password,
+      role: this.formValue.value.role,
+    }).then(() => {
+      console.log('User created successfully');
+    }).catch((error) => {
+      this.errorSubject.next(this.getErrorMessage(error));
+    })
 
-    // Damien : First, we link the user service's usermodel to the input given by the user.
-    this.userService.user.firstname = this.formValue.value.firstname;
-    this.userService.user.lastname = this.formValue.value.lastname;
-    this.userService.user.phone = this.formValue.value.phone;
-    this.userService.user.street = this.formValue.value.street;
-    this.userService.user.zip = this.formValue.value.zip;
-    this.userService.user.state = this.formValue.value.state;
-    this.userService.user.username = this.makeUserName();
-    this.userService.user.password = this.formValue.value.password;
+    
+  }
 
-    this.userService.create(this.auth);
+  private getErrorMessage(error: any): string {
+    if (error?.code) {
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          return 'This email is already registered';
+        case 'auth/invalid-email':
+          return 'Invalid email address';
+        case 'auth/operation-not-allowed':
+          return 'Registration is currently disabled';
+        case 'auth/weak-password':
+          return 'Password is too weak';
+        default:
+          return 'An unexpected error occurred';
+      }
+    }
+    return error?.message || 'An unexpected error occurred';
   }
 
   makeUserName(): string {
