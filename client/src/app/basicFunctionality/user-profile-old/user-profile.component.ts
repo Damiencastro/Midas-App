@@ -21,9 +21,15 @@ export class UserProfileComponent {
   public userService = inject(UserService);
   public routerLink: RouterLink = inject(RouterLink);
 
+  public userRole$ = this.userService.viewRole$;
+  public userPhone$ = this.userService.viewPhone$;
+  public userName$ = this.userService.username$;
+
   constructor(private router: Router, private auth: Auth) { }
 
-  
+  public refreshUser() {
+    console.log(this.userService.userProfile$);
+  }
 
 
 }

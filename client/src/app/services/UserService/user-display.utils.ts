@@ -24,7 +24,7 @@ export class UserDisplayUtils {
         return '';
     }
 
-    static formatDisplayName(user: UserModel | null): string {
+    static formatDisplayName(user: UserModel): string {
         if(!user) return 'Guest';
 
         const fullName = this.formatFullName(user);

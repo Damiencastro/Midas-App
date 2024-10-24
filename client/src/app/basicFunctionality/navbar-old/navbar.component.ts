@@ -25,7 +25,11 @@ export class NavbarComponent{
   constructor(private router: Router, private auth: Auth) { }
 
   
-
+  logout() {
+    this.userService.logout();
+    this.router.navigate(['/login']);
+    console.log(this.userService.isLoggedIn$)
+  }
 
 
 

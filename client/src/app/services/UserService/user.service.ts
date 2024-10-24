@@ -41,6 +41,7 @@ import { UserModel } from '../../models/user.model';
 import { UserDisplayUtils } from './user-display.utils';
 import { UserRole } from '../../models/userRole.model';
 import { profile } from 'console';
+import { RegisterComponent } from '../../basicFunctionality/register-old/register.component';
 
 @Injectable({
   providedIn: 'root'
@@ -62,11 +63,16 @@ export class UserService implements OnDestroy {
 
   // Derived observables
   readonly isLoggedIn$ = this.userProfile$.pipe(
-    map(user => user !== null)
+    map(user => user === null)
   );
 
-  readonly displayName$ = this.userProfile$.pipe(
-    map(UserDisplayUtils.formatDisplayName),
+  readonly username$ = this.userProfile$.pipe(
+    map(user => {
+      if(!user) {
+        return;
+      }
+      return UserDisplayUtils.formatDisplayName(user)
+    }),
     distinctUntilChanged()
   );
 
@@ -103,7 +109,7 @@ export class UserService implements OnDestroy {
 
 
   readonly viewModel$ = combineLatest({
-    displayName: this.displayName$,
+    username: this.username$,
     isAdmin: this.isAdmin$,
     isManager: this.isManager$,
     isAccountant: this.isAccountant$
@@ -138,7 +144,8 @@ export class UserService implements OnDestroy {
         // User is logged in, get their profile
         return this.getUserProfile((firebaseUser as FirebaseUser).uid).pipe(
           tap({
-            next: (profile) => {
+            next: (profile: UserModel) => {
+              console.log(profile);
               this.userProfileSubject.next(profile);
               this.loadingSubject.next(false);
               this.errorSubject.next(null);
@@ -162,7 +169,7 @@ export class UserService implements OnDestroy {
     try {
       this.loadingSubject.next(true);
       this.errorSubject.next(null);
-
+      let userCredential = null;
       // Create the Firebase auth user
       
       
@@ -171,17 +178,19 @@ export class UserService implements OnDestroy {
         UserDisplayUtils.formatUsername(userInfo) + '@midas-app.com',
         userInfo.password
       ).then((userCred) => {
-        console.log("User created successfully");
-        console.log(credential);
-        this.createUserProfile(userCred.user, userInfo);
+        userCredential = userCred;
+        console.log(userCred);
       }).catch((error) => {
         console.log(error);
-        this.errorSubject.next(this.getErrorMessage(error));
+        throw error;
       });
+      if(this.auth.currentUser !== null) {
+        this.createUserProfile(this.auth.currentUser, userInfo);
+      }
       
     } catch (error) {
       console.error('Registration failed:', error);
-      this.errorSubject.next(this.getErrorMessage(error));
+      
       throw error;
     } finally {
       this.loadingSubject.next(false);
@@ -208,12 +217,12 @@ export class UserService implements OnDestroy {
   /**
    * Logs in an existing user with email and password
    */
-  async login(email: string, password: string): Promise<void> {
+  async login(username: string, password: string): Promise<void> {
     try {
       this.loadingSubject.next(true);
       this.errorSubject.next(null);
 
-      await signInWithEmailAndPassword(this.auth, email, password);
+      await signInWithEmailAndPassword(this.auth, username + '@midas-app.com', password);
       
     } catch (error) {
       console.error('Login failed:', error);
@@ -263,7 +272,7 @@ export class UserService implements OnDestroy {
       role: profileInformation.role,
       password: '',
     };
-
+    console.log(userProfile);
     const userRef = this.getUserDocRef(firebaseUser.uid);
     await setDoc(userRef, userProfile);
   }
@@ -275,6 +284,7 @@ export class UserService implements OnDestroy {
     return from(getDoc(this.getUserDocRef(uid))).pipe(
       map(doc => {
         if (!doc.exists()) {
+          console.log('getUserProfile if statement reached');
           throw new Error('User profile not found');
         }
         return doc.data() as UserModel;

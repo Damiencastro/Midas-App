@@ -18,11 +18,15 @@ import { Auth } from '@angular/fire/auth';
 })
 export class UsersComponent {
 
+
   userService = inject(UserService);
   constructor(private router: Router, private auth: Auth) { }
 
 
-  
+  logInfo() {
+    console.log(this.userService);
+    console.log(this.logInfo);
+  }
 
   logout = () => {
     this.userService.logout();

@@ -22,10 +22,10 @@
           <img src="assets/Male Icon.png" class="py-10" style="max-width: 40px; margin:auto">
           <div class="text-white flex flex-col pr-5">
             <h1 class="p-0 m-0 font-medium">
-              {{userService.displayName$}}
+              {{userService.username$ | async}}
             </h1>
             <p class="p-0 pt-1 m-0 font-medium text-xs">
-              {{userService.viewRole$}}
+              {{userService.viewRole$ | async}}
             </p>
           </div>
         </a>
@@ -39,7 +39,7 @@
           </button>
 
           <!-- Logout -->
-          <button (click)="userService.logout()" mat-menu-item>
+          <button (click)="logout()" mat-menu-item>
             <mat-icon>
               logout
             </mat-icon>
@@ -75,7 +75,7 @@
           Accounts
         </a>
 
-        <a mat-button (click)="userService.logout()" class="px-4">
+        <a mat-button (click)="logout()" class="px-4">
             <mat-icon>
               logout
             </mat-icon>

@@ -13,14 +13,14 @@
         <img src="../../../assets/Male Icon.png" class="py-10" style="max-width: 300px; margin:auto">
       </div>
 
-      <button type="submit" class="w-full mt-4 border border-black disabled:bg-amber-400 py-2 px-3 my-5 bg-amber-600 text-white font-bold">
+      <button type="submit" class="w-full mt-4 border border-black disabled:bg-amber-400 py-2 px-3 my-5 bg-amber-600 text-white font-bold" (click)="logInfo()" >
       Update Profile Image
       </button>
 
       <hr class="py-4 border-gray-100">
       <div class="grid grid-cols-2 gap-4">
         <div class="text-gray-100 font-bold">Full Name</div>
-        <div class="text-gray-300 font-medium">{{userService.displayName$}}</div>
+        <div class="text-gray-300 font-medium">{{userService.username$ | async}}</div>
 <!-- 
         <div class="text-gray-100 font-bold">Email</div>
         <div class="text-gray-300 font-medium">{{userDetail.email}}</div> -->
@@ -29,11 +29,11 @@
           Role
         </div>
 
-        <div class="text-gray-300 font-medium">{{userService.viewRole$}}</div>
+        <div class="text-gray-300 font-medium">{{userService.viewRole$ | async}}</div>
         <div class="text-gray-100 font-bold">
           Phone
         </div>
-        <div class="text-gray-300 font-medium">{{userService.viewPhone$ || '-'}}</div>
+        <div class="text-gray-300 font-medium">{{userService.viewPhone$ | async }}</div>
 
       </div>
     </div>

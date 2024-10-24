@@ -25,8 +25,8 @@ export class LoginComponent {
   constructor(private formbuilder: FormBuilder, private router: Router, private http: HttpClient, private auth: Auth){}
 
   login() {
-        this.userService.login
-        this.router.navigate(['/dashboard'])
+        this.userService.login(this.formValue.value.username, this.formValue.value.password);
+        this.router.navigate(['']);
   }
 
 

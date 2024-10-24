@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, FormControl, Validators, A
 import { error } from 'console';
 import { UserService } from '../../services/UserService/user.service';
 import { Auth, getAuth } from '@angular/fire/auth';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 
 
 @Component({
@@ -30,9 +30,8 @@ export class RegisterComponent {
   showEdit!: boolean;
   currentId: string = '';
   
-  private readonly errorSubject = new BehaviorSubject<string | null>(null);
-
-  readonly error$ = this.errorSubject.asObservable();
+  
+  errorSubject = new BehaviorSubject<string | null>(null);
 
 
 
@@ -71,6 +70,7 @@ export class RegisterComponent {
     }).then(() => {
       console.log('User created successfully');
     }).catch((error) => {
+      console.error('User creation failed:', error);
       this.errorSubject.next(this.getErrorMessage(error));
     })
 

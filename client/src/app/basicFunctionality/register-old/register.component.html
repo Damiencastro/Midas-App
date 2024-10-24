@@ -2,11 +2,7 @@
 <div tabindex="1" aria-hidden="true" data-testid="register-modal"
   class="overflow-y-auto overflow-x-hidden flex m-10 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
   <div class="relative pb-4 w-full max-h-full " style="width: 40%; max-width:600px" data-testid="register-box-modal">
-    <div *ngIf="error$ | async as errorMessage" 
-        class="error-message" data-testid="register-box-error-messsage"
-        style="background-color: #FEE2E2; color: #991B1B; padding: 12px; border-radius: 4px; margin-top: 8px; display:block">
-        {{ errorMessage }}
-      </div>
+    
     <!-- Modal content -->
     <div class="relative rounded-lg shadow text-white" style="background-color: #1b1c1f;" data-testid="register-box-modal-inner">
       <!-- Modal header -->
@@ -216,6 +212,12 @@
               placeholder="State" required="">
           </div>
 
+        </div>
+
+        <div *ngIf="userService.error$" 
+          class="error-message" data-testid="register-box-error-messsage"
+          style="background-color: #FEE2E2; color: #991B1B; padding: 12px; border-radius: 4px; margin-top: 8px; display:block">
+          {{ userService.error$ | async}}
         </div>
 
 
