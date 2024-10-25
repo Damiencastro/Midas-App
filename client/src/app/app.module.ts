@@ -5,13 +5,6 @@ import { Component, OnInit, inject } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ChangePasswordComponent } from './basicFunctionality/change-password-old/change-password.component';
-import { ForgetPasswordComponent } from './basicFunctionality/forget-password-old/forget-password.component';
-import { LoginComponent } from './basicFunctionality/login-old/login.component';
-import { RegisterComponent } from './basicFunctionality/register-old/register.component';
-import { ResetPasswordComponent } from './basicFunctionality/reset-password-old/reset-password.component';
-import { UsersComponent } from './basicFunctionality/users-old/users.component';
-import { NavbarComponent } from './basicFunctionality/navbar-old/navbar.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -30,34 +23,22 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common/http';
-import { UserProfileComponent } from './basicFunctionality/user-profile-old/user-profile.component';
-import { CalendarComponent } from './basicFunctionality/calendar/calendar.component';
-import { DashboardComponent } from './basicFunctionality/dashboard/dashboard.component';
-import { UserApplicationFormComponent } from './userComponents/user-application-form/user-application-form.component';
-import { ApplicationReviewComponent } from './userComponents/application-review/application-review.component';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { AdminDashboardComponent } from './adminComponents/adminDashboard/admin-dashboard/admin-dashboard.component';
+import { ForgotPasswordModule } from './userModule/forgotPassword/forgot-password.module';
+import { CalendarModule } from './userModule/calendar/calendar.module';
+import { UserModule } from './userModule/user-module.module';
+import { AdminModule } from './adminModule/admin-module.module';
+import { NavbarComponent } from './shared/navbar/navbar.component';
+import { NavbarModule } from './shared/navbar/navbar.module';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    ChangePasswordComponent,
-    ForgetPasswordComponent,
-    LoginComponent,
-    RegisterComponent,
-    ResetPasswordComponent,
-    UsersComponent,
-    NavbarComponent,
-    UserProfileComponent,
-    CalendarComponent,
-    DashboardComponent,
-    UserApplicationFormComponent,
-    ApplicationReviewComponent,
-    AdminDashboardComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
@@ -77,6 +58,11 @@ import { AdminDashboardComponent } from './adminComponents/adminDashboard/admin-
     FormsModule,
     HttpClientModule,
     MatFormField,
+    UserModule,
+    AdminModule,
+    
+    
+
 
   ],
   providers: [
