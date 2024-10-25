@@ -26,7 +26,6 @@ import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { ForgotPasswordModule } from './userModule/forgotPassword/forgot-password.module';
 import { CalendarModule } from './userModule/calendar/calendar.module';
 import { UserModule } from './userModule/user-module.module';
 import { AdminModule } from './adminModule/admin-module.module';
