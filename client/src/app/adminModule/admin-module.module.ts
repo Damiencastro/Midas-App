@@ -4,11 +4,16 @@ import { AdminUserApplicationReviewModule } from './adminUserApplicationReview/a
 import { AdminDashboardModule } from './adminDashboard/admin-dashboard.module';
 import { AdminExpiredPasswordReportModule } from './adminExpiredPasswordReport/admin-expired-password-report.module';
 import { AdminUsersChartModule } from './adminUsersChart/admin-users-chart.module';
+import { AdminDashboardComponent } from './adminDashboard/admin-dashboard/admin-dashboard.component';
+import { AdminExpiredPasswordReportComponent } from './adminExpiredPasswordReport/admin-expired-password-report/admin-expired-password-report.component';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    AdminDashboardComponent,
+    AdminExpiredPasswordReportComponent
+  ],
   imports: [
     CommonModule,
     AdminDashboardModule,

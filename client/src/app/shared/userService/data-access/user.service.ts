@@ -188,7 +188,7 @@ export class UserService implements OnDestroy {
         throw error;
       });
       if(this.auth.currentUser !== null) {
-        this.createUserProfile(this.auth.currentUser, userInfo);
+        this.submitUserApplication(this.auth.currentUser, userInfo);
       }
       
     } catch (error) {
@@ -259,7 +259,7 @@ export class UserService implements OnDestroy {
   /**
    * Creates a new user profile in Firestore
    */
-  private async createUserProfile(
+  private async submitUserApplication(
     firebaseUser: FirebaseUser,
     profileInformation: UserModel
   ): Promise<void> {
@@ -276,7 +276,7 @@ export class UserService implements OnDestroy {
       password: '',
     };
     console.log(userProfile);
-    const userRef = this.getUserDocRefFromUid(firebaseUser.uid);
+    const userRef = this.getApplicationDocRefFromUid(firebaseUser.uid);
     await setDoc(userRef, userProfile);
   }
 
@@ -334,6 +334,10 @@ export class UserService implements OnDestroy {
    */
   private getUserDocRefFromUid(uid: string): DocumentReference {
     return doc(this.firestore, 'users', uid);
+  }
+
+  private getApplicationDocRefFromUid(uid: string): DocumentReference {
+    return doc(this.firestore, 'applications', uid);
   }
 
   private getUserDocRefFromUsername(username: string): DocumentReference {

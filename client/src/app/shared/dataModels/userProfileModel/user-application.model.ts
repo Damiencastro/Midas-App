@@ -11,4 +11,5 @@ export interface UserApplicationModel{
   state: string;
   password: string;
   requestedRole: UserRole;
+  status: 'pending' | 'approved' | 'denied';
 }

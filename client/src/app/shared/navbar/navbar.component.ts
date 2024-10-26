@@ -22,12 +22,12 @@ export class NavbarComponent{
 
   public userService = inject(UserService);
   router: any;
+  readonly isAdmin$ = this.userService.isAdmin$;
 
-  constructor(router: Router) { this.router = router}
+  constructor(router: Router) { this.router = router; console.log(this.isAdmin$)}
 
   
   logout() {
-    console.log(this.userService.allUsers$)
     this.userService.logout();
     console.log(this.userService.isLoggedIn$)
     this.router.navigate(['/login']);

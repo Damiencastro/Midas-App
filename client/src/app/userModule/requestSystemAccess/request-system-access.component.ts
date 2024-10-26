@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormControl, Validators,  } from '@angular/form
 import { Auth } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { UserService } from '../../shared/userService/data-access/user.service';
+import { UserRole } from '../../shared/dataModels/userProfileModel/userRole.model';
 
 
 @Component({
@@ -12,7 +13,6 @@ import { UserService } from '../../shared/userService/data-access/user.service';
   styleUrl: './request-system-access.component.scss'
 })
 export class RequestSystemAccessComponent {
-
 
 
   passwordHide = true;
@@ -44,7 +44,7 @@ export class RequestSystemAccessComponent {
       street: new FormControl("",),
       zip: new FormControl("",),
       state: new FormControl("",),
-      role: new FormControl("",),
+      role: new FormControl(UserRole,),
     },)
   }
 
