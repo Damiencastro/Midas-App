@@ -11,6 +11,7 @@ import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
 const routes: Routes = [
     {
         path: '',
+        pathMatch: 'full',
         redirectTo: 'portal-dashboard',
     },
     {
@@ -22,7 +23,7 @@ const routes: Routes = [
         component: AccountLedgerComponent
     },
     {
-        path: 'chart-of-account',
+        path: 'chart-of-accounts',
         component: ChartOfAccountComponent
     },
     {
@@ -39,10 +40,6 @@ const routes: Routes = [
         component: PortalDashboardComponent
     },
     {
-        path: 'portal-dashboard',
-        
-    },
-    {
         path: 'business-gl-functions',
         loadChildren: () => import('./adminBusinessGLFunctions/admin-business-glfunctions.module').then(m => m.AdminBusinessGLFunctionsModule)
     },
@@ -57,4 +54,4 @@ const routes: Routes = [
     exports: [RouterModule]
 })
 
-export class UserModuleRoutingModule {}
+export class PortalRoutingModule {}

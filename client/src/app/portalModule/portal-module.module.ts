@@ -9,6 +9,7 @@ import { ChartOfAccountComponent } from './chartOfAccount/chart-of-account.compo
 import { JournalEntryFormComponent } from './journalEntryForm/journal-entry-form.component';
 import { JournalEntryReviewComponent } from './journalEntryReview/journal-entry-review.component';
 import { PortalDashboardComponent } from './portalDashboard/portal-dashboard.component';
+import { PortalRoutingModule } from './portal-routing.module';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { PortalDashboardComponent } from './portalDashboard/portal-dashboard.com
     CommonModule,
     AdminBusinessGLFunctionsModule,
     AdminGeneralLedgerFunctionsModule,
+    PortalRoutingModule
   ]
 })
 export class PortalModule { }
