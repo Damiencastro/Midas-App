@@ -77,15 +77,6 @@ workspace "MidasC4" "A C4 model for the Midas Financial Accounting Software" {
                                         "
                         
                     }
-                    helpFeature = component "Help Feature" {
-                    tags "Not Implemented"
-                        Description "This component will allow users to access help documentation. \
-                                        It will display a list of common issues and solutions. "
-                                    /* Should fulfill R#2.18 by providing a help feature for users. \
-                                        Should fulfill R#2.17 by toggling help tooltip hover on/off. \
-                                        Should fulfill R#2.17 by providing tooltip text for each button. \
-                                        */
-                    }
                     
                     group userComponents {
                         
@@ -181,9 +172,9 @@ workspace "MidasC4" "A C4 model for the Midas Financial Accounting Software" {
                     }
                     group adminBusinessGLFunctions {
                         /* "Admin Functions to Manage Multiple Business General Ledgers" */
-                        Description "This feature allows administrators to manage multiple business general ledgers. \
-                                        It will allow administrators to add, edit, and delete business general ledgers. \
-                                        It will also allow administrators to assign users to business general ledgers."
+                        # Description "This feature allows administrators to manage multiple business general ledgers. \
+                        #                 It will allow administrators to add, edit, and delete business general ledgers. \
+                        #                 It will also allow administrators to assign users to business general ledgers."
                         adminBusinessGLCreate = component "Admin General Ledger Create" {
                             tags "Not Implemented"
                             Description "This component will allow administrators to create a new business general ledger."
@@ -336,7 +327,13 @@ workspace "MidasC4" "A C4 model for the Midas Financial Accounting Software" {
                 }
                 group shared {
                     helpFeature = component "Help Feature" {
-                        Description "Provides access to help documentation throughout the application."
+                        tags "Not Implemented"
+                        Description "This component will allow users to access help documentation. \
+                                        It will display a list of common issues and solutions. "
+                                    /* Should fulfill R#2.18 by providing a help feature for users. \
+                                        Should fulfill R#2.17 by toggling help tooltip hover on/off. \
+                                        Should fulfill R#2.17 by providing tooltip text for each button. \
+                                        */
                     }
                     navbar = component "Navigation Bar" {
                         tags Implemented
@@ -426,7 +423,7 @@ workspace "MidasC4" "A C4 model for the Midas Financial Accounting Software" {
         
             group projectRequirements {
                     container sprintOne {
-                        component 
+                        
                     }
                     container sprintTwo {
 
@@ -471,7 +468,7 @@ workspace "MidasC4" "A C4 model for the Midas Financial Accounting Software" {
         }
 
         component webApplication {
-            include adminUserPanel adminReviewApplication adminViewUserProfile adminUserDeactivation adminExpiredPasswordReport
+            include 
         }
 
         styles {
