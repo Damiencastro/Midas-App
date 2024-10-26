@@ -11,8 +11,7 @@ import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
 const routes: Routes = [
     {
         path: '',
-        canActivate: [AuthGuardService],
-        component: PortalDashboardComponent
+        redirectTo: 'portal-dashboard',
     },
     {
         path: 'event-log',
@@ -33,6 +32,15 @@ const routes: Routes = [
     {
         path: 'journal-entry-review',
         component: JournalEntryReviewComponent
+    },
+    {
+        path: 'portal-dashboard',
+        canActivate: [AuthGuardService],
+        component: PortalDashboardComponent
+    },
+    {
+        path: 'portal-dashboard',
+        
     },
     {
         path: 'business-gl-functions',

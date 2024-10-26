@@ -35,14 +35,14 @@ const routes: Routes = [
         component: RequestSystemAccessComponent
     },
     {
-        path: '',
+        path: 'home',
         component: SplashScreenComponent
     },
     {
         path: '',
-        canActivate: [AuthGuardService],
-        
-    }
+        pathMatch: 'full',
+        redirectTo: 'home',
+    },
 ];
 
 @NgModule({
