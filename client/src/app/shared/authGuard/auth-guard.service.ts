@@ -20,22 +20,14 @@ export class AuthGuardService {
       map(user => {
         // If no user or role is guest, allow access
         if (!user || user.role === UserRole.Guest) {
-          return true;
+          console.log('User is not authorized');
+          return false;
         }
 
         // Otherwise, redirect based on role
-        switch (user.role) {
-          case UserRole.Administrator:
-            this.router.navigate(['/admin-dashboard']);
-            break;
-          case UserRole.Manager:
-            this.router.navigate(['/manager-dashboard']);
-            break;
-          case UserRole.Accountant:
-            this.router.navigate(['/accountant-dashboard']);
-            break;
-        }
-        return false;
+        console.log('User is authorized');
+        console.log(user);
+        return true;
       })
     );
   }

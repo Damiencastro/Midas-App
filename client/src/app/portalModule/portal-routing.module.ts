@@ -6,8 +6,14 @@ import { ChartOfAccountComponent } from "./chartOfAccount/chart-of-account.compo
 import { JournalEntryFormComponent } from "./journalEntryForm/journal-entry-form.component";
 import { JournalEntryReviewComponent } from "./journalEntryReview/journal-entry-review.component";
 import { PortalDashboardComponent } from "./portalDashboard/portal-dashboard.component";
+import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
 
 const routes: Routes = [
+    {
+        path: '',
+        canActivate: [AuthGuardService],
+        component: PortalDashboardComponent
+    },
     {
         path: 'event-log',
         component: AccountEventLogComponent
@@ -27,10 +33,6 @@ const routes: Routes = [
     {
         path: 'journal-entry-review',
         component: JournalEntryReviewComponent
-    },
-    {
-        path: 'portal-dashboard',
-        component: PortalDashboardComponent
     },
     {
         path: 'business-gl-functions',

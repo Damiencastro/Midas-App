@@ -8,7 +8,7 @@
     <a routerLink="/" class="text-amber-500 font-bold text-4xl" style="text-decoration:none">MIDAS</a>
     <div class="ml-10 p-3 my-5"><a [routerLink]="['calendar']" class="text-white font-bold text-2xl" style="text-decoration:uppercase" ><img src="assets/CalendarIcon.jpeg" style="width: 35px;" /> </a></div>
     <span>|</span>
-    <div class="p-3 my-5"><a routerLink="/" class="text-white font-bold text-1xl" style="text-decoration:none">Journalizing</a></div>
+    <div class="p-3 my-5"><a routerLink="/portal" class="text-white font-bold text-1xl" style="text-decoration:none">Portal</a></div>
 
     @if(userService.isLoggedIn$ | async){
 
@@ -31,7 +31,7 @@
         </a>
         <mat-menu #profileDropdownMenu="matMenu" style="background-color: #121316">
           <!-- <button [routerLink]="['account',userDetail.id]" mat-menu-item> -->
-          <button routerLink="/users/profile" mat-menu-item>
+          <button routerLink="/profile" mat-menu-item>
             <mat-icon>account_circle</mat-icon>
             <span>
               View Profile
@@ -47,7 +47,7 @@
           </button>
 
           <!-- Change Password -->
-          <button [routerLink]="['change-password']" mat-menu-item>
+          <button routerLink="/forgot-password" mat-menu-item>
             <mat-icon>
               password
             </mat-icon>
@@ -87,11 +87,11 @@
     }@else{
     <div>
       <div class="flex gap5 items-center">
-        <a mat-button routerLink="/users/login">
+        <a mat-button routerLink="/login">
           Login
         </a>
 
-        <a mat-button routerLink="/users/request-system-access">
+        <a mat-button routerLink="/request-system-access">
           Register
         </a>
 

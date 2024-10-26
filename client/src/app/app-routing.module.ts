@@ -5,7 +5,7 @@ import { AuthGuardService } from './shared/authGuard/auth-guard.service';
 
 export const routes: Routes = [
   {
-    path: 'users',
+    path: '',
     loadChildren: () => import('./userModule/user-module.module').then(m => m.UserModule),
   },
   {
