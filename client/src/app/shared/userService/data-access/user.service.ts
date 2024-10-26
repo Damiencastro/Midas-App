@@ -276,7 +276,7 @@ export class UserService implements OnDestroy {
       password: '',
     };
     console.log(userProfile);
-    const userRef = this.getUserDocRef(firebaseUser.uid);
+    const userRef = this.getUserDocRefFromUid(firebaseUser.uid);
     await setDoc(userRef, userProfile);
   }
 
@@ -284,7 +284,7 @@ export class UserService implements OnDestroy {
    * Gets a user's profile from Firestore
    */
   private getUserProfile(uid: string): Observable<UserModel> {
-    return from(getDoc(this.getUserDocRef(uid))).pipe(
+    return from(getDoc(this.getUserDocRefFromUid(uid))).pipe(
       map(doc => {
         if (!doc.exists()) {
           console.log('getUserProfile if statement reached');
@@ -310,7 +310,7 @@ export class UserService implements OnDestroy {
 
       // Update Firestore
       await updateDoc(
-        this.getUserDocRef(currentUser.id),
+        this.getUserDocRefFromUid(currentUser.id),
         { ...updates, lastUpdated: new Date() }
       );
 
@@ -332,10 +332,13 @@ export class UserService implements OnDestroy {
   /**
    * Gets a reference to a user's Firestore document
    */
-  private getUserDocRef(uid: string): DocumentReference {
+  private getUserDocRefFromUid(uid: string): DocumentReference {
     return doc(this.firestore, 'users', uid);
   }
 
+  private getUserDocRefFromUsername(username: string): DocumentReference {
+    return doc(this.firestore, 'users', username);
+  }
   /**
    * Converts Firebase errors to user-friendly messages
    */
