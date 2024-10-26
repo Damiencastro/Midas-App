@@ -6,6 +6,7 @@ import { InboxComponent } from "./inbox/inbox.component";
 import { LoginComponent } from "./login/login.component";
 import { ProfileComponent } from "./profile/profile.component";
 import { RequestSystemAccessComponent } from "./requestSystemAccess/request-system-access.component";
+import { SplashScreenComponent } from "./shared/splash-screen-component/splash-screen-component.component";
 
 const routes: Routes = [
     {
@@ -31,6 +32,10 @@ const routes: Routes = [
     {
         path: 'request-system-access',
         component: RequestSystemAccessComponent
+    },
+    {
+        path: '',
+        component: SplashScreenComponent
     }
 ];
 

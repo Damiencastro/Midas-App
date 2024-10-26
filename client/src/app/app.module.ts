@@ -31,13 +31,14 @@ import { UserModule } from './userModule/user-module.module';
 import { AdminModule } from './adminModule/admin-module.module';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { NavbarModule } from './shared/navbar/navbar.module';
+import { UserService } from './shared/userService/data-access/user.service';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent
+    NavbarComponent,
   ],
   imports: [
     BrowserModule,

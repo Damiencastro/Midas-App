@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatInputModule } from '@angular/material/input';
+import { AppRoutingModule } from '../../app-routing.module';
 
 
 
@@ -22,6 +23,7 @@ import { MatInputModule } from '@angular/material/input';
     MatMenuModule,
     MatSnackBarModule,
     MatInputModule,
+    AppRoutingModule
   ]
 })
 export class NavbarModule { }

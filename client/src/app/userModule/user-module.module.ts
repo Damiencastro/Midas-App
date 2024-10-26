@@ -13,8 +13,10 @@ import { RouterLink } from '@angular/router';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule } from '@angular/material/icon';
-import { FormsModule } from '@angular/forms';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SplashScreenComponent } from './shared/splash-screen-component/splash-screen-component.component';
+import { AppPhoneInputComponent } from './requestSystemAccess/utils/app-phone-input.component'
 
 
 
@@ -26,6 +28,8 @@ import { FormsModule } from '@angular/forms';
     LoginComponent,
     ProfileComponent,
     RequestSystemAccessComponent,
+    SplashScreenComponent,
+    AppPhoneInputComponent,
 
   ],
   imports: [
@@ -38,6 +42,8 @@ import { FormsModule } from '@angular/forms';
     MatToolbarModule,
     MatIconModule,
     FormsModule,
+    ReactiveFormsModule,
+    
   ]
 })
 export class UserModule { }

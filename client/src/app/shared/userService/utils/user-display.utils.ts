@@ -25,8 +25,8 @@ export class UserDisplayUtils {
     }
 
     static formatDisplayName(user: UserModel): string {
-        if(!user) return 'Guest';
-
+        if(user === null) return 'Guest';
+        console.log(user);
         const fullName = this.formatFullName(user);
         const roleTitle = this.getRoleTitle(user.role);
         

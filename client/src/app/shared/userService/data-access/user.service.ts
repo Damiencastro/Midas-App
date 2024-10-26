@@ -45,11 +45,16 @@ import { UserRole } from '../../dataModels/userProfileModel/userRole.model';
   providedIn: 'root'
 })
 export class UserService implements OnDestroy {
+
+  private readonly firestore = getFirestore();
   
   // Private subjects for state management
   private readonly userProfileSubject = new BehaviorSubject<UserModel | null>(null);
   private readonly loadingSubject = new BehaviorSubject<boolean>(true);
   private readonly errorSubject = new BehaviorSubject<string | null>(null);
+  private readonly userDocCollection = new BehaviorSubject<any>(() => {
+    return collection(this.firestore, 'users');
+  });
   
   // Subject for cleanup on destroy
   private readonly destroySubject = new Subject<void>();
@@ -58,10 +63,11 @@ export class UserService implements OnDestroy {
   readonly userProfile$ = this.userProfileSubject.asObservable();
   readonly loading$ = this.loadingSubject.asObservable();
   readonly error$ = this.errorSubject.asObservable();
+  readonly allUsers$ = this.userDocCollection.asObservable();
 
   // Derived observables
   readonly isLoggedIn$ = this.userProfile$.pipe(
-    map(user => user === null)
+    map(user => !!user)
   );
 
   readonly username$ = this.userProfile$.pipe(
@@ -116,7 +122,6 @@ export class UserService implements OnDestroy {
   
   constructor(
     private readonly auth: Auth,
-    private readonly firestore: Firestore
   ) {
     // Initialize the auth state subscription
     this.initializeAuthStateSubscription();
@@ -366,4 +371,6 @@ export class UserService implements OnDestroy {
   getCurrentUser(): UserModel | null {
     return this.userProfileSubject.getValue();
   }
+
+  
 }
