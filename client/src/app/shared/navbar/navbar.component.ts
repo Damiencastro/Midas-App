@@ -21,14 +21,16 @@ import { Auth } from '@angular/fire/auth';
 export class NavbarComponent{
 
   public userService = inject(UserService);
+  router: any;
 
-  constructor() { }
+  constructor(router: Router) { this.router = router}
 
   
   logout() {
     console.log(this.userService.allUsers$)
     this.userService.logout();
     console.log(this.userService.isLoggedIn$)
+    this.router.navigate(['/login']);
   }
 
 
