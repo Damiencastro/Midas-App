@@ -30,6 +30,7 @@ export class LoginComponent {
   }
 
   login() {
+    console.log(this.formValue.value.username); console.log(this.formValue.value.password);
         this.userService.login(this.formValue.value.username, this.formValue.value.password);
         this.router.navigate(['']);
   }

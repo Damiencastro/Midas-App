@@ -160,16 +160,17 @@ export class UserService implements OnDestroy {
 
   //  This function is called when a user registers for the app
   async application(userInfo: UserModel): Promise<void> {
+    const username = this.userFirestoreService.createUsername(userInfo)
     try { //First, we indicate that the app is loading and clear any previous errors
       this.loadingSubject.next(true);
       this.errorSubject.next(null);
       let userCredential = null;
       
-      userInfo.username = this.userFirestoreService.createUsername(userInfo); // We create a username from the user's first and last name
+      
       
       const credential = await createUserWithEmailAndPassword( // Then, we need to create the authentication entry
         this.auth, //Auth instance
-        userInfo.username + '@midas-app.com', // This appends an email address to the username to form the email
+        username + '@midas-app.com', // This appends an email address to the username to form the email
         userInfo.password
       ).then((userCred) => { //Then, we get the user credential returned from the promise
         this.userFirestoreService.linkUserProfileToAuth(userCred.user.uid, userInfo); // The user is linked with the credential
@@ -193,8 +194,21 @@ export class UserService implements OnDestroy {
     try {
       this.loadingSubject.next(true);
       this.errorSubject.next(null);
-
-      await signInWithEmailAndPassword(this.auth, username + '@midas-app.com', password);
+      console.log(username);
+      console.log(password);
+      await signInWithEmailAndPassword(this.auth, username + '@midas-app.com', password).then((userCred) => {
+        console.log(userCred);
+          this.userFirestoreService.getUserObservable(userCred.user.uid).subscribe((user) => {
+            if(!user) {throw new Error('User not found');}
+            this.userProfileSubject.next(user);
+            this.userProfile$.forEach((user) => {console.log(user);});
+          });
+      });
+      console.log('Login successful');
+      console.log(this.auth.currentUser);
+      this.userProfile$.forEach((user) => {
+        console.log(user);
+      });
       
     } catch (error) {
       console.error('Login failed:', error);

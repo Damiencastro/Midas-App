@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot} from '@angular/fire/firestore';
 import { User as FirebaseUser, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
-import { BehaviorSubject, Observable, firstValueFrom, map, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom, map, of, switchMap, takeUntil, tap } from 'rxjs';
 
 import { UserModel } from '../../../dataModels/userProfileModel/user.model';
 import { UserDisplayUtils } from '../../../userService/utils/user-display.utils';
@@ -41,15 +41,19 @@ export class UserFirestoreService implements OnDestroy{
 
 
    initializeUserFirestoreService(firestore: Firestore){
+    console.log('UserFirestoreService initializing...');
     onSnapshot(collection(firestore, 'users'), (snapshot) => {
-      takeUntil(this.destroySubject),
-      tap(() => this.userCollectionLoadingSubject.next(true)),
-      map(( snapshot: QuerySnapshot<DocumentData, DocumentData>, index: number) => {
-        this.userCollectionSnapshotSubject.next(snapshot);
-        this.userCollectionLoadingSubject.next(false);
-      })
-      });
-      
+      this.userCollectionSnapshotSubject.next(snapshot);
+      of(snapshot).pipe(
+        takeUntil(this.destroySubject),
+        tap(() => this.userCollectionLoadingSubject.next(true)),
+        map(( snapshot: QuerySnapshot<DocumentData, DocumentData>) => {
+          this.userCollectionSnapshotSubject.next(snapshot);
+          console.log(snapshot);
+          this.userCollectionLoadingSubject.next(false);
+        })
+      ).subscribe();
+    });
       
    }
   
@@ -58,8 +62,12 @@ export class UserFirestoreService implements OnDestroy{
   getUserObservable(uid: string): Observable<UserModel | null> {
     return this.userCollectionSnapshot$.pipe(
       // First map to handle possible null values
-      map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
-        if (!snapshot) return null;
+      map((snapshot) => {
+        if (snapshot === null) {
+          console.log('No snapshot');
+          return null;
+          
+        }
         
         // Find the matching document
         const userDoc = snapshot.docs.find(doc => doc.id === uid);
@@ -133,7 +141,7 @@ export class UserFirestoreService implements OnDestroy{
     });
   }
 
-  createUsername(userProfile: UserModel): string{
+  createUsername(userProfile: UserModel){
     console.log(userProfile)
     const candidateUsername = UserDisplayUtils.formatUsername(userProfile);
     this.checkUsername(candidateUsername).then((isAvailable) => {
