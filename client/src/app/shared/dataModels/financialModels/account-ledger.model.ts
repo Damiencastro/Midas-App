@@ -1,7 +1,7 @@
 // ----------------
 // Base Enums
 // ----------------
-enum AccountCategory {
+export enum AccountCategory {
     ASSET = 'ASSET',
     LIABILITY = 'LIABILITY',
     EQUITY = 'EQUITY',
@@ -9,19 +9,19 @@ enum AccountCategory {
     EXPENSE = 'EXPENSE'
   }
   
-  enum NormalSide {
+export  enum NormalSide {
     DEBIT = 'DEBIT',
     CREDIT = 'CREDIT'
   }
   
-  enum StatementType {
+ export enum StatementType {
     BALANCE_SHEET = 'BS',
     INCOME_STATEMENT = 'IS',
     RETAINED_EARNINGS = 'RE',
     CASH_FLOW = 'CF'
   }
   
-  enum JournalEntryStatus {
+export  enum JournalEntryStatus {
     DRAFT = 'DRAFT',
     PENDING = 'PENDING',
     APPROVED = 'APPROVED',
@@ -48,7 +48,7 @@ enum AccountCategory {
   // ----------------
   // Account Structure
   // ----------------
-  interface AccountSubcategories {
+  export interface AccountSubcategories {
     ASSET: [
       'CURRENT_ASSETS',
       'LONG_TERM_INVESTMENTS',
@@ -115,7 +115,7 @@ enum AccountCategory {
     normalSide?: NormalSide;
   }
   
-  interface AccountVersionHistory {
+  export interface AccountVersionHistory {
     id: string;
     accountId: string;
     version: number;

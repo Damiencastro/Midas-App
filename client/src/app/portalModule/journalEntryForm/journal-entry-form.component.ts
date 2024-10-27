@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { AccountFirestoreService } from '../../shared/firestoreService/accountStore/data-access/account-firestore.service';
 
 @Component({
   selector: 'app-journal-entry-form',
-  templateUrl: './journal-entry-form.component.html',
-  styleUrl: './journal-entry-form.component.scss'
+  templateUrl: './journal-entry-form.component.html'
 })
-export class JournalEntryFormComponent {
+export class JournalEntryFormComponent{
+  private accountFirestoreService = inject(AccountFirestoreService);
+  
+  constructor() {
+  }
 
 }
