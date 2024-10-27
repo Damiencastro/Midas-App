@@ -1,13 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminBusinessGLFunctionsModule } from './adminBusinessGLFunctions/admin-business-glfunctions.module';
 import { AdminGeneralLedgerFunctionsModule } from './adminGeneralLedgerFunctions/admin-general-ledger-functions.module';
-import { AdminUsersChartModule } from '../adminModule/adminUsersChart/admin-users-chart.module';
-import { AccountEventLogComponent } from './accountEventLog/account-event-log.component';
-import { AccountLedgerComponent } from './accountLedger/account-ledger.component';
-import { ChartOfAccountComponent } from './chartOfAccount/feature/chart-of-account.component';
 import { JournalEntryFormComponent } from './journalEntryForm/journal-entry-form.component';
-import { JournalEntryReviewComponent } from './journalEntryReview/journal-entry-review.component';
 import { PortalDashboardComponent } from './portalDashboard/portal-dashboard.component';
 import { PortalRoutingModule } from './portal-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -21,21 +15,18 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ChartOfAccountsCard } from './chartOfAccount/ui/chart-for-chart-of-accounts.component';
+import { ChartOfAccountsCard } from './chartOfAccount/ui/chart-of-accounts.card';
+import { FilterDialogComponent } from './chartOfAccount/utils/account-filter.component';
 
 @NgModule({
   declarations: [
-    AccountEventLogComponent,
-    AccountLedgerComponent,
-    ChartOfAccountComponent,
     JournalEntryFormComponent,
-    JournalEntryReviewComponent,
     PortalDashboardComponent,
     ChartOfAccountsCard,
+    FilterDialogComponent
   ],
   imports: [
     CommonModule,
-    AdminBusinessGLFunctionsModule,
     AdminGeneralLedgerFunctionsModule,
     PortalRoutingModule,
     FormsModule,
