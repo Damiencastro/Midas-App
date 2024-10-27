@@ -1,118 +1,126 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc} from '@angular/fire/firestore';
-import { DocumentReference, collection } from 'firebase/firestore';
-import { BehaviorSubject } from 'rxjs';
+import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot} from '@angular/fire/firestore';
+import { User as FirebaseUser, user } from '@angular/fire/auth'
+import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
+import { BehaviorSubject, Observable, firstValueFrom, map, switchMap, takeUntil, tap } from 'rxjs';
 
-import { UserFilter } from '../../../dataModels/userProfileModel/user-filter.model';
 import { UserModel } from '../../../dataModels/userProfileModel/user.model';
-import { UserApplicationModel } from '../../../dataModels/userProfileModel/user-application.model';
+import { UserDisplayUtils } from '../../../userService/utils/user-display.utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserFirestoreService implements OnDestroy{
 
-  userCollectionSubject = new BehaviorSubject<CollectionReference | null>(null);
-  userCollectionLoadingSubject = new BehaviorSubject<boolean>(false);
+  userCollectionSnapshotSubject = new BehaviorSubject<QuerySnapshot | null>(null); //This holds a snapshot of type: QuerySnapshot<DocumentData, DocumentData>.
+  // Key properties of QuerySnapshot
+  // snapshot.docs         // Array of QueryDocumentSnapshot objects
+  // snapshot.empty       // boolean - true if no documents exist
+  // snapshot.size        // number - count of documents
+  // snapshot.metadata    // SnapshotMetadata object containing hasPendingWrites and fromCache
+
+  // Common methods
+  // snapshot.docChanges() // Returns array of DocumentChange objects
+  // snapshot.forEach()    // Allows you to iterate over the documents
+  userCollectionLoadingSubject = new BehaviorSubject<boolean>(false);              //
   userCollectionErrorSubject = new BehaviorSubject<any | null>(null);
 
-  userCollection$ = this.userCollectionSubject.asObservable();
+  userCollectionSnapshot$ = this.userCollectionSnapshotSubject.asObservable();
   userCollectionLoading$ = this.userCollectionLoadingSubject.asObservable();
   userCollectionError$ = this.userCollectionErrorSubject.asObservable();
-
-  userApplicationCollectionSubject = new BehaviorSubject<CollectionReference | null>(null);
-  userApplicationCollectionLoadingSubject = new BehaviorSubject<boolean>(false);
-  userApplicationCollectionErrorSubject = new BehaviorSubject<any | null>(null);
-
-  userApplicationCollection$ = this.userApplicationCollectionSubject.asObservable();
-  userApplicationCollectionLoading$ = this.userApplicationCollectionLoadingSubject.asObservable();
-  userApplicationCollectionError$ = this.userApplicationCollectionErrorSubject.asObservable();
 
   firestoreSubject = new BehaviorSubject<Firestore | null>(null);
   firestore$ = this.firestoreSubject.asObservable();
 
+  private readonly destroySubject = new BehaviorSubject<void>(undefined);
+
 
   constructor(firestore: Firestore) {
-
-    if(firestore) {
-      this.firestoreSubject.next(firestore);
-    } else{
-      throw new Error('Firestore is not available');
-    }
-
-    //First, we indicate that the user collection is loading and there are no errors yet
-    this.userCollectionLoadingSubject.next(true);
-    this.userCollectionErrorSubject.next(null);
-    try { // Then we try to load it up
-      this.userCollectionSubject.next(collection(firestore, 'users'));
-      this.userCollectionLoadingSubject.next(false);
-    } catch(error) { //If there's an error, we set the error and stop loading
-      this.userCollectionErrorSubject.next(error);
-      this.userCollectionLoadingSubject.next(false);
-    }
-
-    //Same for the user application collection
-    this.userApplicationCollectionLoadingSubject.next(true);
-    this.userApplicationCollectionErrorSubject.next(null);
-    try {
-      this.userApplicationCollectionSubject.next(collection(firestore, 'applications'));
-      this.userApplicationCollectionLoadingSubject.next(false);
-    } catch(error) {
-      this.userApplicationCollectionErrorSubject.next(error);
-      this.userApplicationCollectionLoadingSubject.next(false);
-    }
-
+    this.initializeUserFirestoreService(firestore);
    }
 
+
+   initializeUserFirestoreService(firestore: Firestore){
+    onSnapshot(collection(firestore, 'users'), (snapshot) => {
+      takeUntil(this.destroySubject),
+      tap(() => this.userCollectionLoadingSubject.next(true)),
+      map(( snapshot: QuerySnapshot<DocumentData, DocumentData>, index: number) => {
+        this.userCollectionSnapshotSubject.next(snapshot);
+        this.userCollectionLoadingSubject.next(false);
+      })
+      });
+      
+      
+   }
   
 
   // Get user from uid
-   getUserDocRefByUid(uid: string): DocumentReference | null{
-    this.firestore$.subscribe(firestore => {
-      if(firestore){
-        return doc(firestore, 'users', uid);
-      } else {
-        throw new Error('Firestore is not available');
-      }
-    });
-    return null;
-   }
-  // get user from username
-   getUserDocRefByUsername(username: string): DocumentReference | null{
-    this.firestore$.subscribe(firestore => {
-      if(firestore){
-        return doc(firestore, 'users', username);
-      } else {
-        throw new Error('Firestore is not available');
-      }
-    });
-    return null;
-   }
-
-  // get all users with optional filter
-  getUsersCollection(filter?: UserFilter): CollectionReference | null{
-    this.userCollection$.subscribe(collection => {
-      if(collection){
-        if(filter){
-          const userQuery = query(collection, where('role', '==', filter.role));
-          const querySnapshot = getDocs(userQuery);
-          querySnapshot.then(queryResult => {
-            if(queryResult.empty){
-              return null; 
-            } else {
-              return collection; 
-            }
-          });
-        } else{
-          return getDocs(collection);
-        }
-      } else {
-        throw new Error('User Collection is not available');
-      }
-    });
-    return null;
+  getUserObservable(uid: string): Observable<UserModel | null> {
+    return this.userCollectionSnapshot$.pipe(
+      // First map to handle possible null values
+      map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
+        if (!snapshot) return null;
+        
+        // Find the matching document
+        const userDoc = snapshot.docs.find(doc => doc.id === uid);
+        return userDoc ? userDoc.data() as UserModel : null;
+      })
+    );
   }
 
+  getAllUsers(): Observable<UserModel[]> {
+    return this.userCollectionSnapshot$.pipe(
+      map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
+        // Handle null case
+        if (!snapshot) return [];
+        
+        // Convert each document to a UserModel
+        return snapshot.docs.map(doc => ( doc.data() as UserModel
+        ));
+      })
+    );
+  }
+
+  async getUser(uid: string): Promise<UserModel | null> {
+    return firstValueFrom(this.getUserObservable(uid));
+  }
+
+  async getAllUsersOnce(): Promise<UserModel[]> {
+    return firstValueFrom(this.getAllUsers());
+  }
+  
+  
+  // get all users with optional filter
+  getAllUsersWhere(
+    property: keyof UserModel,
+    operator: '==' | '<' | '<=' | '>' | '>=',
+    value: any
+  ): Observable<UserModel[]> {
+    return this.userCollectionSnapshot$.pipe(
+      map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
+        if (!snapshot) return [];
+
+        return snapshot.docs
+          .map(doc => (
+            doc.data() as UserModel
+          ))
+          .filter(user => {
+            if(!user[property]) return false;
+            const propertyValue = user[property];
+            if(propertyValue === undefined || propertyValue === null) return false;
+
+            switch (operator) {
+              case '==': return propertyValue === value;
+              case '<': return propertyValue < value;
+              case '<=': return propertyValue <= value;
+              case '>': return propertyValue > value;
+              case '>=': return propertyValue >= value;
+              default: return false;
+            }
+          });
+        })
+    )
+  }
 
   // create userProfile and associate with user auth info
   linkUserProfileToAuth(uid: string, user: UserModel) {
@@ -125,75 +133,34 @@ export class UserFirestoreService implements OnDestroy{
     });
   }
 
-
-  
-  // get user application by uid
-  getUserAppDocRefByUid(uid: string): DocumentReference | null{
-    this.firestore$.subscribe(firestore => {
-      if(firestore){
-        return doc(firestore, 'application', uid);
+  createUsername(userProfile: UserModel): string{
+    console.log(userProfile)
+    const candidateUsername = UserDisplayUtils.formatUsername(userProfile);
+    this.checkUsername(candidateUsername).then((isAvailable) => {
+      if(isAvailable){
+        userProfile.username = candidateUsername;
       } else {
-        throw new Error('Firestore is not available');
+        userProfile.username = candidateUsername + Math.random();
+        return 
       }
     });
-    return null;
-   }
-
-  // get user application by username
-
-  getUserAppDocRefByUsername(username: string): DocumentReference | null{
-    this.firestore$.subscribe(firestore => {
-      if(firestore){
-        return doc(firestore, 'application', username);
-      } else {
-        throw new Error('Firestore is not available');
-      }
-    });
-    return null;
-   }
-  // get all user applications with optional filter
-
-  getUserApplicationsCollection(filter?: UserFilter): CollectionReference | null{
-    this.userApplicationCollection$.subscribe(collection => {
-      if(collection){
-        if(filter){
-          const userQuery = query(collection, where('role', '==', filter.role));
-          const querySnapshot = getDocs(userQuery);
-          querySnapshot.then(queryResult => {
-            if(queryResult.empty){
-              return null; 
-            } else {
-              return collection; 
-            }
-          });
-        } else{
-          return getDocs(collection);
-        }
-      } else {
-        throw new Error('User Application Collection is not available');
-      }
-    });
-    return null;
+    console.log(userProfile);
+    return userProfile.username;
   }
-  // create user application and associate with user profile
-  linkUserAppToProfile(uid: string, userApp: UserApplicationModel) {
-    this.firestore$.subscribe(firestore => {
-      if(firestore){
-        setDoc(doc(firestore, 'applications', uid), userApp);
-      } else {
-        throw new Error('Firestore is not available');
-      }
+
+  checkUsername(candidateUsername: string): Promise<boolean> {
+    return firstValueFrom(this.getAllUsersWhere('username', '==', candidateUsername)).then(users => {
+      return users.length === 0;
     });
   }
+
 
   ngOnDestroy(): void {
-    this.userCollectionSubject.complete();
     this.userCollectionLoadingSubject.complete();
     this.userCollectionErrorSubject.complete();
 
-    this.userApplicationCollectionSubject.complete();
-    this.userApplicationCollectionLoadingSubject.complete();
-    this.userApplicationCollectionErrorSubject.complete();
+    this.userCollectionSnapshotSubject.complete();
+    this.destroySubject.complete();
 
     this.firestoreSubject.complete();
   }

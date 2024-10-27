@@ -40,18 +40,21 @@ import {
 import { UserDisplayUtils } from '../utils/user-display.utils';
 import { UserModel } from '../../dataModels/userProfileModel/user.model';
 import { UserRole } from '../../dataModels/userProfileModel/userRole.model';
-import { UserFirestoreService } from '../../firestoreService/userStore/data-access/user-firestore.service';
-import { userInfo } from 'os';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService implements OnDestroy {
+
+  private readonly firestore = getFirestore();
   
   // Private subjects for state management
   private readonly userProfileSubject = new BehaviorSubject<UserModel | null>(null);
   private readonly loadingSubject = new BehaviorSubject<boolean>(true);
   private readonly errorSubject = new BehaviorSubject<string | null>(null);
+  private readonly userDocCollection = new BehaviorSubject<any>(() => {
+    return collection(this.firestore, 'users');
+  });
   
   // Subject for cleanup on destroy
   private readonly destroySubject = new Subject<void>();
@@ -60,9 +63,7 @@ export class UserService implements OnDestroy {
   readonly userProfile$ = this.userProfileSubject.asObservable();
   readonly loading$ = this.loadingSubject.asObservable();
   readonly error$ = this.errorSubject.asObservable();
-
-  userFirestoreService = inject(UserFirestoreService);
-
+  readonly allUsers$ = this.userDocCollection.asObservable();
 
   // Derived observables
   readonly isLoggedIn$ = this.userProfile$.pipe(
@@ -108,6 +109,15 @@ export class UserService implements OnDestroy {
     map(user => user !== null && user.role !== UserRole.Guest),
     distinctUntilChanged()
   );
+  
+
+
+  readonly viewModel$ = combineLatest({
+    username: this.username$,
+    isAdmin: this.isAdmin$,
+    isManager: this.isManager$,
+    isAccountant: this.isAccountant$
+  });
 
   
   constructor(
@@ -135,15 +145,11 @@ export class UserService implements OnDestroy {
         }
         console.log(firebaseUser);
         // User is logged in, get their profile
-        return this.userFirestoreService.getUserObservable((firebaseUser as FirebaseUser).uid).pipe(
+        return this.getUserProfile((firebaseUser as FirebaseUser).uid).pipe(
           tap({
-            next: (profile: UserModel | null) => {
-              if(profile) {
-                console.log(profile);
-                this.userProfileSubject.next(profile);
-              } else{
-                this.userProfileSubject.next(null);
-              }
+            next: (profile: UserModel) => {
+              console.log(profile);
+              this.userProfileSubject.next(profile);
               this.loadingSubject.next(false);
               this.errorSubject.next(null);
             },
@@ -158,26 +164,33 @@ export class UserService implements OnDestroy {
     ).subscribe();
   }
 
-  //  This function is called when a user registers for the app
+  /**
+   * Registers a new user with email and password
+   * Creates their profile in Firestore after successful registration
+   */
   async application(userInfo: UserModel): Promise<void> {
-    try { //First, we indicate that the app is loading and clear any previous errors
+    try {
       this.loadingSubject.next(true);
       this.errorSubject.next(null);
       let userCredential = null;
+      // Create the Firebase auth user
       
-      userInfo.username = this.userFirestoreService.createUsername(userInfo); // We create a username from the user's first and last name
       
-      const credential = await createUserWithEmailAndPassword( // Then, we need to create the authentication entry
-        this.auth, //Auth instance
-        userInfo.username + '@midas-app.com', // This appends an email address to the username to form the email
+      const credential = await createUserWithEmailAndPassword(
+        this.auth,
+        UserDisplayUtils.formatUsername(userInfo) + '@midas-app.com',
         userInfo.password
-      ).then((userCred) => { //Then, we get the user credential returned from the promise
-        this.userFirestoreService.linkUserProfileToAuth(userCred.user.uid, userInfo); // The user is linked with the credential
-        // console.log(userCred);
+      ).then((userCred) => {
+        userCredential = userCred;
+        console.log(userCred);
       }).catch((error) => {
         console.log(error);
         throw error;
       });
+      if(this.auth.currentUser !== null) {
+        this.submitUserApplication(this.auth.currentUser, userInfo);
+      }
+      
     } catch (error) {
       console.error('Registration failed:', error);
       
@@ -186,6 +199,24 @@ export class UserService implements OnDestroy {
       this.loadingSubject.next(false);
     }
   }
+
+  async checkusername(candidateUsername: string): Promise<boolean> {
+    try{
+
+      const userRef = collection(getFirestore(), 'users');
+
+      const q = query(userRef, where('username', '==', candidateUsername));
+
+      const querySnapshot = await getDocs(q);
+
+      return !querySnapshot.empty;
+    } catch(error) {
+      console.error('Username check failed:', error);
+      throw error;
+    }
+  }
+
+
   /**
    * Logs in an existing user with email and password
    */
@@ -228,69 +259,90 @@ export class UserService implements OnDestroy {
   /**
    * Creates a new user profile in Firestore
    */
-  // private async submitUserApplication(
-  //   firebaseUser: FirebaseUser,
-  //   profileInformation: UserApplicationModel
-  // ): Promise<void> {
-  //   const userProfile: UserApplicationModel = {
-  //     id: firebaseUser.uid,
-  //     username: profileInformation.username,
-  //     firstname: profileInformation.firstname,
-  //     lastname: profileInformation.lastname,
-  //     phone: profileInformation.phone,
-  //     street: profileInformation.street,
-  //     zip: profileInformation.zip,
-  //     state: profileInformation.state,
-  //     requestedRole: profileInformation.requestedRole,
-  //     password: '',
-  //     status: 'pending',
-  //     dateRequested: new Date(),
-
-      
-  //   };
-  //   console.log(userProfile);
-
-    
-  // }
+  private async submitUserApplication(
+    firebaseUser: FirebaseUser,
+    profileInformation: UserModel
+  ): Promise<void> {
+    const userProfile: UserModel = {
+      id: firebaseUser.uid,
+      username: UserDisplayUtils.formatUsername(profileInformation),
+      firstname: profileInformation.firstname,
+      lastname: profileInformation.lastname,
+      phone: profileInformation.phone,
+      street: profileInformation.street,
+      zip: profileInformation.zip,
+      state: profileInformation.state,
+      role: profileInformation.role,
+      password: '',
+    };
+    console.log(userProfile);
+    const userRef = this.getApplicationDocRefFromUid(firebaseUser.uid);
+    await setDoc(userRef, userProfile);
+  }
 
   /**
    * Gets a user's profile from Firestore
    */
+  private getUserProfile(uid: string): Observable<UserModel> {
+    return from(getDoc(this.getUserDocRefFromUid(uid))).pipe(
+      map(doc => {
+        if (!doc.exists()) {
+          console.log('getUserProfile if statement reached');
+          throw new Error('User profile not found');
+        }
+        return doc.data() as UserModel;
+      })
+    );
+  }
 
   /**
    * Updates a user's profile in Firestore
    */
-  // async updateProfile(updates: Partial<UserModel>): Promise<void> {
-  //   try {
-  //     const currentUser = this.userProfileSubject.getValue();
-  //     if (!currentUser) {
-  //       throw new Error('No user logged in');
-  //     }
+  async updateProfile(updates: Partial<UserModel>): Promise<void> {
+    try {
+      const currentUser = this.userProfileSubject.getValue();
+      if (!currentUser) {
+        throw new Error('No user logged in');
+      }
 
-  //     this.loadingSubject.next(true);
-  //     this.errorSubject.next(null);
+      this.loadingSubject.next(true);
+      this.errorSubject.next(null);
 
-  //     // Update Firestore
-  //     await updateDoc(
-  //       this.userFirestoreService.getUserDocRefByUid(currentUser.id),
-  //       { ...updates, lastUpdated: new Date() }
-  //     );
+      // Update Firestore
+      await updateDoc(
+        this.getUserDocRefFromUid(currentUser.id),
+        { ...updates, lastUpdated: new Date() }
+      );
 
-  //     // Update local state
-  //     this.userProfileSubject.next({
-  //       ...currentUser,
-  //       ...updates
-  //     });
+      // Update local state
+      this.userProfileSubject.next({
+        ...currentUser,
+        ...updates
+      });
       
-  //   } catch (error) {
-  //     console.error('Profile update failed:', error);
-  //     this.errorSubject.next(this.getErrorMessage(error));
-  //     throw error;
-  //   } finally {
-  //     this.loadingSubject.next(false);
-  //   }
-  // }
+    } catch (error) {
+      console.error('Profile update failed:', error);
+      this.errorSubject.next(this.getErrorMessage(error));
+      throw error;
+    } finally {
+      this.loadingSubject.next(false);
+    }
+  }
 
+  /**
+   * Gets a reference to a user's Firestore document
+   */
+  private getUserDocRefFromUid(uid: string): DocumentReference {
+    return doc(this.firestore, 'users', uid);
+  }
+
+  private getApplicationDocRefFromUid(uid: string): DocumentReference {
+    return doc(this.firestore, 'applications', uid);
+  }
+
+  private getUserDocRefFromUsername(username: string): DocumentReference {
+    return doc(this.firestore, 'users', username);
+  }
   /**
    * Converts Firebase errors to user-friendly messages
    */

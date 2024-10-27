@@ -10,5 +10,13 @@ export interface UserModel{
   zip: string;
   state: string;
   password: string;
-  role: UserRole;
+  requestedRole: UserRole;
+  status: 'pending' | 'approved' | 'denied';
+  dateRequested: Date;
+  numDenied?: number;
+  datesDenied?: Date[];
+  dateApproved?: Date;
+  assignedGL?: string;
+  assignedAccounts?: string[];
+  role?: UserRole;
 }

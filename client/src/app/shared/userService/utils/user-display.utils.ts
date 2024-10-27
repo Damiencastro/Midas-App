@@ -3,6 +3,8 @@ import { UserRole } from "../../dataModels/userProfileModel/userRole.model";
 import { UserService } from "../data-access/user.service";
 
 export class UserDisplayUtils {
+
+
     static getRoleTitle(role: UserRole): string {
         switch (role) {
             case UserRole.Accountant:
@@ -28,14 +30,14 @@ export class UserDisplayUtils {
         if(user === null) return 'Guest';
         console.log(user);
         const fullName = this.formatFullName(user);
-        const roleTitle = this.getRoleTitle(user.role);
+        if(user.role === null) return fullName;
+        const roleTitle = this.getRoleTitle(user.role as UserRole);
         
         return `${fullName} (${roleTitle})`;
     }
 
     static formatUsername(user: UserModel): string {
-        return  user.firstname.charAt(0).toUpperCase() + user.lastname.charAt(0).toUpperCase() + user.lastname.slice(1) + this.dateCreatedFormat();
-
+        return user.firstname.charAt(0).toUpperCase() + user.lastname.charAt(0).toUpperCase() + user.lastname.slice(1) + this.dateCreatedFormat();
     }
 
     static dateCreatedFormat(): string {
@@ -44,7 +46,9 @@ export class UserDisplayUtils {
         const month = date.getMonth();
 
         const doubleDigitYear = fullyear.toString().slice(2);
+        console.log(doubleDigitYear);
         const doubleDigitMonth = month < 10 ? `0${month}` : month.toString();
+        console.log(doubleDigitMonth);
         return `${doubleDigitYear}${doubleDigitMonth}`;
     }
 }

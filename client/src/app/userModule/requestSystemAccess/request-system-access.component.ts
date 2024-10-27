@@ -56,7 +56,7 @@ export class RequestSystemAccessComponent {
     
     this.userService.application({
       id: this.currentId,
-      username: this.makeUserName(),
+      username: '',
       firstname: this.formValue.value.firstname,
       lastname: this.formValue.value.lastname,
       phone: this.formValue.value.phone,
@@ -64,7 +64,10 @@ export class RequestSystemAccessComponent {
       zip: this.formValue.value.zip,
       state: this.formValue.value.state,
       password: this.formValue.value.password,
-      role: this.formValue.value.role,
+      requestedRole: this.formValue.value.role,
+      status: 'pending',
+      dateRequested: new Date()
+      
     }).then(() => {
       console.log('User created successfully');
     }).catch((error) => {
@@ -95,9 +98,6 @@ export class RequestSystemAccessComponent {
     return error?.message || 'An unexpected error occurred';
   }
 
-  makeUserName(): string {
-    return this.formValue.value.firstname.charAt(0) + this.formValue.value.lastname;
-  }
 
 }
 
