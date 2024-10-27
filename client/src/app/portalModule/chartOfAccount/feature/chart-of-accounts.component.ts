@@ -49,6 +49,6 @@ export class ChartOfAccountsComponent implements OnInit {
   }
   
   createNewAccount() {
-    this.router.navigate(['/portal/create-account']);
+    this.router.navigate(['/admin/create-account']);
   }
 }

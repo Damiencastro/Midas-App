@@ -17,13 +17,24 @@ import { MatCardModule } from '@angular/material/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartOfAccountsCard } from './chartOfAccount/ui/chart-of-accounts.card';
 import { FilterDialogComponent } from './chartOfAccount/utils/account-filter.component';
+import { AccountEventLogComponent } from './accountEventLog/feature/account-event-log.component';
+import { AccountEventCard } from './accountEventLog/ui/account-event.card';
+import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.component';
+import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
+import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
 
 @NgModule({
   declarations: [
     JournalEntryFormComponent,
     PortalDashboardComponent,
     ChartOfAccountsCard,
-    FilterDialogComponent
+    FilterDialogComponent,
+    AccountEventLogComponent,
+    AccountEventCard,
+    AccountLedgerComponent,
+    AccountLedgerCard,
+    ChartOfAccountsComponent
+
   ],
   imports: [
     CommonModule,
