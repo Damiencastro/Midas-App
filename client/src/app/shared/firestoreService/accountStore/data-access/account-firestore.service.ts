@@ -166,4 +166,12 @@ export class AccountFirestoreService implements OnDestroy {
       );
     }
 
+    addJournalEntry(journalEntry: JournalEntry): Promise<void> {
+      return setDoc(doc(collection(this.firestore, 'journalEntries')), {
+        ...journalEntry,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+
 }

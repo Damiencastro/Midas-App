@@ -22,8 +22,10 @@ import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.c
 import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
 import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
 import { DialogModule } from '@angular/cdk/dialog';
-import { JournalEntryReviewComponent } from './journalEntryReview/feature/journal-entry-form.component';
+import { JournalEntryReviewComponent } from './journalEntryReview/feature/journal-entry-review.component';
 import { JournalReviewCard } from './journalEntryReview/ui/journal-review.card';
+import { JournalEntryFormComponent } from './journalEntryForm/feature/journal-entry-form.component';
+import { JournalEntryFormCard } from './journalEntryForm/ui/journal-entry-form.card';
 
 @NgModule({
   declarations: [
@@ -37,6 +39,8 @@ import { JournalReviewCard } from './journalEntryReview/ui/journal-review.card';
     AccountLedgerComponent,
     AccountLedgerCard,
     ChartOfAccountsComponent,
+    JournalEntryFormComponent,
+    JournalEntryFormCard
 
   ],
   imports: [

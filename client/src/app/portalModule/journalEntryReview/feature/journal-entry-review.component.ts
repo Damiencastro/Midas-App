@@ -3,6 +3,8 @@ import { Component, inject, OnInit } from "@angular/core";
 import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
 import { JournalEntryService } from "../data-access/journal-entry.service";
 import { BehaviorSubject, Observable } from "rxjs";
+import { Firestore } from "@angular/fire/firestore";
+import { getAllJournalEntries } from "../utils/get-journal-entries";
 
 @Component({
     selector: 'app-journal-entry-form',
@@ -14,6 +16,7 @@ import { BehaviorSubject, Observable } from "rxjs";
     `
 })
 export class JournalEntryReviewComponent implements OnInit {
+    private firestore = inject(Firestore);
     private journalEntryService = inject(JournalEntryService);
     private journalEntriesSubject = new BehaviorSubject<JournalEntry[]>([]);
     readonly journalEntries$: Observable<JournalEntry[]> = this.journalEntriesSubject.asObservable();
@@ -27,12 +30,18 @@ export class JournalEntryReviewComponent implements OnInit {
             next: (journalEntries) => {
                 this.journalEntriesSubject.next(journalEntries || []);
             },
-            error: (error) => {
-                console.error('Error fetching journal entries:', error);
-                this.journalEntriesSubject.next([]);
+            error: async (error) => {
+                try {
+                    const journalEntries = await getAllJournalEntries();
+                    this.journalEntriesSubject.next(journalEntries || []);
+                } catch (error) {
+                    console.error('Error fetching journal entries:', error);
+                    this.journalEntriesSubject.next([]);
+                }
             }
         });
     }
+
 
     routeToJournalEntry(journalEntry: JournalEntry) {
         // Route to journal entry

@@ -25,11 +25,11 @@ import { Component } from '@angular/core';
             </button>
 
             <!-- Account Ledger Button -->
-            <button routerLink="/portal/account-ledger" class="bg-white hover:bg-gray-50 transition-all p-6 rounded-lg shadow-md flex flex-col items-center justify-center border border-gray-200 hover:border-blue-500 group">
+            <button routerLink="/portal/journal-entry-form" class="bg-white hover:bg-gray-50 transition-all p-6 rounded-lg shadow-md flex flex-col items-center justify-center border border-gray-200 hover:border-blue-500 group">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500 mb-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
-                <span class="text-lg font-semibold text-gray-700">Account Ledger</span>
+                <span class="text-lg font-semibold text-gray-700">Journal Entry Form</span>
             </button>
         </div>
     </div>
