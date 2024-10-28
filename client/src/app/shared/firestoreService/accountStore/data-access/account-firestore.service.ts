@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable, Subject, map, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, first, from, lastValueFrom, map, mergeMap, switchMap, takeUntil } from 'rxjs';
 import { Account, AccountFilter, GeneralLedger } from '../../../dataModels/financialModels/account-ledger.model';
+import { addDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -76,20 +77,33 @@ export class AccountFirestoreService implements OnDestroy {
     }
 
     //Create account
-    createAccount(account: Account): Promise<void> {
-      this.generalLedgerSnapshot$.subscribe((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
-        if (!snapshot) {
-          throw new Error('No snapshot to create account');
-        }
-        snapshot.docs.forEach(doc => {//Check to see if account already exists
-          if (doc.id === account.id) {
+    async createAccount(account: Account): Promise<void> {
+      console.log(account);
+      console.log(this.firestore);
+      
+      lastValueFrom(this.generalLedgerSnapshot$.pipe(
+        first(),
+        // Use switchMap instead of map when returning a Promise
+        switchMap(snapshot => {
+          console.log(snapshot);
+          if (!snapshot) {
+            throw new Error('No snapshot to create account');
+          }
+    
+          // Check for existing account
+          const existingAccount = snapshot.docs.find(doc => doc.id === account.id);
+          if (existingAccount) {
+            console.log(existingAccount);
+            console.log(account);
             throw new Error('Account already exists');
           }
-        })//If not, we create new account.
-          const accDocRef = doc(collection(this.firestore, 'generalLedger'), account.id);
-          return setDoc(accDocRef, account);
-      });
-      throw new Error('No snapshot to create account');
+    
+          // Create new account
+          const accDocRef = collection(this.firestore, 'generalLedger');
+          console.log(accDocRef);
+          return from(addDoc(accDocRef, account));
+        })
+      ));
     }
 
     updateAccount(id: string, account: Partial<Account>): Promise<void> {

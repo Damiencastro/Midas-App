@@ -252,7 +252,7 @@ export  enum JournalEntryStatus {
   // ----------------
   // Event Logging
   // ----------------
-  interface EventLog {
+  export interface EventLog {
     id: string;
     timestamp: Date;
     entityType: 'ACCOUNT' | 'JOURNAL_ENTRY' | 'GENERAL_LEDGER';
@@ -270,7 +270,7 @@ export  enum JournalEntryStatus {
     };
   }
   
-  interface EventQuery {
+  export interface EventQuery {
     entityType?: 'ACCOUNT' | 'JOURNAL_ENTRY' | 'GENERAL_LEDGER';
     entityId?: string;
     action?: EventAction;

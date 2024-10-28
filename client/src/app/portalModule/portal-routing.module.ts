@@ -3,7 +3,7 @@ import { Routes, RouterModule } from "@angular/router";
 // import { AccountEventLogComponent } from "./accountEventLog/account-event-log.component";
 // import { AccountLedgerComponent } from "./accountLedger/account-ledger.component";
 import { ChartOfAccountsComponent } from "./chartOfAccount/feature/chart-of-accounts.component";
-import { JournalEntryFormComponent } from "./journalEntryForm/journal-entry-form.component";
+import { JournalEntryFormComponent } from "./journalEntryForm/feature/journal-entry-form.component"
 // import { JournalEntryReviewComponent } from "./journalEntryReview/journal-entry-review.component";
 import { PortalDashboardComponent } from "./portalDashboard/portal-dashboard.component";
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
@@ -44,7 +44,7 @@ const routes: Routes = [
     //     loadChildren: () => import('./adminBusinessGLFunctions/admin-business-glfunctions.module').then(m => m.AdminBusinessGLFunctionsModule)
     // },
     {
-        path: 'general-ledger-functions',
+        path: 'admin',
         loadChildren: () => import('./adminGeneralLedgerFunctions/admin-general-ledger-functions.module').then(m => m.AdminGeneralLedgerFunctionsModule)
     }
 ];

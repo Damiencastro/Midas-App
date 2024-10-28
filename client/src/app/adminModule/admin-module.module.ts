@@ -12,6 +12,7 @@ import { AdminExpiredPasswordReportComponent } from './adminExpiredPasswordRepor
   imports: [
     CommonModule,
     AdminUsersChartModule,
+    
   ]
 })
 export class AdminModule { }
