@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminGeneralLedgerFunctionsModule } from './adminGeneralLedgerFunctions/admin-general-ledger-functions.module';
-import { JournalEntryFormComponent } from './journalEntryForm/feature/journal-entry-form.component';
 import { PortalDashboardComponent } from './portalDashboard/portal-dashboard.component';
 import { PortalRoutingModule } from './portal-routing.module';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -22,13 +21,14 @@ import { AccountEventCard } from './accountEventLog/ui/account-event.card';
 import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.component';
 import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
 import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
-import { JournalEntryCard } from './journalEntryForm/ui/journal-entry.card';
 import { DialogModule } from '@angular/cdk/dialog';
+import { JournalEntryReviewComponent } from './journalEntryReview/feature/journal-entry-form.component';
+import { JournalReviewCard } from './journalEntryReview/ui/journal-review.card';
 
 @NgModule({
   declarations: [
-    JournalEntryFormComponent,
-    JournalEntryCard,
+    JournalEntryReviewComponent,
+    JournalReviewCard,
     PortalDashboardComponent,
     ChartOfAccountsCard,
     FilterDialogComponent,

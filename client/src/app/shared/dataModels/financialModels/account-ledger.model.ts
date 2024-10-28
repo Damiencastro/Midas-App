@@ -133,7 +133,7 @@ export  enum JournalEntryStatus {
   // ----------------
   // Journal Entries
   // ----------------
-  interface JournalEntry {
+  export interface JournalEntry {
     id: string;
     entryNumber: string;
     date: Date;
@@ -161,7 +161,7 @@ export  enum JournalEntryStatus {
     versionHistory: JournalEntryVersionHistory[];
   }
   
-  interface JournalTransaction {
+  export interface JournalTransaction {
     id: string;
     journalEntryId: string;
     accountId: string;
@@ -176,7 +176,7 @@ export  enum JournalEntryStatus {
     updatedBy: string;
   }
   
-  interface JournalEntryVersionHistory {
+  export interface JournalEntryVersionHistory {
     id: string;
     journalEntryId: string;
     version: number;

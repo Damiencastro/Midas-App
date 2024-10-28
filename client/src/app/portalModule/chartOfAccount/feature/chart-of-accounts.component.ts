@@ -30,13 +30,12 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class ChartOfAccountsComponent implements OnInit {
   private chartOfAccountsService = inject(ChartOfAccountsService);
-  private router = inject(Router);
   private dialog = inject(MatDialog);
   
   // Use BehaviorSubject with initial null value for filter
   private filterSubject = new BehaviorSubject<AccountFilter | null>(null);
   private filterShownSubject= new BehaviorSubject<boolean>(false);
-  
+
   filterShown$ = this.filterShownSubject.asObservable();
   filter$ = this.filterSubject.asObservable();
   
@@ -48,7 +47,7 @@ export class ChartOfAccountsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    // No need for additional subscriptions
+    this.filterShownSubject.next(false);
   }
   
   // Method to update filter if needed

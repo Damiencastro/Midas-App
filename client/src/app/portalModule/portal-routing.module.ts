@@ -3,7 +3,7 @@ import { Routes, RouterModule } from "@angular/router";
 // import { AccountEventLogComponent } from "./accountEventLog/account-event-log.component";
 // import { AccountLedgerComponent } from "./accountLedger/account-ledger.component";
 import { ChartOfAccountsComponent } from "./chartOfAccount/feature/chart-of-accounts.component";
-import { JournalEntryFormComponent } from "./journalEntryForm/feature/journal-entry-form.component"
+import { JournalEntryReviewComponent } from "./journalEntryReview/feature/journal-entry-form.component"
 // import { JournalEntryReviewComponent } from "./journalEntryReview/journal-entry-review.component";
 import { PortalDashboardComponent } from "./portalDashboard/portal-dashboard.component";
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
@@ -26,14 +26,14 @@ const routes: Routes = [
         path: 'chart-of-accounts',
         component: ChartOfAccountsComponent
     },
-    {
-        path: 'journal-entry-form',
-        component: JournalEntryFormComponent
-    },
-    // {not yet implemented
-    //     path: 'journal-entry-review',
-    //     component: JournalEntryReviewComponent
+    // {
+    //     path: 'journal-entry-form',
+    //     component: JournalEntryFormComponent
     // },
+    {
+        path: 'journal-entry-review',
+        component: JournalEntryReviewComponent
+    },
     {
         path: 'portal-dashboard',
         canActivate: [AuthGuardService],
