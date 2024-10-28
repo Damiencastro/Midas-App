@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-admin-users-chart',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './admin-users-chart.component.scss'
 })
 export class AdminUsersChartComponent {
-
+  
 }
