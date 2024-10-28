@@ -1,47 +1,114 @@
-import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+// filter-dialog.component.ts
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AccountFilter } from '../../../shared/dataModels/financialModels/account-ledger.model';
 
-
-// First, create a separate component for the filter dialog
 @Component({
-    selector: 'filter-card',
-    template: `
-      <!-- <h2 mat-dialog-title>Filters</h2>
-      <mat-dialog-content>
-        <div class="space-y-4">
-          <mat-form-field class="w-full">
-            <mat-label>Category</mat-label>
-            <mat-select [(ngModel)]="data.categoryFilter">
-              <mat-option value="">All Categories</mat-option>
-              <mat-option *ngFor="let category of data.categories" [value]="category">
-                {{category}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-  
-          <mat-form-field class="w-full">
-            <mat-label>Search</mat-label>
-            <input matInput [(ngModel)]="data.searchTerm" placeholder="Search accounts...">
-          </mat-form-field>
-        </div>
-      </mat-dialog-content>
-      <mat-dialog-actions align="end">
-        <button mat-button (click)="clearFilters()">Clear</button>
-        <button mat-button [mat-dialog-close]="data">Apply</button>
-      </mat-dialog-actions> -->
-    `
-  })
-  export class FilterDialogComponent {
-    constructor(
-      @Inject(MAT_DIALOG_DATA) public data: {
-        categoryFilter: string;
-        searchTerm: string;
-        categories: string[];
-      }
-    ) {}
-  
-    clearFilters() {
-      this.data.categoryFilter = '';
-      this.data.searchTerm = '';
+  selector: 'filter-card',
+  template: `
+    <h2 mat-dialog-title>Filter Accounts</h2>
+    <mat-dialog-content>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+        <!-- Account Number -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Account Number</mat-label>
+          <input 
+            matInput
+            [(ngModel)]="filter.accountNumber"
+            placeholder="Enter account number"
+          >
+        </mat-form-field>
+
+        <!-- Account Name -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Account Name</mat-label>
+          <input 
+            matInput
+            [(ngModel)]="filter.accountName"
+            placeholder="Enter account name"
+          >
+        </mat-form-field>
+
+        <!-- Category -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="filter.category">
+            <mat-option [value]="null">All</mat-option>
+            <mat-option value="ASSET">Asset</mat-option>
+            <mat-option value="LIABILITY">Liability</mat-option>
+            <mat-option value="EQUITY">Equity</mat-option>
+            <mat-option value="REVENUE">Revenue</mat-option>
+            <mat-option value="EXPENSE">Expense</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Subcategory -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Subcategory</mat-label>
+          <input 
+            matInput
+            [(ngModel)]="filter.subcategory"
+            placeholder="Enter subcategory"
+          >
+        </mat-form-field>
+
+        <!-- Normal Side -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Normal Side</mat-label>
+          <mat-select [(ngModel)]="filter.normalSide">
+            <mat-option [value]="null">All</mat-option>
+            <mat-option value="DEBIT">Debit</mat-option>
+            <mat-option value="CREDIT">Credit</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Status -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="filter.isActive">
+            <mat-option [value]="null">All</mat-option>
+            <mat-option [value]="true">Active</mat-option>
+            <mat-option [value]="false">Inactive</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="onCancel()">Cancel</button>
+      <button mat-button color="primary" (click)="onApply()">Apply</button>
+    </mat-dialog-actions>
+  `,
+  styles: [`
+    :host {
+      display: block;
+      max-width: 600px;
+      width: 100%;
     }
+    
+    .mat-dialog-content {
+      max-height: 70vh;
+    }
+  `]
+})
+export class FilterDialogComponent {
+  filter: AccountFilter;
+
+  constructor(
+    public dialogRef: MatDialogRef<FilterDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { currentFilter: AccountFilter }
+  ) {
+    this.filter = { ...data.currentFilter || {} };
   }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  onApply(): void {
+    // Remove null values before closing
+    const cleanFilter = Object.fromEntries(
+      Object.entries(this.filter).filter(([_, value]) => value != null)
+    );
+    this.dialogRef.close(cleanFilter);
+  }
+}

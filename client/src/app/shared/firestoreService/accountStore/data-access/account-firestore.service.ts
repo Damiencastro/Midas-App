@@ -1,7 +1,8 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable, Subject, map, takeUntil } from 'rxjs';
-import { Account, AccountFilter, GeneralLedger } from '../../../dataModels/financialModels/account-ledger.model';
+import { BehaviorSubject, Observable, Subject, first, from, lastValueFrom, map, mergeMap, switchMap, takeUntil } from 'rxjs';
+import { Account, AccountFilter, GeneralLedger, JournalEntry } from '../../../dataModels/financialModels/account-ledger.model';
+import { addDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,9 @@ export class AccountFirestoreService implements OnDestroy {
   private generalLedgersSubject = new BehaviorSubject<GeneralLedger[] | null>(null);
   private generalLedgerSnapshotSubject = new BehaviorSubject<QuerySnapshot | null>(null);
   private firestore = inject(Firestore);
+
+  private journalEntrySnapshotSubject = new BehaviorSubject<QuerySnapshot | null>(null);
+  private journalEntrySnapshot$ = this.journalEntrySnapshotSubject.asObservable();
 
   generalLedgerSnapshot$ = this.generalLedgerSnapshotSubject.asObservable();
   private destroySubject = new Subject<void>();
@@ -24,6 +28,10 @@ export class AccountFirestoreService implements OnDestroy {
       takeUntil(this.destroySubject);
       this.generalLedgersSubject.next(snapshot.docs.map(doc => doc.data() as GeneralLedger));
       this.generalLedgerSnapshotSubject.next(snapshot);
+    });
+    onSnapshot(collection(firestore, 'journalEntries'), (snapshot: QuerySnapshot) => {
+      takeUntil(this.destroySubject);
+      this.journalEntrySnapshotSubject.next(snapshot);
     });
    }
 
@@ -76,20 +84,33 @@ export class AccountFirestoreService implements OnDestroy {
     }
 
     //Create account
-    createAccount(account: Account): Promise<void> {
-      this.generalLedgerSnapshot$.subscribe((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
-        if (!snapshot) {
-          throw new Error('No snapshot to create account');
-        }
-        snapshot.docs.forEach(doc => {//Check to see if account already exists
-          if (doc.id === account.id) {
+    async createAccount(account: Account): Promise<void> {
+      console.log(account);
+      console.log(this.firestore);
+      
+      lastValueFrom(this.generalLedgerSnapshot$.pipe(
+        first(),
+        // Use switchMap instead of map when returning a Promise
+        switchMap(snapshot => {
+          console.log(snapshot);
+          if (!snapshot) {
+            throw new Error('No snapshot to create account');
+          }
+    
+          // Check for existing account
+          const existingAccount = snapshot.docs.find(doc => doc.id === account.id);
+          if (existingAccount) {
+            console.log(existingAccount);
+            console.log(account);
             throw new Error('Account already exists');
           }
-        })//If not, we create new account.
-          const accDocRef = doc(collection(this.firestore, 'generalLedger'), account.id);
-          return setDoc(accDocRef, account);
-      });
-      throw new Error('No snapshot to create account');
+    
+          // Create new account
+          const accDocRef = collection(this.firestore, 'generalLedger');
+          console.log(accDocRef);
+          return from(addDoc(accDocRef, account));
+        })
+      ));
     }
 
     updateAccount(id: string, account: Partial<Account>): Promise<void> {
@@ -110,4 +131,47 @@ export class AccountFirestoreService implements OnDestroy {
       this.destroySubject.next();
       this.destroySubject.complete();
     }
+
+
+    getJournalEntries(accountId?: string, startDate?: Date, endDate?: Date): Observable<JournalEntry[] | null> {
+      return this.journalEntrySnapshot$.pipe(
+        map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
+          if (!snapshot) {
+            throw new Error('No snapshot to get journal entries');
+          }
+
+          if(!accountId && !startDate && !endDate){
+            return snapshot.docs.map(doc => doc.data() as JournalEntry);
+          }
+
+          // Filter based on accountId
+          const filteredDocs = snapshot.docs.filter(doc => {
+            const entry = doc.data() as JournalEntry;
+            return entry.transactions.some(transaction => transaction.accountId === accountId);
+          });
+
+          // Extract and return the JournalEntry data
+          return filteredDocs.map(doc => doc.data() as JournalEntry);
+        }),
+        map(entries => {
+          if (!startDate || !endDate) {
+            return entries;
+          }
+
+          // Filter based on date range
+          return entries.filter(entry => {
+            return entry.date >= startDate && entry.date <= endDate;
+          });
+        })
+      );
+    }
+
+    addJournalEntry(journalEntry: JournalEntry): Promise<void> {
+      return setDoc(doc(collection(this.firestore, 'journalEntries')), {
+        ...journalEntry,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    }
+
 }

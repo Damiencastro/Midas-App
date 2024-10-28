@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable, OnDestroy, inject } from '@angular/core';
 import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot} from '@angular/fire/firestore';
 import { User as FirebaseUser, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
@@ -29,8 +29,7 @@ export class UserFirestoreService implements OnDestroy{
   userCollectionLoading$ = this.userCollectionLoadingSubject.asObservable();
   userCollectionError$ = this.userCollectionErrorSubject.asObservable();
 
-  firestoreSubject = new BehaviorSubject<Firestore | null>(null);
-  firestore$ = this.firestoreSubject.asObservable();
+  private firestore = inject(Firestore);
 
   private readonly destroySubject = new BehaviorSubject<void>(undefined);
 
@@ -52,10 +51,14 @@ export class UserFirestoreService implements OnDestroy{
           console.log(snapshot);
           this.userCollectionLoadingSubject.next(false);
         })
-      ).subscribe();
+      );
     });
       
    }
+
+   refreshSnapshot(){
+    
+  }
   
 
   // Get user from uid
@@ -64,11 +67,19 @@ export class UserFirestoreService implements OnDestroy{
       // First map to handle possible null values
       map((snapshot) => {
         if (snapshot === null) {
-          console.log('No snapshot');
-          return null;
+          try{
+            this.refreshSnapshot();
+            if(this.userCollectionSnapshotSubject.value === null){
+              throw new Error('Snapshot is still null');
+            }
+          }catch(e){
+            console.log(e);
+            console.log('No snapshot');
+            return null;
+          }
           
         }
-        
+        if(snapshot === null) {return null;}
         // Find the matching document
         const userDoc = snapshot.docs.find(doc => doc.id === uid);
         return userDoc ? userDoc.data() as UserModel : null;
@@ -132,13 +143,13 @@ export class UserFirestoreService implements OnDestroy{
 
   // create userProfile and associate with user auth info
   linkUserProfileToAuth(uid: string, user: UserModel) {
-    this.firestore$.subscribe(firestore => {
-      if(firestore){
-        setDoc(doc(firestore, 'users', uid), user);
-      } else {
-        throw new Error('Firestore is not available');
-      }
-    });
+    
+    if(this.firestore){
+      setDoc(doc(this.firestore, 'users', uid), user);
+    } else {
+      throw new Error('Firestore is not available');
+    }
+    
   }
 
   createUsername(userProfile: UserModel){
@@ -170,6 +181,5 @@ export class UserFirestoreService implements OnDestroy{
     this.userCollectionSnapshotSubject.complete();
     this.destroySubject.complete();
 
-    this.firestoreSubject.complete();
   }
 }

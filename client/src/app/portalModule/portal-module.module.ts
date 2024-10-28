@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminGeneralLedgerFunctionsModule } from './adminGeneralLedgerFunctions/admin-general-ledger-functions.module';
-import { JournalEntryFormComponent } from './journalEntryForm/journal-entry-form.component';
 import { PortalDashboardComponent } from './portalDashboard/portal-dashboard.component';
 import { PortalRoutingModule } from './portal-routing.module';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,10 +21,16 @@ import { AccountEventCard } from './accountEventLog/ui/account-event.card';
 import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.component';
 import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
 import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
+import { DialogModule } from '@angular/cdk/dialog';
+import { JournalEntryReviewComponent } from './journalEntryReview/feature/journal-entry-review.component';
+import { JournalReviewCard } from './journalEntryReview/ui/journal-review.card';
+import { JournalEntryFormComponent } from './journalEntryForm/feature/journal-entry-form.component';
+import { JournalEntryFormCard } from './journalEntryForm/ui/journal-entry-form.card';
 
 @NgModule({
   declarations: [
-    JournalEntryFormComponent,
+    JournalEntryReviewComponent,
+    JournalReviewCard,
     PortalDashboardComponent,
     ChartOfAccountsCard,
     FilterDialogComponent,
@@ -33,7 +38,9 @@ import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-acco
     AccountEventCard,
     AccountLedgerComponent,
     AccountLedgerCard,
-    ChartOfAccountsComponent
+    ChartOfAccountsComponent,
+    JournalEntryFormComponent,
+    JournalEntryFormCard
 
   ],
   imports: [
@@ -51,7 +58,12 @@ import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-acco
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatCardModule
+    MatCardModule,
+    DialogModule
+  ],
+  providers: [
+    { provide: MAT_DIALOG_DATA, useValue: {} },
+    { provide: MatDialogRef, useValue: {} }
   ]
 })
 export class PortalModule { }
