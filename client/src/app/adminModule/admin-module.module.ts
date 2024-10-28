@@ -15,12 +15,8 @@ import { AdminUserApplicationsComponent } from './admin-user-applications/admin-
   ],
   imports: [
     CommonModule,
- AdminModuleChanges
-    
     AdminUsersChartModule,
     AdminRoutingModule
-    
-system-architected
   ]
 })
 export class AdminModule { }
