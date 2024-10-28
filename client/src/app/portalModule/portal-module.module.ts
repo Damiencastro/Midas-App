@@ -4,7 +4,7 @@ import { AdminGeneralLedgerFunctionsModule } from './adminGeneralLedgerFunctions
 import { JournalEntryFormComponent } from './journalEntryForm/feature/journal-entry-form.component';
 import { PortalDashboardComponent } from './portalDashboard/portal-dashboard.component';
 import { PortalRoutingModule } from './portal-routing.module';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,6 +23,7 @@ import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.c
 import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
 import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
 import { JournalEntryCard } from './journalEntryForm/ui/journal-entry.card';
+import { DialogModule } from '@angular/cdk/dialog';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,7 @@ import { JournalEntryCard } from './journalEntryForm/ui/journal-entry.card';
     AccountEventCard,
     AccountLedgerComponent,
     AccountLedgerCard,
-    ChartOfAccountsComponent
+    ChartOfAccountsComponent,
 
   ],
   imports: [
@@ -53,7 +54,12 @@ import { JournalEntryCard } from './journalEntryForm/ui/journal-entry.card';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatCardModule
+    MatCardModule,
+    DialogModule
+  ],
+  providers: [
+    { provide: MAT_DIALOG_DATA, useValue: {} },
+    { provide: MatDialogRef, useValue: {} }
   ]
 })
 export class PortalModule { }
