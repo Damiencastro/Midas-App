@@ -29,11 +29,11 @@ export class AccountFirestoreService implements OnDestroy {
 
    
 
-   getAllAccountsWhere(filter?: AccountFilter): Observable<Account[] | null> {
+   getAllAccountsWhere(filter?: AccountFilter): Observable<Account[]> {
     return this.generalLedgerSnapshot$.pipe(
       map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
         if (!snapshot) {
-          return null;
+          return [];
         }
         
         // First get all accounts
