@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "flowbite": "^2.5.2"
+  },
+  "devDependencies": {
+    "typescript": "~5.5.2"
   }
 }

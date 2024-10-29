@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { 
+import {
   Auth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -21,21 +21,21 @@ import {
   query,
   getDocs
 } from '@angular/fire/firestore';
-import { 
-  BehaviorSubject, 
-  Observable, 
-  Subject, 
-  from, 
-  of, 
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  from,
+  of,
   EMPTY,
   catchError,
-  map, 
-  switchMap, 
-  take, 
+  map,
+  switchMap,
+  take,
   takeUntil,
   tap,
   distinctUntilChanged,
-  combineLatest
+  combineLatest, observable
 } from 'rxjs';
 import { UserDisplayUtils } from '../utils/user-display.utils';
 import { UserModel } from '../../dataModels/userProfileModel/user.model';
@@ -47,12 +47,12 @@ import { userInfo } from 'os';
   providedIn: 'root'
 })
 export class UserService implements OnDestroy {
-  
+
   // Private subjects for state management
   private readonly userProfileSubject = new BehaviorSubject<UserModel | null>(null);
   private readonly loadingSubject = new BehaviorSubject<boolean>(true);
   private readonly errorSubject = new BehaviorSubject<string | null>(null);
-  
+
   // Subject for cleanup on destroy
   private readonly destroySubject = new Subject<void>();
 
@@ -109,7 +109,7 @@ export class UserService implements OnDestroy {
     distinctUntilChanged()
   );
 
-  
+
   constructor(
     private readonly auth: Auth,
   ) {
@@ -165,9 +165,9 @@ export class UserService implements OnDestroy {
       this.loadingSubject.next(true);
       this.errorSubject.next(null);
       let userCredential = null;
-      
-      
-      
+
+
+
       const credential = await createUserWithEmailAndPassword( // Then, we need to create the authentication entry
         this.auth, //Auth instance
         username + '@midas-app.com', // This appends an email address to the username to form the email
@@ -181,7 +181,7 @@ export class UserService implements OnDestroy {
       });
     } catch (error) {
       console.error('Registration failed:', error);
-      
+
       throw error;
     } finally {
       this.loadingSubject.next(false);
@@ -209,7 +209,7 @@ export class UserService implements OnDestroy {
       this.userProfile$.forEach((user) => {
         console.log(user);
       });
-      
+
     } catch (error) {
       console.error('Login failed:', error);
       this.errorSubject.next(this.getErrorMessage(error));
@@ -229,7 +229,7 @@ export class UserService implements OnDestroy {
 
       await signOut(this.auth);
       // userProfileSubject will be cleared by auth state subscription
-      
+
     } catch (error) {
       console.error('Logout failed:', error);
       this.errorSubject.next(this.getErrorMessage(error));
@@ -260,11 +260,11 @@ export class UserService implements OnDestroy {
   //     status: 'pending',
   //     dateRequested: new Date(),
 
-      
+
   //   };
   //   console.log(userProfile);
 
-    
+
   // }
 
   /**
@@ -295,7 +295,7 @@ export class UserService implements OnDestroy {
   //       ...currentUser,
   //       ...updates
   //     });
-      
+
   //   } catch (error) {
   //     console.error('Profile update failed:', error);
   //     this.errorSubject.next(this.getErrorMessage(error));
@@ -341,5 +341,7 @@ export class UserService implements OnDestroy {
     return this.userProfileSubject.getValue();
   }
 
-  
+  public placeInProfile(pfp: File) {
+    // Damien, I think you'll handle actually posting to DB?
+  }
 }
