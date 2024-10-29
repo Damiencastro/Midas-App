@@ -10,16 +10,17 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
         <!-- Basic Information -->
         <div class="col-span-2 grid grid-cols-2 gap-4">
           <div>
-            <label for="entryNumber" class="block text-sm font-medium mb-1">Entry Number</label>
+            <label for="entryNumber" class="block white text-sm font-medium mb-1 white">Entry Number</label>
             <input 
               id="entryNumber" 
               type="text" 
               formControlName="entryNumber"
               class="w-full p-2 border rounded"
+              placeholder="Enter the Entry Number"
             >
           </div>
           <div>
-            <label for="date" class="block text-sm font-medium mb-1">Date</label>
+            <label for="date" class="block text-sm font-medium mb-1 white">Date</label>
             <input 
               id="date" 
               type="date" 
@@ -31,42 +32,45 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 
         <!-- Description -->
         <div class="col-span-2">
-          <label for="description" class="block text-sm font-medium mb-1">Description</label>
+          <label for="description" class="color-black block text-sm font-medium mb-1 white">Description</label>
           <textarea 
             id="description" 
             formControlName="description"
             class="w-full p-2 border rounded"
             rows="3"
+            placeholder="Enter a Description for the entry"
           ></textarea>
         </div>
 
         <!-- Transactions -->
         <div class="col-span-2">
-          <h3 class="text-lg font-medium mb-2">Transactions</h3>
+          <h3 class="text-lg font-medium mb-2 white">Transactions</h3>
           <div formArrayName="transactions">
             <div *ngFor="let transaction of transactions.controls; let i=index" 
                  [formGroupName]="i"
                  class="grid grid-cols-4 gap-4 mb-4">
               <div>
-                <label [for]="'accountId-' + i" class="block text-sm font-medium mb-1">Account</label>
+                <label [for]="'accountId-' + i" class="block text-sm font-medium mb-1 white">Account</label>
                 <input 
                   [id]="'accountId-' + i" 
                   type="text" 
                   formControlName="accountId"
                   class="w-full p-2 border rounded"
+                  placeholder="Enter account name/ID"
                 >
               </div>
               <div>
-                <label [for]="'description-' + i" class="block text-sm font-medium mb-1">Description</label>
+                <label [for]="'description-' + i" class="block text-sm font-medium mb-1 white">Description</label>
                 <input 
                   [id]="'description-' + i" 
                   type="text" 
                   formControlName="description"
                   class="w-full p-2 border rounded"
+                  [placeholder]="'Transaction '+(i+1)+ ' description'"
                 >
               </div>
               <div>
-                <label [for]="'debitAmount-' + i" class="block text-sm font-medium mb-1">Debit</label>
+                <label [for]="'debitAmount-' + i" class="block text-sm font-medium mb-1 white">Debit</label>
                 <input 
                   [id]="'debitAmount-' + i" 
                   type="number" 
@@ -75,7 +79,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
                 >
               </div>
               <div>
-                <label [for]="'creditAmount-' + i" class="block text-sm font-medium mb-1">Credit</label>
+                <label [for]="'creditAmount-' + i" class="block text-sm font-medium mb-1 white">Credit</label>
                 <input 
                   [id]="'creditAmount-' + i" 
                   type="number" 
@@ -97,10 +101,10 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
         <!-- Totals Display -->
         <div class="col-span-2 grid grid-cols-2 gap-4 mt-4">
           <div>
-            <p class="font-medium">Total Debits: {{ calculateTotalDebits() }}</p>
+            <p class="font-medium gold">Total Debits: {{ calculateTotalDebits() }}</p>
           </div>
           <div>
-            <p class="font-medium">Total Credits: {{ calculateTotalCredits() }}</p>
+            <p class="font-medium gold">Total Credits: {{ calculateTotalCredits() }}</p>
           </div>
         </div>
 
@@ -116,7 +120,8 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
         </div>
       </div>
     </form>
-  `
+  `,
+  styleUrl: 'journal-entry-form-stylesheet.scss'
 })
 export class JournalEntryFormCard {
   @Output() formSubmit = new EventEmitter<any>();
