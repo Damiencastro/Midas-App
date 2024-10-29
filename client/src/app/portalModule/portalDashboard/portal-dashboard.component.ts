@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   template: `
   <div class="min-h-screen flex flex-col items-center pt-20">
     <div class="w-full max-w-3xl">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">Accounting Dashboard</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center blue">Accounting Dashboard</h1>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
             <!-- Chart of Accounts Button -->
@@ -34,6 +34,7 @@ import { Component } from '@angular/core';
         </div>
     </div>
 </div>`,
+styleUrl: 'portal-dashboard-stylesheet.scss'
 })
 export class PortalDashboardComponent {
 

@@ -13,7 +13,8 @@ import { getAllJournalEntries } from "../utils/get-journal-entries";
             [journalEntries$]="journalEntries$"
             (chosenJournalEntry)="routeToJournalEntry($event)"
         ></journal-review-card>
-    `
+    `,
+    styleUrl:'../ui/journal-review.card.stylesheet.scss'
 })
 export class JournalEntryReviewComponent implements OnInit {
     private firestore = inject(Firestore);
