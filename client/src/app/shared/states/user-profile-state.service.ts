@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, map, distinctUntilChanged, Subject, switchMap, of, filter, takeUntil } from "rxjs";
-import { UserModel } from "../dataModels/userProfileModel/user.model";
+import { UserApplication, UserApplicationWithMetaData, UserModel } from "../dataModels/userProfileModel/user.model";
 import { AuthStateService } from "./auth-state.service";
 import { UserFirestoreService } from "../services/firestoreService/user-firestore.service";
+import { FirebaseApp } from "@angular/fire/app";
+import { serverTimestamp } from "firebase/firestore";
 
 interface UserProfileState {
     profile: UserModel | null;
@@ -15,25 +17,25 @@ interface UserProfileState {
     private readonly destroy$ = new Subject<void>();
 
     constructor(
-        authStateService: AuthStateService,
-        firestoreService: UserFirestoreService
+        private authStateService: AuthStateService,
+        private firestoreService: UserFirestoreService
     ) {
-        this.initProfileState(authStateService, firestoreService);
+        this.initProfileState();
     }
   
-    initProfileState(authStateService: AuthStateService, firestoreService: UserFirestoreService) {
+    initProfileState() {
         this.destroy$.next();
     
-        authStateService.isLoggedIn$.pipe(
+        this.authStateService.isLoggedIn$.pipe(
             switchMap(isLoggedIn => {
                 if (!isLoggedIn) {
                     return of({ profile: null });
                 }
-                return authStateService.getUid$.pipe(
+                return this.authStateService.getUid$.pipe(
                     // Explicitly handle undefined/null case
                     filter((uid): uid is string => uid !== null && uid !== undefined),
                     switchMap(uid => 
-                        firestoreService.getUserObservable(uid).pipe(
+                        this.firestoreService.getUserObservable(uid).pipe(
                             map(profile => ({ profile }))
                         )
                     )
@@ -56,4 +58,16 @@ interface UserProfileState {
       map(state => state.profile),
       distinctUntilChanged()
     );
+
+
+    submitApplication(userApp: UserApplicationWithMetaData): Promise<void> {
+        const userApplicationWithMetadata = {
+            ...userApp,
+            submittedOn: serverTimestamp(),
+            status: 'PENDING',
+            reviewedBy: null,
+            
+        }
+        return this.firestoreService.submitApplication(userApplicationWithMetadata);
+    }
   }

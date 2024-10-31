@@ -1,21 +1,19 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, map, distinctUntilChanged, shareReplay, Subject, takeUntil, tap, catchError, Observable } from "rxjs";
-import { Account, AccountFilter } from "../dataModels/financialModels/account-ledger.model";
+import { BehaviorSubject, combineLatest, map, distinctUntilChanged, shareReplay, Subject, takeUntil, tap, catchError, Observable, of, switchMap, from } from "rxjs";
+import { Account, AccountFilter, NormalSide } from "../dataModels/financialModels/account-ledger.model";
 import { ErrorHandlingService } from "../services/error-handling.service";
 import { EventBusService } from "../services/event-bus.service";
 import { AccountFirestoreService } from "../services/firestoreService/account-firestore.service";
+import { FilteringService } from "../services/filter.service";
+import { AccountResponseDTO, CreateAccountDTO } from "../facades/accountFacades/chart-of-accounts.facade";
+import { serverTimestamp } from "firebase/firestore";
+import { timeStamp } from "console";
 
-interface AccountState {
-    accounts: Account[];
-    selectedAccount: string | null;
-    filters: AccountFilter | null;
-    lastUpdated: Date;
-  }
   
   @Injectable({ providedIn: 'root' })
   export class AccountingStateService {
-    private readonly accountsSubject = new Subject<Account[]>();
-    private selectedAccountSubject = new BehaviorSubject<Account[]>([]);
+    private readonly accountsSubject = new BehaviorSubject<Account[]>([]);
+    private selectedAccountSubject = new Subject<string>();
     private filterSubject = new Subject<AccountFilter>();
 
     private readonly accounts$ = this.accountsSubject.asObservable();
@@ -29,6 +27,7 @@ interface AccountState {
       private accountingFirestoreService: AccountFirestoreService,
       private errorHandlingService: ErrorHandlingService,
       private eventBus: EventBusService,
+      private filterService: FilteringService
 
     ) {
       this.initializeAccountingState();
@@ -45,39 +44,71 @@ interface AccountState {
       );
     }
   
-    readonly filteredAccounts$ = this.filter$.pipe(
-      catchError(error => {return this.errorHandlingService.handleError(error, null)}),
-      map(filters => this.applyFilters(filters)),
-      distinctUntilChanged(),
-      shareReplay(1)
-    )
+    
       
     readonly selectedAccount$ = this.selectedAccountSubject.pipe(
       catchError(error => {return this.errorHandlingService.handleError(error, [] as Account[])}),
       distinctUntilChanged()
     );
 
-    applyFilters(filters: AccountFilter | null): Observable<Account[]> {
+    readonly filteredAccounts$ = combineLatest([this.accounts$, this.filterSubject]).pipe(
+      map(([journalEntries, filter]) => this.filterService.filter(journalEntries, filter, [
+        'id',
+        'entryNumber',
+        'dateStart',
+        'dateEnd',
+        'status',
+        'createdBy'
+      ])),
+      distinctUntilChanged(),
+    );
+
+    updateFilters(filter: AccountFilter) {
+      this.filterSubject.next(filter);
+    }
+
+    selectAccount(accountId: string): Observable<void>{
+      return of(this.selectedAccountSubject.next(accountId));
+
+    }
+
+    getAccountsStartingWith(basenum: string): Observable<Account[]> {
       return this.accounts$.pipe(
-        catchError(error => {return this.errorHandlingService.handleError(error, [] as Account[])}),
-        map(accounts => {
-          
-          return accounts.filter(account => {
-            if (!filters) {
-              return true; // Include all accounts if no filters
-            }
-            if (
-              (filters.category && account.category !== filters.category) ||
-              (filters.subcategory && account.subcategory !== filters.subcategory) ||
-              (filters.isActive && account.isActive !== filters.isActive) ||
-              (filters.normalSide && account.normalSide !== filters.normalSide)
-            ) {
-              return false; // Exclude if any filter doesn't match
-            }
-    
-          return true; // Include if all filters match or are not present
-          })
-        }),
+        map(accounts => accounts.filter(account => account.accountNumber.startsWith(basenum))),
+        distinctUntilChanged()
       );
+    }
+    
+    createAccount(
+      account: CreateAccountDTO, 
+      accNum: Observable<string>, 
+      userId: string
+    ): Observable<Account> {
+      return combineLatest([accNum, userId]).pipe(
+        switchMap(([accNum, userId]) => {
+          const newAccount: Account = {
+            accountName: account.accountName,
+            description: account.description,
+            category: account.category,
+            subcategory: account.subcategory,
+            normalSide: account.normalSide,
+            accountNumber: accNum,
+            isActive: true,
+            version: 1,
+            createdAt: new Date(Date.now()),
+            createdBy: userId,
+            updatedAt: new Date(Date.now()),
+            updatedBy: [userId],
+            versionHistory: [],
+          };
+          
+          // Convert Promise to Observable
+          return from(this.accountingFirestoreService.createAccount(newAccount));
+        })
+      );
+    }
+
+    deactivateAccount(accountId: string): Promise<void> {
+      return this.accountingFirestoreService.deactivateAccount(accountId);
     }
   }

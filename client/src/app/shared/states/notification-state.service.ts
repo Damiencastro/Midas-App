@@ -1,10 +1,12 @@
 import { Injectable } from "@angular/core";
 import { type } from "os";
-import { BehaviorSubject, map, distinctUntilChanged, combineLatest, shareReplay, Subject } from "rxjs";
+import { BehaviorSubject, map, distinctUntilChanged, combineLatest, shareReplay, Subject, takeUntil, catchError, tap } from "rxjs";
 import { NotificationService } from "../services/firestoreService/notification-firestore.service";
+import { FilteringService } from "../services/filter.service";
+import { ErrorHandlingService } from "../services/error-handling.service";
 
 export interface NotificationFilter {
-    type: 'EMAIL' | 'ALERT' | 'SYSTEM';
+    type: 'all' | 'EMAIL' | 'ALERT' | 'SYSTEM';
     priority: 'all' | 'low' | 'medium' | 'high';
     category: 'all' | 'system' | 'approval' | 'alert';
 }
@@ -20,48 +22,56 @@ export interface Notification{
     successful: boolean;
 }
 
-interface NotificationState {
-    notifications: Notification[];
-    notificationFilters: NotificationFilter;
-  }
+
   
   @Injectable({ providedIn: 'root' })
   export class NotificationStateService {
-    private readonly notificationStateSubject = new Subject<NotificationState>();
+    private notificationsSubject = new BehaviorSubject<Notification[]>([]);
+    private filterSubject = new Subject<NotificationFilter>();
+    private readonly notifications$ = this.notificationsSubject.asObservable();
 
-    constructor(notificationService: NotificationService) {
-        this.initNotificationStoreSubscription(notificationService);
+    private destroySubject = new Subject<void>();
+    private readonly destroy$ = this.destroySubject.asObservable();
+
+
+    constructor(
+      private notificationService: NotificationService,
+      private filterService: FilteringService,
+      private errorHandlingService: ErrorHandlingService
+
+      ) {
+        this.initializeNotificationState();
     }
 
-    private initNotificationStoreSubscription(notificationService: NotificationService) {
-        notificationService.notifications$.subscribe(notifications => {
-            
-        })
+    initializeNotificationState() {
+      this.notificationService.notifications$.pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          return this.errorHandlingService.handleError(error, [] as Notification[]);
+        }),
+        tap(notifications => this.notificationsSubject.next(notifications)),
+        
+      );
     }
   
-    readonly unreadCount$ = this.notificationStateSubject.pipe(
-      map(state => state.notifications.length),
+    readonly unreadCount$ = this.notifications$.pipe(
+      map(notifications => notifications.filter(notification => !notification.read).length),
       distinctUntilChanged()
     );
 
-    readonly filteredNotifications$ = this.notificationStateSubject.pipe(
-        map(state => ({ 
-          notifications: state.notifications, // Assuming you have a notifications array in your state
-          filters: state.notificationFilters 
-        })),
-        map(({ notifications, filters }) => this.applyFilters(notifications, filters)),
-        distinctUntilChanged(),
-        shareReplay(1)
-      );
+    readonly filteredNotifications$ = combineLatest([this.notifications$, this.filterSubject]).pipe(
+      map(([journalEntries, filter]) => this.filterService.filter(journalEntries, filter, [
+        'type',
+        'priority',
+        'category',
+      ])),
+      distinctUntilChanged(),
+    );
 
-    applyFilters(notifications: Notification[], filters: NotificationFilter): Notification[] {
-        return notifications.filter(notification => {
-          const typeMatch = notification.type === filters.type;
-          const priorityMatch = notification.priority === filters.priority;
-          const categoryMatch = filters.category === 'all' || notification.category === filters.category;
-          return typeMatch && priorityMatch && categoryMatch;
-        });
+    updateFilters(filter: NotificationFilter) {
+      this.filterSubject.next(filter);
     }
+    
   }
 
   

@@ -74,7 +74,6 @@ export  enum JournalEntryStatus {
   }
   
   export interface Account {
-    id: string;
     accountName: string;
     accountNumber: string;
     description: string;
@@ -83,16 +82,16 @@ export  enum JournalEntryStatus {
     subcategory: AccountSubcategories[AccountCategory];
     
     // Balance tracking
-    openingBalance: number;
-    currentBalance: number;
-    totalDebits: number;
-    totalCredits: number;
+    openingBalance?: number;
+    currentBalance?: number;
+    totalDebits?: number;
+    totalCredits?: number;
     
     // All entries affecting this account
-    entries: LedgerEntry[];
+    entries?: LedgerEntry[];
     
     // For ordering in statements
-    order: string;
+    order?: string;
     
     // Status
     isActive: boolean;
@@ -103,7 +102,7 @@ export  enum JournalEntryStatus {
     createdAt: Date;
     createdBy: string;
     updatedAt: Date;
-    updatedBy: string;
+    updatedBy: string[];
     version: number;
     versionHistory: AccountVersionHistory[];
   }
@@ -157,6 +156,15 @@ export  enum JournalEntryStatus {
     // Version tracking
     version: number;
     versionHistory: JournalEntryVersionHistory[];
+  }
+
+  export interface JournalFilter{
+    id?: string;
+    entryNumber?: string;
+    dateStart?: Date;
+    dateEnd?: Date;
+    status: JournalEntryStatus;
+    createdBy?: string;
   }
   
   export interface JournalTransaction {

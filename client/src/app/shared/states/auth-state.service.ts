@@ -68,4 +68,14 @@ interface AuthState {
       map(state => state.lockoutUntil && state.lockoutUntil > new Date()),
       distinctUntilChanged()
     );
+
+    readonly token$ = this.authStateSubject.pipe(
+        map(state => state.token),
+        distinctUntilChanged()
+      );
+
+    readonly user$ = this.authStateSubject.pipe(
+        map(state => state.user),
+        distinctUntilChanged()
+      );
   }

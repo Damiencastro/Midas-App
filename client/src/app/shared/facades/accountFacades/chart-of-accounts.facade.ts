@@ -1,116 +1,277 @@
-/*  This facade serves as the primary interface for managing the chart of accounts structure. 
-// It handles account creation, modification, and deactivation while enforcing account numbering rules and structural validations. 
-// The facade ensures unique account numbers, maintains proper account hierarchies, and manages relationships between parent and sub-accounts.
-// Key responsibilities include maintaining account categorization (assets, liabilities, etc.), managing account status changes, 
-// and ensuring proper account organization. It also coordinates with other facades when accounts are referenced or modified, such as 
-// during journal entry creation or financial statement generation.
-
-//account creation
-
-//account modification
-
-//account deactivation
-
-//enforcing account numbering rules
-
-//structural validations
+import { Injectable, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Observable, Subject, merge } from 'rxjs';
+import { takeUntil, map, tap } from 'rxjs/operators';
+import { Account, AccountCategory, AccountSubcategories } from '../../dataModels/financialModels/account-ledger.model';
+import { ErrorHandlingService } from '../../services/error-handling.service';
+import { EventBusService, EventType } from '../../services/event-bus.service';
+import { AccountingStateService } from '../../states/accounting-state.service';
+import { AuthStateService } from '../../states/auth-state.service';
 
 
+type SubcategoryMap = {
+  ASSET: 'CURRENT_ASSETS' | 'LONG_TERM_INVESTMENTS' | 'PROPERTY_PLANT_EQUIPMENT' | 'INTANGIBLE_ASSETS';
+  LIABILITY: 'CURRENT_LIABILITIES' | 'LONG_TERM_LIABILITIES';
+  EQUITY: 'OWNERS_EQUITY' | 'STOCKHOLDERS_EQUITY';
+  REVENUE: 'OPERATING_REVENUE' | 'NON_OPERATING_REVENUE';
+  EXPENSE: 'OPERATING_EXPENSE' | 'NON_OPERATING_EXPENSE';
+};
 
-*/
 
-import { BehaviorSubject, Observable, catchError, finalize, find, map, switchMap, take, tap, throwError } from "rxjs";
-import { Account, AccountFilter } from "../../dataModels/financialModels/account-ledger.model";
-import { Injectable } from "@angular/core";
-import { AccountFirestoreService } from "../../services/firestoreService/account-firestore.service";
-import { ErrorHandlingService } from "../../services/error-handling.service";
-import { EventBusService, EventType } from "../../services/event-bus.service";
+// DTOs
+interface CreateAccountDTO {
+  accountName: string;
+  description: string;
+  category: AccountCategory;
+  subcategory: AccountSubcategories[AccountCategory];
+  normalSide: 'DEBIT' | 'CREDIT';
+}
 
-@Injectable({ providedIn: 'root' })
-export class ChartOfAccountsFacade {
-  private readonly accountsSubject = new BehaviorSubject<Account[]>([]);
-  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
-  private readonly errorSubject = new BehaviorSubject<string | null>(null);
-  private readonly selectedAccountSubject = new BehaviorSubject<Account | null>(null);
+interface UpdateAccountDTO {
+  accountName?: string;
+  description?: string;
+  category?: AccountCategory;
+  subcategory?: string;
+}
 
-  readonly accounts$ = this.accountsSubject.asObservable();
-  readonly loading$ = this.loadingSubject.asObservable();
-  readonly error$ = this.errorSubject.asObservable();
-  readonly selectedAccount$ = this.selectedAccountSubject.asObservable();
+interface AccountResponseDTO extends CreateAccountDTO {
+  id: string;
+  createdAt: Date;
+  createdBy: string;
+  status: 'active' | 'inactive';
+  lastModifiedAt?: Date;
+  lastModifiedBy?: string;
+  version: number;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ChartOfAccountsFacade implements OnDestroy {
+  // Cleanup subscription
+  private readonly destroy$ = new Subject<void>();
 
   constructor(
-    private accountFirestoreService: AccountFirestoreService,
+    private accountingStateService: AccountingStateService,
     private errorHandlingService: ErrorHandlingService,
-    private eventBus: EventBusService
-  ) {
-    // Initialize accounts subscription
-    this.loadAccounts();
+    private eventBus: EventBusService,
+    private authState: AuthStateService,
+    private router: Router,
+    // private accountingEventLog: AccountingEventLogService
+  ) {}
+
+  /**
+   * Selects an account and navigates to its ledger view
+   * @param accountId The ID of the account to select
+   * @returns Observable<boolean> indicating success/failure
+   */
+  selectAccount(accountId: string): Observable<void> {
+    return this.accountingStateService.selectAccount(accountId);
   }
 
-  loadAccounts(filter?: AccountFilter): Observable<Account[]> {
-    this.loadingSubject.next(true);
+  /**
+   * Creates a new account in the chart of accounts
+   * @param accountData The account creation data
+   * @returns Observable<AccountResponseDTO>
+   */
+  createAccount(accountData: CreateAccountDTO): Observable<AccountResponseDTO> {
     
-    return this.accountFirestoreService.getAllAccountsWhere(filter).pipe(
-      tap(accounts => this.accountsSubject.next((accounts) ? accounts : [])),
-      // catchError(this.errorHandlingService.handleError<Account[]>('loadAccounts', [])), Will have to figure this out when Claude has more tokens
-      //There was an issue where the catchError function was supposed to take in an Accountp[ called accounts or a null input. It's supposed to then retry if possible and then return an empty array if not possible. For some reason the operator function was not eliminating the null outputs. So, OperatorFunction<Account[] | null, Account[] null> rather than OperatorFunction<Account[] | null, Account[]>
-      finalize(() => this.loadingSubject.next(false))
-    );
-  }
-
-  createAccount(account: Account): Observable<void> {
-    this.loadingSubject.next(true);
-
-    return this.validateAccount(account).pipe(
-      switchMap(() => this.accountFirestoreService.createAccount(account)),
-      tap(() => {
+    const accountNumber = this.createAccountNumber(accountData.category, accountData.subcategory);
+    
+    return this.accountingStateService.createAccount(accountData, accountNumber).pipe(
+      tap((account: Account) => {
         this.eventBus.emit({
           type: EventType.ACCOUNT_CREATED,
           payload: account
         });
-        this.loadAccounts(); // Refresh accounts list
-      }),
-      // catchError(error => this.errorHandlingService.handleError('createAccount')(error)),
-      finalize(() => this.loadingSubject.next(false))
+        this.accountingEventLog.logEvent({
+          type: EventType.ACCOUNT_CREATED,
+          accountId: account.id,
+          userId: this.authState.getUid$,
+          timestamp: new Date(),
+          details: account
+        });
+      })
     );
   }
 
-  // Add more public methods as needed
-
-  selectAccount(account: Account) {
-    this.selectedAccountSubject.next(account);
+  /**
+   * Updates an existing account
+   * @param accountId The ID of the account to update
+   * @param updates The account updates to apply
+   * @returns Observable<AccountResponseDTO>
+   */
+  updateAccount(accountId: string, updates: UpdateAccountDTO): Observable<AccountResponseDTO> {
+    return this.accountingStateService.updateAccount(accountId, updates).pipe(
+      tap(account => {
+        this.eventBus.emit({
+          type: 'ACCOUNT_UPDATED',
+          payload: account
+        });
+        this.accountingEventLog.logEvent({
+          type: 'ACCOUNT_UPDATE',
+          accountId: account.id,
+          userId: this.authState.getCurrentUserId(),
+          timestamp: new Date(),
+          details: {
+            before: account,
+            after: { ...account, ...updates }
+          }
+        });
+      })
+    );
   }
 
-  
-
-  private validateAccount(account: Account): Observable<boolean> {
-    // Implement account validation logic
-    const errors: string[] = [];
-
-    if (!account.accountNumber) {
-      errors.push('Account number is required');
-    }
-
-    if (!account.accountName) {
-      errors.push('Account name is required');
-    }
-
-    // Add more validation rules
-
-    if (errors.length > 0) {
-      return throwError(() => new Error(errors.join(', ')));
-    }
-
-    // Check for duplicate account numbers
-    return this.accounts$.pipe(
-      take(1),
-      map((accounts: Account[]) => {
-        const duplicate = accounts.find((a: Account) => a.accountNumber === account.accountNumber);
-        if (duplicate) {
-          throw new Error('Account number already exists');
+  /**
+   * Deactivates an account if it has no balance
+   * @param accountId The ID of the account to deactivate
+   * @returns Observable<boolean>
+   */
+  deactivateAccount(accountId: string): Observable<boolean> {
+    return this.accountingStateService.getAccount(accountId).pipe(
+      map(account => {
+        if (!account) {
+          this.errorHandlingService.handleSystemError(
+            'ACCOUNT_NOT_FOUND',
+            'Account not found'
+          );
+          return false;
         }
+        
+        if (account.balance !== 0) {
+          this.errorHandlingService.handleBusinessValidation(
+            'ACCOUNT_HAS_BALANCE',
+            'Cannot deactivate account with non-zero balance'
+          );
+          return false;
+        }
+
+        this.accountingStateService.deactivateAccount(accountId);
+        this.eventBus.emit({
+          type: 'ACCOUNT_DEACTIVATED',
+          payload: { accountId }
+        });
+        this.accountingEventLog.logEvent({
+          type: 'ACCOUNT_DEACTIVATION',
+          accountId: account.id,
+          userId: this.authState.getCurrentUserId(),
+          timestamp: new Date(),
+          details: account
+        });
         return true;
       })
     );
   }
+
+  /**
+   * Validates an account number according to business rules
+   * @param accountNumber The account number to validate
+   * @returns boolean indicating if the account number is valid
+   */
+  private createAccountNumber(
+    accountCategory: AccountCategory,
+    subcategory: AccountSubcategories[AccountCategory],
+    parentAccount?: string
+  ): Observable<string> {
+    // Step 1: Get category prefix
+    const categoryPrefix = this.getCategoryPrefix(accountCategory);
+    
+    // Step 2: Get subcategory number
+    const subcategoryNumber = this.getSubcategoryNumber(accountCategory, subcategory);
+    
+    // Step 3: Handle parent/child relationship
+    if (parentAccount) {
+      // If this is a sub-account, use parent's number as base
+      return this.generateNextChildNumber(parentAccount);
+    } else {
+      // If this is a new major account, generate next available
+      const baseNumber = `${categoryPrefix}${subcategoryNumber}00`;
+      return this.generateNextAvailableNumber(baseNumber);
+    }
+  }
+  
+  private getCategoryPrefix(category: AccountCategory): string {
+    const prefixMap: Record<AccountCategory, string> = {
+      'ASSET': '1',
+      'LIABILITY': '2',
+      'EQUITY': '3',
+      'REVENUE': '4',
+      'EXPENSE': '5'
+    };
+    return prefixMap[category];
+  }
+  
+  private getSubcategoryNumber(
+    category: AccountCategory, 
+    subcategory: AccountSubcategories[AccountCategory]
+  ): string {
+    const subcategoryIndex = subcategory.toString() as keyof SubcategoryMap;
+    const subcategoryMap: Record<AccountCategory, Record<string, string>> = {
+      'ASSET': {
+        'CURRENT_ASSETS': '1',
+        'LONG_TERM_INVESTMENTS': '2',
+        'PROPERTY_PLANT_EQUIPMENT': '3',
+        'INTANGIBLE_ASSETS': '4'
+      },
+      'LIABILITY': {
+        'CURRENT_LIABILITIES': '1',
+        'LONG_TERM_LIABILITIES': '2'
+      },
+      'EQUITY': {
+        'OWNERS_EQUITY': '1',
+        'STOCKHOLDERS_EQUITY': '2'
+      },
+      'REVENUE': {
+        'OPERATING_REVENUE': '1',
+        'NON_OPERATING_REVENUE': '2'
+      },
+      'EXPENSE': {
+        'OPERATING_EXPENSE': '1',
+        'NON_OPERATING_EXPENSE': '2'
+      }
+    };
+    return subcategoryMap[category][subcategoryIndex];
+  }
+  
+  private generateNextAvailableNumber(baseNumber: string): Observable<string> {
+    return this.accountingStateService.getAccountsStartingWith(baseNumber).pipe(
+      map(accounts => {
+        if (accounts.length === 0) return baseNumber;
+        
+        // Find highest number and increment
+        const maxNumber = Math.max(...accounts.map(a => 
+          parseInt(a.accountNumber.slice(-2))));
+        const nextNumber = (maxNumber + 1).toString().padStart(2, '0');
+        return baseNumber.slice(0, -2) + nextNumber;
+      })
+    );
+  }
+  
+  private generateNextChildNumber(parentNumber: string): Observable<string> {
+    return this.accountingStateService.getAccountsStartingWith(parentNumber).pipe(
+      map(accounts => {
+        if (accounts.length === 0) return parentNumber + '01';
+        
+        // Find highest child number and increment
+        const maxNumber = Math.max(...accounts.map(a => 
+          parseInt(a.accountNumber.slice(-2))));
+        return parentNumber + (maxNumber + 1).toString().padStart(2, '0');
+      })
+    );
+  }
+  
+  
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }
+
+// Note: Future consideration for mergeAccounts functionality
+// Future enhancement could include account merging capability
+// Would require:
+// - Balance transfer logic
+// - Reference updates
+// - Historical record preservation
+// - Special permissions

@@ -17,34 +17,46 @@ export class AccountFirestoreService implements OnDestroy {
   private destroySubject = new Subject<void>();
 
   constructor(
-    firestore: Firestore,
+    private firestore: Firestore,
     private errorHandlingService: ErrorHandlingService) {
-    this.initializeAccountFirestoreService(firestore, errorHandlingService);
+    this.initializeAccountFirestoreService();
    }
   
 
-   initializeAccountFirestoreService(firestore: Firestore, errorHandlingService: ErrorHandlingService){ 
+   initializeAccountFirestoreService(){ 
     //Create subscription to the generalLedgers collection snapshot
-    onSnapshot(collection(firestore, 'generalLedger'), (snapshot) => {
+    onSnapshot(collection(this.firestore, 'generalLedger'), (snapshot) => {
       takeUntil(this.destroySubject);
       const accounts = snapshot.docs.map(doc => ({
-        id: doc.id,
         ...doc.data()
       }) as Account);
       catchError(error => {
-        errorHandlingService.handleError(error, [] as Account[]);
+        this.errorHandlingService.handleError(error, [] as Account[]);
         return [];
       });
       this.accountsSubject.next(accounts);
     });
    }
 
+   createAccount(account: Account): Promise<Account> {
+    const accountDocRef = doc(collection(this.firestore, 'generalLedger'), account.accountNumber);
+    return setDoc(accountDocRef, account).then(() => { return account });
+   }
+
+   deactivateAccount(id: string): Promise<void> {
+    const accountRef = doc(collection(this.firestore, 'generalLedger'), id);
+    return updateDoc(accountRef, {
+      isActive: false,
+      updatedAt: serverTimestamp()
+    });
+   }
    
 
    ngOnDestroy() {
     this.destroySubject.next();
     this.destroySubject.complete();
   }
+
 
    
 

@@ -66,7 +66,12 @@ export class RequestSystemAccessComponent {
       password: this.formValue.value.password,
       requestedRole: this.formValue.value.role,
       status: 'pending',
-      dateRequested: new Date()
+      dateRequested: new Date(),
+      notificationFilter: {
+        'category': 'all',
+        'priority': 'all',
+        'type': 'all'
+      }
       
     }).then(() => {
       console.log('User created successfully');
