@@ -42,7 +42,7 @@ export class ErrorHandlingService {
   /**
    * Main error handler that can be used in RxJS pipes
    */
-  handleError<T>(operation: string, fallbackValue: T) {
+  handleError<T>(operation: string, fallbackValue: T): (error: any) => Observable<T> {
     return (error: any): Observable<T> => {
       const systemError: SystemError = {
         id: crypto.randomUUID(), // Generate unique error ID

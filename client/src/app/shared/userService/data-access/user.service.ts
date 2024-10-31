@@ -40,8 +40,10 @@ import {
 import { UserDisplayUtils } from '../utils/user-display.utils';
 import { UserModel } from '../../dataModels/userProfileModel/user.model';
 import { UserRole } from '../../dataModels/userProfileModel/userRole.model';
-import { UserFirestoreService } from '../../firestoreService/userStore/data-access/user-firestore.service';
+import { UserFirestoreService } from '../../services/firestoreService/user-firestore.service';
 import { userInfo } from 'os';
+// Make sure you have this import at the top of your file
+import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -112,6 +114,8 @@ export class UserService implements OnDestroy {
   
   constructor(
     private readonly auth: Auth,
+    private storage: Storage,
+    private firestore: Firestore
   ) {
     // Initialize the auth state subscription
     this.initializeAuthStateSubscription();
@@ -274,36 +278,33 @@ export class UserService implements OnDestroy {
   /**
    * Updates a user's profile in Firestore
    */
-  // async updateProfile(updates: Partial<UserModel>): Promise<void> {
-  //   try {
-  //     const currentUser = this.userProfileSubject.getValue();
-  //     if (!currentUser) {
-  //       throw new Error('No user logged in');
-  //     }
+  async updateProfile(updates: Partial<UserModel>): Promise<void> {
+    try {
+      const currentUser = this.userProfileSubject.getValue();
+      if (!currentUser) {
+        throw new Error('No user logged in');
+      }
 
-  //     this.loadingSubject.next(true);
-  //     this.errorSubject.next(null);
+      this.loadingSubject.next(true);
+      this.errorSubject.next(null);
 
-  //     // Update Firestore
-  //     await updateDoc(
-  //       this.userFirestoreService.getUserDocRefByUid(currentUser.id),
-  //       { ...updates, lastUpdated: new Date() }
-  //     );
+      // Update Firestore
+      await this.userFirestoreService.updateUser(currentUser.id, updates);
 
-  //     // Update local state
-  //     this.userProfileSubject.next({
-  //       ...currentUser,
-  //       ...updates
-  //     });
+      // Update local state
+      this.userProfileSubject.next({
+        ...currentUser,
+        ...updates
+      });
       
-  //   } catch (error) {
-  //     console.error('Profile update failed:', error);
-  //     this.errorSubject.next(this.getErrorMessage(error));
-  //     throw error;
-  //   } finally {
-  //     this.loadingSubject.next(false);
-  //   }
-  // }
+    } catch (error) {
+      console.error('Profile update failed:', error);
+      this.errorSubject.next(this.getErrorMessage(error));
+      throw error;
+    } finally {
+      this.loadingSubject.next(false);
+    }
+  }
 
   /**
    * Converts Firebase errors to user-friendly messages
@@ -337,9 +338,46 @@ export class UserService implements OnDestroy {
    * Gets the current user synchronously
    * Use with caution - prefer subscribing to userProfile$ observable
    */
-  getCurrentUser(): UserModel | null {
-    return this.userProfileSubject.getValue();
+  getCurrentUser(): UserModel {
+    const currentUser = this.userProfileSubject.getValue();
+    if(currentUser) {
+      return currentUser;
+    } else{
+      throw new Error('No user logged in');
+    }
   }
+
+  async uploadProfilePicture(userId: string | undefined, pfp: File): Promise<string> {
+    if (!userId) {
+      throw new Error('No user ID provided');
+    }
+
+    try {
+      // Create a reference to the file location
+      const filePath = `profile-pictures/${userId}`;
+      const fileRef = ref(this.storage, filePath);
+
+      // Upload the file
+      await uploadBytes(fileRef, pfp);
+
+      // Get the download URL
+      const downloadURL = await getDownloadURL(fileRef);
+
+
+      // Update the user's profile in Firestore with the image URL
+      const userRef = doc(this.firestore, 'users', userId);
+      await updateDoc(userRef, {
+        profilePictureUrl: downloadURL
+      });
+
+      return downloadURL;
+    } catch (error) {
+      console.error('Error uploading profile picture:', error);
+      throw error;
+    }
+  }
+
 
   
 }
+

@@ -1,3 +1,4 @@
+import { NotificationFilter } from "../../states/notification-state.service";
 import { UserRole } from "./userRole.model";
 
 export interface UserModel{
@@ -19,4 +20,5 @@ export interface UserModel{
   assignedGL?: string;
   assignedAccounts?: string[];
   role?: UserRole;
+  notificationFilter: NotificationFilter;
 }

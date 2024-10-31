@@ -34,6 +34,9 @@ import { NavbarModule } from './shared/navbar/navbar.module';
 import { UserService } from './shared/userService/data-access/user.service';
 import { EventBusService } from './shared/services/event-bus.service';
 import { ErrorHandlingService } from './shared/services/error-handling.service';
+import { AccountBalanceFacade } from './shared/facades/accountFacades/account-balance.facade';
+import { JournalEntryFacade } from './shared/facades/transactionManagementFacades/journal-entries.facade';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 
 
 
@@ -74,7 +77,10 @@ import { ErrorHandlingService } from './shared/services/error-handling.service';
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     EventBusService,
-    ErrorHandlingService
+    ErrorHandlingService,
+    AccountBalanceFacade,
+    JournalEntryFacade,
+    provideStorage(() => getStorage()),
   ],
   bootstrap: [AppComponent]
 })

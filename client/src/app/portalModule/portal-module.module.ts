@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminGeneralLedgerFunctionsModule } from './adminGeneralLedgerFunctions/admin-general-ledger-functions.module';
-import { JournalEntryFormComponent } from './journalEntryForm/journal-entry-form.component';
 import { PortalDashboardComponent } from './portalDashboard/portal-dashboard.component';
 import { PortalRoutingModule } from './portal-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -22,10 +21,15 @@ import { AccountEventCard } from './accountEventLog/ui/account-event.card';
 import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.component';
 import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
 import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
+import { JournalEntryFormCard } from './journalEntryForm/ui/journal-entry-card.component';
+import { JournalEntryFormComponent } from './journalEntryForm/feature/journal-entry-form.component';
+import { JournalEntryReviewComponent } from './journalEntryReview/feature/journal-entry-review.component';
+import { JournalReviewCard } from './journalEntryReview/ui/journal-entry-review.card';
 
 @NgModule({
   declarations: [
     JournalEntryFormComponent,
+    JournalEntryFormCard,
     PortalDashboardComponent,
     ChartOfAccountsCard,
     FilterDialogComponent,
@@ -33,7 +37,10 @@ import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-acco
     AccountEventCard,
     AccountLedgerComponent,
     AccountLedgerCard,
-    ChartOfAccountsComponent
+    ChartOfAccountsComponent,
+    ChartOfAccountsCard,
+    JournalEntryReviewComponent,
+    JournalReviewCard
 
   ],
   imports: [

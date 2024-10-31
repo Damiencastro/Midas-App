@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AccountFirestoreService } from '../../../shared/firestoreService/accountStore/data-access/account-firestore.service';
+import { AccountFirestoreService } from '../../../shared/services/firestoreService/account-firestore.service';
 import { Observable, Subject } from 'rxjs';
 import { Account, AccountFilter } from '../../../shared/dataModels/financialModels/account-ledger.model';
 

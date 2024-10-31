@@ -1,7 +1,28 @@
+/*  This facade serves as the primary interface for managing the chart of accounts structure. 
+// It handles account creation, modification, and deactivation while enforcing account numbering rules and structural validations. 
+// The facade ensures unique account numbers, maintains proper account hierarchies, and manages relationships between parent and sub-accounts.
+// Key responsibilities include maintaining account categorization (assets, liabilities, etc.), managing account status changes, 
+// and ensuring proper account organization. It also coordinates with other facades when accounts are referenced or modified, such as 
+// during journal entry creation or financial statement generation.
+
+//account creation
+
+//account modification
+
+//account deactivation
+
+//enforcing account numbering rules
+
+//structural validations
+
+
+
+*/
+
 import { BehaviorSubject, Observable, catchError, finalize, find, map, switchMap, take, tap, throwError } from "rxjs";
 import { Account, AccountFilter } from "../../dataModels/financialModels/account-ledger.model";
 import { Injectable } from "@angular/core";
-import { AccountFirestoreService } from "../../firestoreService/accountStore/data-access/account-firestore.service";
+import { AccountFirestoreService } from "../../services/firestoreService/account-firestore.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
 import { EventBusService, EventType } from "../../services/event-bus.service";
 
@@ -10,10 +31,12 @@ export class ChartOfAccountsFacade {
   private readonly accountsSubject = new BehaviorSubject<Account[]>([]);
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   private readonly errorSubject = new BehaviorSubject<string | null>(null);
+  private readonly selectedAccountSubject = new BehaviorSubject<Account | null>(null);
 
   readonly accounts$ = this.accountsSubject.asObservable();
   readonly loading$ = this.loadingSubject.asObservable();
   readonly error$ = this.errorSubject.asObservable();
+  readonly selectedAccount$ = this.selectedAccountSubject.asObservable();
 
   constructor(
     private accountFirestoreService: AccountFirestoreService,
@@ -53,6 +76,12 @@ export class ChartOfAccountsFacade {
   }
 
   // Add more public methods as needed
+
+  selectAccount(account: Account) {
+    this.selectedAccountSubject.next(account);
+  }
+
+  
 
   private validateAccount(account: Account): Observable<boolean> {
     // Implement account validation logic
