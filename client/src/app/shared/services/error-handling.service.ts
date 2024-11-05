@@ -1,9 +1,8 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { error } from "console";
 import { FirebaseError } from "firebase/app";
-import { BehaviorSubject, EMPTY, Observable, delay, filter, mergeMap, of, throwError } from "rxjs";
+import { BehaviorSubject, EMPTY, Observable, ObservableInput, delay, filter, mergeMap, of, throwError } from "rxjs";
 import { EventBusService, EventType } from "./event-bus.service";
 
 interface SystemError {
@@ -42,14 +41,13 @@ export class ErrorHandlingService {
   /**
    * Main error handler that can be used in RxJS pipes
    */
-  handleError<T>(operation: string, fallbackValue: T): (error: any) => Observable<T> {
-    return (error: any): Observable<T> => {
+  handleError<T>(operation: string, fallbackValue: T): ObservableInput<T> {
       const systemError: SystemError = {
         id: crypto.randomUUID(), // Generate unique error ID
         timestamp: new Date(),
         operation,
-        message: this.getErrorMessage(error),
-        originalError: error,
+        message: this.getErrorMessage(Error),
+        originalError: Error,
         retryCount: 0,
         context: { operation, fallbackValue }
       };
@@ -57,9 +55,9 @@ export class ErrorHandlingService {
       // Check if we should retry the operation
       if (this.shouldRetry(systemError)) {
         systemError.retryCount++;
-        return of(error).pipe(
+        return of(Error).pipe(
           delay(1000), // Wait 1 second before retry
-          mergeMap(() => throwError(() => error))
+          mergeMap(() => throwError(() => Error))
         );
       }
 
@@ -77,7 +75,7 @@ export class ErrorHandlingService {
 
       // Return fallback value if provided, otherwise empty
       return of(fallbackValue);
-    };
+    
   }
 
   /**

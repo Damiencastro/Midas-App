@@ -1,5 +1,4 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ChartOfAccountsService } from '../data-access/chart-of-accounts.service';
 import { ChartOfAccountsCard } from '../ui/chart-of-accounts.card';
 import { Account } from '../../../shared/dataModels/financialModels/account-ledger.model';
 import { AccountFilter } from '../../../shared/dataModels/financialModels/account-ledger.model';
@@ -24,7 +23,6 @@ import { ChartOfAccountsFacade } from '../../../shared/facades/accountFacades/ch
 export class ChartOfAccountsComponent implements OnInit {
 
   //Import chart of account service to receive information
-  chartOfAccountsService = inject(ChartOfAccountsService);
 
   //Create subjects to hold the most up to date information from chart of account service
   filterSubject = new BehaviorSubject<AccountFilter | null>(null);
@@ -35,13 +33,15 @@ export class ChartOfAccountsComponent implements OnInit {
 
   router = inject(Router);
   
-  constructor() {}
+  constructor(
+    private chartOfAccountsFacade: ChartOfAccountsFacade
+  ) {}
 
   ngOnInit(): void {
     //Subscribe to the chart of account service to get the most up to date information
-    this.filter$.subscribe(filter => {
+    this.filter$.subscribe((filter: AccountFilter | null) => {
       console.log(filter);
-      this.chartOfAccountsService.getAllAccountsWhere(filter).subscribe(accounts => {
+      this.chartOfAccountsFacade.getAllAccountsWhere(filter).subscribe(accounts => {
         console.log(accounts);
         this.accountsSubject.next(accounts);
       })
@@ -50,8 +50,8 @@ export class ChartOfAccountsComponent implements OnInit {
   
   selectedAccount(account: Account) {
     // this.accountSelected.emit(account);
-    this.accountFacade.selectAccount(account);
-    this.router.navigate(['/admin/account', account.id]);
+    this.accountFacade.selectAccount(account.accountNumber);
+    this.router.navigate(['/admin/account', account.accountNumber]);
   }
   
   createNewAccount() {

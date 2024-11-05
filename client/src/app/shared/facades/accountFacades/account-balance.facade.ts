@@ -61,7 +61,7 @@ export class AccountBalanceFacade {
           payload: update
         });
       }),
-      catchError(this.errorHandling.handleError('updateBalance', undefined)),
+      catchError((error) => {return this.errorHandling.handleError('updateBalance', undefined)}),
       tap(() => this.loadingSubject.next(false))
     );
   }
@@ -82,7 +82,7 @@ export class AccountBalanceFacade {
   hasSufficientBalance(accountId: string, amount: number): Observable<boolean> {
     return this.getAccountBalance(accountId).pipe(
       map(balance => balance >= amount),
-      catchError(this.errorHandling.handleError('hasSufficientBalance', false))
+      catchError((error) => {return this.errorHandling.handleError('hasSufficientBalance', false)})
     );
   }
 
@@ -132,11 +132,8 @@ export class AccountBalanceFacade {
   }
 
   private applyBalanceUpdate(update: BalanceUpdate): Observable<void> {
-    return this.accountFirestore.updateBalance(
-      update.accountId,
-      update.amount,
-      update.type,
-      update.reference
+    return this.updateBalance(
+      update
     );
   }
 

@@ -50,6 +50,17 @@ export class AccountFirestoreService implements OnDestroy {
       updatedAt: serverTimestamp()
     });
    }
+
+   getAllCurrentBalances(): Observable<AccountBalance[]> {
+    return this.accounts$.pipe(
+      map(accounts => {
+        return accounts.map(account => ({
+          accountId: account.accountNumber,
+          balance: account.currentBalance
+        } as AccountBalance));
+      })
+    );
+   }
    
 
    ngOnDestroy() {

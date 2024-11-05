@@ -38,12 +38,14 @@ import {
   combineLatest
 } from 'rxjs';
 import { UserDisplayUtils } from '../utils/user-display.utils';
-import { UserModel } from '../../dataModels/userProfileModel/user.model';
+import { UserApplication, UserModel } from '../../dataModels/userProfileModel/user.model';
 import { UserRole } from '../../dataModels/userProfileModel/userRole.model';
 import { UserFirestoreService } from '../../services/firestoreService/user-firestore.service';
 import { userInfo } from 'os';
 // Make sure you have this import at the top of your file
 import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
+import { UserAdminFirestoreService } from '../../services/firestoreService/user-admin-firestore.service';
+import { UserAdminFacade } from '../../facades/userFacades/user-administration.facade';
 
 @Injectable({
   providedIn: 'root'
@@ -64,7 +66,6 @@ export class UserService implements OnDestroy {
   readonly error$ = this.errorSubject.asObservable();
 
   userFirestoreService = inject(UserFirestoreService);
-
 
   // Derived observables
   readonly isLoggedIn$ = this.userProfile$.pipe(
@@ -115,7 +116,10 @@ export class UserService implements OnDestroy {
   constructor(
     private readonly auth: Auth,
     private storage: Storage,
-    private firestore: Firestore
+    private firestore: Firestore,
+    private applicationService: UserAdminFirestoreService,
+    private userAdminService: UserAdminFirestoreService,
+    private userAdminFacade: UserAdminFacade
   ) {
     // Initialize the auth state subscription
     this.initializeAuthStateSubscription();
@@ -163,8 +167,8 @@ export class UserService implements OnDestroy {
   }
 
   //  This function is called when a user registers for the app
-  async application(userInfo: UserModel): Promise<void> {
-    const username = this.userFirestoreService.createUsername(userInfo)
+  async application(userInfo: UserApplication): Promise<void> {
+    const username = this.userAdminFacade.generateUsername(userInfo.firstname, userInfo.lastname, userInfo.dateRequested);
     try { //First, we indicate that the app is loading and clear any previous errors
       this.loadingSubject.next(true);
       this.errorSubject.next(null);
@@ -176,13 +180,14 @@ export class UserService implements OnDestroy {
         this.auth, //Auth instance
         username + '@midas-app.com', // This appends an email address to the username to form the email
         userInfo.password
-      ).then((userCred) => { //Then, we get the user credential returned from the promise
-        this.userFirestoreService.linkUserProfileToAuth(userCred.user.uid, userInfo); // The user is linked with the credential
-        // console.log(userCred);
-      }).catch((error) => {
-        console.log(error);
-        throw error;
-      });
+      )
+      // .then((userCred) => { //Then, we get the user credential returned from the promise
+      //   this.userFirestoreService.linkUserProfileToAuth(userCred.user.uid, userInfo); // The user is linked with the credential
+      //   // console.log(userCred);
+      // }).catch((error) => {
+      //   console.log(error);
+      //   throw error;
+      // });
     } catch (error) {
       console.error('Registration failed:', error);
       
@@ -278,33 +283,33 @@ export class UserService implements OnDestroy {
   /**
    * Updates a user's profile in Firestore
    */
-  async updateProfile(updates: Partial<UserModel>): Promise<void> {
-    try {
-      const currentUser = this.userProfileSubject.getValue();
-      if (!currentUser) {
-        throw new Error('No user logged in');
-      }
+  // async updateProfile(updates: Partial<UserModel>): Promise<void> {
+  //   try {
+  //     const currentUser = this.userProfileSubject.getValue();
+  //     if (!currentUser) {
+  //       throw new Error('No user logged in');
+  //     }
 
-      this.loadingSubject.next(true);
-      this.errorSubject.next(null);
+  //     this.loadingSubject.next(true);
+  //     this.errorSubject.next(null);
 
-      // Update Firestore
-      await this.userFirestoreService.updateUser(currentUser.id, updates);
+  //     // Update Firestore
+  //     await this.userFirestoreService.updateUser(currentUser.id, updates);
 
-      // Update local state
-      this.userProfileSubject.next({
-        ...currentUser,
-        ...updates
-      });
+  //     // Update local state
+  //     this.userProfileSubject.next({
+  //       ...currentUser,
+  //       ...updates
+  //     });
       
-    } catch (error) {
-      console.error('Profile update failed:', error);
-      this.errorSubject.next(this.getErrorMessage(error));
-      throw error;
-    } finally {
-      this.loadingSubject.next(false);
-    }
-  }
+  //   } catch (error) {
+  //     console.error('Profile update failed:', error);
+  //     this.errorSubject.next(this.getErrorMessage(error));
+  //     throw error;
+  //   } finally {
+  //     this.loadingSubject.next(false);
+  //   }
+  // }
 
   /**
    * Converts Firebase errors to user-friendly messages

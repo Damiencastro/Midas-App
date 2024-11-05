@@ -7,6 +7,7 @@ import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map,
 import { UserModel } from '../../dataModels/userProfileModel/user.model';
 import { UserDisplayUtils } from '../../userService/utils/user-display.utils';
 import { AuthStateService } from '../../states/auth-state.service';
+import { SecurityStatus } from '../../facades/userFacades/user-security.facade';
 
 @Injectable({
   providedIn: 'root'
@@ -120,5 +121,32 @@ export class UserFirestoreService implements OnDestroy{
     this.userCollectionSnapshotSubject.complete();
     this.destroySubject.next(); 
     this.destroySubject.complete();
+  }
+
+  getUserSecurityStatus(username: string): Observable<SecurityStatus> {
+    const uid = this.getUid(username);
+    return uid.pipe(
+        switchMap((uid) => {
+            return new Observable<SecurityStatus>((observer) => {
+                onSnapshot(doc(this.firestore, 'userSecurityStatus', uid), (doc) => {
+                    if(doc.exists()) {
+                      observer.next(doc.data() as SecurityStatus);
+                    }
+                })
+            })
+        })
+    )
+  }
+
+  private getUid(username: string): Observable<string> {
+    const uidSubject = new BehaviorSubject<string>('');
+    onSnapshot(collection(this.firestore, 'users'), (snapshot) => {
+        snapshot.docs.map((doc) => { 
+            if (doc.data()[username] === username) {
+                uidSubject.next(doc.id);
+            }
+        })
+    });
+    return uidSubject.asObservable();
   }
 }

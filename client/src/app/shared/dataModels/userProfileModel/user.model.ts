@@ -11,14 +11,25 @@ export interface UserModel{
   zip: string;
   state: string;
   password: string;
-  requestedRole: UserRole;
-  status: 'pending' | 'approved' | 'denied';
-  dateRequested: Date;
   numDenied?: number;
-  datesDenied?: Date[];
   dateApproved?: Date;
   assignedGL?: string;
   assignedAccounts?: string[];
-  role?: UserRole;
+  role: UserRole;
   notificationFilter: NotificationFilter;
 }
+
+export interface UserApplication extends UserModel{
+  requestedRole: UserRole;
+  dateRequested: Date;
+  status: 'pending' | 'approved' | 'denied';
+  datesDenied?: Date[];
+  reviewedBy?: string;
+  notes?: string;
+}
+
+export interface UserApplicationWithMetaData extends UserApplication{
+  submittedOn: Date;
+  
+}
+

@@ -65,6 +65,7 @@ export class RequestSystemAccessComponent {
       state: this.formValue.value.state,
       password: this.formValue.value.password,
       requestedRole: this.formValue.value.role,
+      role: UserRole.Guest,
       status: 'pending',
       dateRequested: new Date(),
       notificationFilter: {

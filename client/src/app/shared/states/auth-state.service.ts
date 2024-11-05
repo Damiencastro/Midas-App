@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
-import { Auth, authState, getAuth } from "@angular/fire/auth";
-import { BehaviorSubject, map, distinctUntilChanged, catchError, Subject } from "rxjs";
+import { Auth, authState, getAuth, signInWithEmailAndPassword } from "@angular/fire/auth";
+import { BehaviorSubject, map, distinctUntilChanged, catchError, Subject, Observable, of, from, switchMap, tap } from "rxjs";
 import { UserModel } from "../dataModels/userProfileModel/user.model";
 import { ErrorHandlingService } from "../services/error-handling.service";
 import { User as FirebaseUser } from 'firebase/auth';
+import { SecurityStatus } from "../facades/userFacades/user-security.facade";
 
 interface AuthState {
     isLoggedIn: boolean;
@@ -18,6 +19,7 @@ interface AuthState {
   export class AuthStateService {
     private readonly authStateSubject = new Subject<AuthState>();
     private readonly userProfileSubject = new BehaviorSubject<UserModel | null>(null);
+    private userSecurityStatusSubject = new BehaviorSubject<SecurityStatus | null>(null);
 
     
 
@@ -78,4 +80,35 @@ interface AuthState {
         map(state => state.user),
         distinctUntilChanged()
       );
+
+      login(username: string, password: string): Observable<boolean> {
+        return from(signInWithEmailAndPassword(this.auth, username, password)).pipe(
+            switchMap(userCredential => {
+                return from(userCredential.user.getIdToken()).pipe(
+                    tap(token => {
+                        this.authStateSubject.next({
+                            isLoggedIn: true,
+                            token: token,
+                            lastActivity: new Date(),
+                            failedAttempts: 0,
+                            user: userCredential.user
+                        });
+                    }),
+                    map(() => true)
+                );
+            })
+        );
+      }
+
+      logout() {
+        this.auth.signOut().then(() => {
+            this.authStateSubject.next({
+                isLoggedIn: false,
+                token: null,
+                lastActivity: null,
+                failedAttempts: 0,
+                user: null
+            });
+        });
+      }
   }

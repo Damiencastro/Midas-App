@@ -85,7 +85,7 @@ export class ApprovalNotificationFacade {
   );
 
   constructor(
-    private emailNotification: EmailNotificationFacade,
+    // private emailNotification: EmailNotificationFacade,
     private errorHandling: ErrorHandlingService,
     private eventBus: EventBusService
   ) {
@@ -124,7 +124,7 @@ export class ApprovalNotificationFacade {
     return this.validateApprovalRequest(request).pipe(
       switchMap(() => this.saveApprovalRequest(request)),
       tap(() => this.notifyApprovers(request)),
-      catchError(this.errorHandling.handleError('createApprovalRequest')),
+      catchError(() => {return this.errorHandling.handleError('createApprovalRequest', void 0)}),
       finalize(() => this.loadingSubject.next(false))
     );
   }
@@ -161,7 +161,7 @@ export class ApprovalNotificationFacade {
           tap(() => this.notifyRequestor(updatedRequest, 'APPROVED'))
         );
       }),
-      catchError(this.errorHandling.handleError('approveRequest')),
+      catchError(() => {return this.errorHandling.handleError('approveRequest', void 0)}),
       finalize(() => this.loadingSubject.next(false))
     );
   }
@@ -198,7 +198,7 @@ export class ApprovalNotificationFacade {
           tap(() => this.notifyRequestor(updatedRequest, 'REJECTED'))
         );
       }),
-      catchError(this.errorHandling.handleError('rejectRequest')),
+      catchError(() => {return this.errorHandling.handleError('rejectRequest', void 0)}),
       finalize(() => this.loadingSubject.next(false))
     );
   }
@@ -206,12 +206,12 @@ export class ApprovalNotificationFacade {
   /**
    * Load pending approvals for a specific approver
    */
-  loadPendingApprovals(approverId: string): Observable<void> {
+  loadPendingApprovals(approverId: string): Observable<ApprovalRequest[] | null> {
     this.loadingSubject.next(true);
 
     return this.fetchPendingApprovals(approverId).pipe(
       tap(approvals => this.pendingApprovalsSubject.next(approvals)),
-      catchError(this.errorHandling.handleError('loadPendingApprovals')),
+      catchError(() => {return this.errorHandling.handleError('loadPendingApprovals', null)}),
       finalize(() => this.loadingSubject.next(false))
     );
   }
