@@ -156,3 +156,169 @@ export class AccountBalanceFacade {
     this.refreshBalances().subscribe();
   }
 }
+
+
+                                          //---------------------------------------//
+                                          /* * * * * Core Balance Methods * * * * */
+                                          //--------------------------------------//
+
+    // getBalance(accountId: string): Observable<BalanceDTO>
+    // getBalances(accountIds: string[]): Observable<BalanceDTO[]>
+    // getRunningBalance(accountId: string, asOf: Date): Observable<BalanceDTO>
+    // calculateNetBalance(accountIds: string[]): Observable<NetBalanceResult>
+    // verifyBalance(accountId: string): Observable<BalanceVerificationResult>
+
+
+                                          //---------------------------------------------//
+                                          /* * * * * Balance Adjustment Methods * * * * */
+                                          //--------------------------------------------//
+
+  // adjustBalance(accountId: string, adjustment: BalanceAdjustmentDTO): Observable<BalanceDTO>
+  // recordCorrection(accountId: string, correction: CorrectionDTO): Observable<CorrectionResult>
+  // applyAdjustingEntry(adjustment: AdjustingEntryDTO): Observable<AdjustmentResult>
+  // reverseAdjustment(adjustmentId: string): Observable<void>
+
+
+                                          //--------------------------------------------//
+                                          /* * * * * Period Management Methods * * * * */
+                                          //-------------------------------------------//
+
+  // getBalanceByPeriod(accountId: string, period: AccountingPeriod): Observable<PeriodBalanceDTO>
+  // getPeriodBalances(accountId: string, dateRange: DateRange): Observable<PeriodBalanceDTO[]>
+  // closeAccountingPeriod(period: AccountingPeriod): Observable<PeriodClosureResult>
+  // reopenAccountingPeriod(period: AccountingPeriod): Observable<PeriodReopenResult>
+  // rolloverBalances(fromPeriod: AccountingPeriod): Observable<RolloverResult>
+
+
+                                          //-----------------------------------------//
+                                          /* * * * * Reconciliation Methods * * * * */
+                                          //----------------------------------------//
+
+  // startReconciliation(accountId: string): Observable<ReconciliationSession>
+  // submitReconciliation(session: ReconciliationSession): Observable<ReconciliationResult>
+  // getUnreconciled(accountId: string): Observable<UnreconciledItemDTO[]>
+  // getLastReconciliation(accountId: string): Observable<ReconciliationDTO>
+  // cancelReconciliation(sessionId: string): Observable<void>
+
+
+                                          //-------------------------------------------//
+                                          /* * * * * Balance Analysis Methods * * * * */
+                                          //------------------------------------------//
+
+  // analyzeBalanceTrend(accountId: string, dateRange: DateRange): Observable<BalanceTrendAnalysis>
+  // detectBalanceAnomalies(accountId: string): Observable<BalanceAnomaly[]>
+  // compareBalancePeriods(accountId: string, period1: AccountingPeriod, period2: AccountingPeriod): Observable<BalanceComparisonResult>
+  // forecastBalance(accountId: string, forecastParams: ForecastParams): Observable<BalanceForecast>
+
+
+                                          //---------------------------------------------//
+                                          /* * * * * Validation & Rules Methods * * * * */
+                                          //--------------------------------------------//
+
+  // validateBalance(accountId: string): Observable<BalanceValidationResult>
+  // checkBalanceConstraints(accountId: string): Observable<ConstraintCheckResult>
+  // verifyDoubleSidedBalance(): Observable<DoubleEntryValidationResult>
+  // validateBalanceSheet(): Observable<BalanceSheetValidationResult>
+
+                                          //--------------------------------------------//
+                                          /* * * * * Balance Reporting Methods * * * * */
+                                          //-------------------------------------------//
+
+  // generateBalanceReport(reportConfig: BalanceReportConfig): Observable<BalanceReport>
+  // exportBalanceHistory(accountId: string, options: ExportOptions): Observable<ExportResult>
+  // generateTrialBalance(asOf: Date): Observable<TrialBalanceReport>
+  // getBalanceStatements(period: AccountingPeriod): Observable<FinancialStatements>
+
+                                          //--------------------------------------------//
+                                          /* * * * * Balance Reporting Methods * * * * */
+                                          //-------------------------------------------//
+
+  // generateBalanceReport(reportConfig: BalanceReportConfig): Observable<BalanceReport>
+  // exportBalanceHistory(accountId: string, options: ExportOptions): Observable<ExportResult>
+  // generateTrialBalance(asOf: Date): Observable<TrialBalanceReport>
+  // getBalanceStatements(period: AccountingPeriod): Observable<FinancialStatements>
+
+                                          //-----------------------------------------------//
+                                          /* * * * * Potential Interfaces & Enums * * * * */
+                                          //----------------------------------------------//
+
+/*
+interface BalanceDTO {
+  accountId: string;
+  currentBalance: number;
+  availableBalance: number;
+  pendingDebits: number;
+  pendingCredits: number;
+  lastUpdated: Date;
+  status: BalanceStatus;
+  reconciled: boolean;
+  lastReconciled?: Date;
+}
+
+interface BalanceAdjustmentDTO {
+  amount: number;
+  type: AdjustmentType;
+  reason: string;
+  documentation?: string;
+  effectiveDate: Date;
+  referenceNumber?: string;
+}
+
+interface PeriodBalanceDTO {
+  period: AccountingPeriod;
+  openingBalance: number;
+  closingBalance: number;
+  totalDebits: number;
+  totalCredits: number;
+  adjustments: BalanceAdjustmentDTO[];
+  status: PeriodStatus;
+}
+
+interface ReconciliationSession {
+  id: string;
+  accountId: string;
+  startDate: Date;
+  endDate: Date;
+  startingBalance: number;
+  endingBalance: number;
+  items: ReconciliationItem[];
+  status: ReconciliationStatus;
+  adjustments: BalanceAdjustmentDTO[];
+}
+
+interface ReconciliationItem {
+  transactionId: string;
+  date: Date;
+  description: string;
+  amount: number;
+  type: 'DEBIT' | 'CREDIT';
+  status: 'PENDING' | 'MATCHED' | 'UNMATCHED';
+  reference?: string;
+}
+
+interface BalanceTrendAnalysis {
+  dailyTrend: TrendPoint[];
+  monthlyTrend: TrendPoint[];
+  seasonality?: SeasonalityAnalysis;
+  anomalies: BalanceAnomaly[];
+  statistics: BalanceStatistics;
+}
+
+interface BalanceThreshold {
+  accountId: string;
+  type: ThresholdType;
+  value: number;
+  condition: ThresholdCondition;
+  notification: NotificationConfig;
+}
+
+type BalanceEvents = 
+  | 'BALANCE_UPDATED'
+  | 'BALANCE_ADJUSTED'
+  | 'RECONCILIATION_COMPLETED'
+  | 'PERIOD_CLOSED'
+  | 'THRESHOLD_BREACHED'
+  | 'ANOMALY_DETECTED'
+  | 'BALANCE_VERIFIED'
+  | 'ADJUSTMENT_REVERSED';
+*/

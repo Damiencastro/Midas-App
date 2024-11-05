@@ -13,12 +13,9 @@ export class UserProfileFacade{
         private userProfileState: UserProfileStateService,
     ){}
 
-    getUserProfile(uid: string): UserModel {
-        this.userProfileState.getUserProfile(uid);
-    }
                                 //----------------------------------------//
                                 /* * * * * Personal Info Methods * * * * */
-                                //---------------------------------------//
+                                //----------------------------------------//
     // // Basic Info
     // updatePersonalInfo(userId: string, info: PersonalInfoUpdate): Observable<void>;
     // getPersonalInfo(userId: string): Observable<PersonalInfo>;

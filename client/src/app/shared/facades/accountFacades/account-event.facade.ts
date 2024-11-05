@@ -281,3 +281,163 @@ export class AccountEventFacade {
     }
   }
 }
+
+
+                                          //---------------------------------------//
+                                          /* * * * * Core Event Methods * * * * */
+                                          //--------------------------------------//
+
+  // getEventStream(accountId: string): Observable<AccountEvent[]>
+  // getEventDetails(eventId: string): Observable<AccountEventDetail>
+  // getEventsForAccounts(accountIds: string[]): Observable<AccountEvent[]>
+  // getAllEventsInPeriod(period: DateRange): Observable<AccountEvent[]>
+  // getLatestEvents(limit?: number): Observable<AccountEvent[]>
+
+
+                                          //-----------------------------------------------//
+                                          /* * * * * Querying & Filtering Methods * * * * */
+                                          //----------------------------------------------//
+
+  // searchEvents(query: EventSearchParams): Observable<AccountEvent[]>
+  // getEventsByType(eventType: AccountEventType): Observable<AccountEvent[]>
+  // getEventsByUser(userId: string): Observable<AccountEvent[]>
+  // getEventsWithChanges(field: AccountField): Observable<AccountEvent[]>
+  // filterEvents(filter: EventFilter): Observable<AccountEvent[]>
+
+                                          //--------------------------------------//
+                                          /* * * * * Audit Trail Methods * * * * */
+                                          //-------------------------------------//
+
+  // getAuditTrail(accountId: string): Observable<AuditEntry[]>
+  // getFieldHistory(accountId: string, field: AccountField): Observable<FieldHistory[]>
+  // getBalanceChangeHistory(accountId: string): Observable<BalanceChangeEvent[]>
+  // getStatusChangeHistory(accountId: string): Observable<StatusChangeEvent[]>
+  // reconstructAccountState(accountId: string, asOf: Date): Observable<AccountStateSnapshot>
+
+
+                                          //------------------------------------------//
+                                          /* * * * * Change Analysis Methods * * * * */
+                                          //-----------------------------------------//
+
+  // compareSnapshots(accountId: string, date1: Date, date2: Date): Observable<AccountDiff>
+  // analyzeChangeTrends(accountId: string, period: DateRange): Observable<ChangeTrendAnalysis>
+  // getChangeFrequency(accountId: string): Observable<ChangeFrequencyAnalysis>
+  // identifySignificantChanges(accountId: string): Observable<SignificantChange[]>
+  // getModificationPatterns(accountId: string): Observable<ModificationPattern[]>
+
+
+                                          //------------------------------------------//
+                                          /* * * * * Event Reporting Methods * * * * */
+                                          //-----------------------------------------//
+
+  // generateEventReport(reportConfig: EventReportConfig): Observable<EventReport>
+  // exportEventHistory(exportConfig: EventExportConfig): Observable<ExportResult>
+  // generateAuditReport(auditConfig: AuditReportConfig): Observable<AuditReport>
+  // createChangeLog(accountId: string, period: DateRange): Observable<ChangeLog>
+  // generateComplianceReport(complianceConfig: ComplianceConfig): Observable<ComplianceReport>
+
+
+                                          //--------------------------------------------------//
+                                          /* * * * * Compliance & Monitoring Methods * * * * */
+                                          //-------------------------------------------------//
+
+  // validateEventIntegrity(accountId: string): Observable<IntegrityValidationResult>
+  // checkEventCompleteness(accountId: string): Observable<CompletenessCheck>
+  // verifyAuditTrail(accountId: string): Observable<AuditTrailVerification>
+  // monitorSensitiveChanges(monitorConfig: MonitorConfig): Observable<SensitiveChangeAlert>
+
+                                          //-----------------------------------------------//
+                                          /* * * * * Potential Interfaces & Enums * * * * */
+                                          //----------------------------------------------//
+
+/*
+interface AccountEvent {
+  id: string;
+  accountId: string;
+  timestamp: Date;
+  type: AccountEventType;
+  userId: string;
+  changes: EventChange[];
+  metadata: EventMetadata;
+  contextId?: string;
+  source: EventSource;
+  severity: EventSeverity;
+}
+
+interface EventChange {
+  field: AccountField;
+  oldValue: any;
+  newValue: any;
+  reason?: string;
+  validation?: ValidationResult;
+}
+
+interface AuditEntry extends AccountEvent {
+  ipAddress: string;
+  userAgent: string;
+  sessionId: string;
+  authorization: AuthorizationDetails;
+  relatedEvents?: string[];
+}
+
+interface EventSearchParams {
+  dateRange?: DateRange;
+  eventTypes?: AccountEventType[];
+  users?: string[];
+  fields?: AccountField[];
+  severity?: EventSeverity[];
+  sources?: EventSource[];
+  keywords?: string[];
+}
+
+interface EventFilter {
+  includeTypes?: AccountEventType[];
+  excludeTypes?: AccountEventType[];
+  minSeverity?: EventSeverity;
+  withChanges?: boolean;
+  authenticated?: boolean;
+  hasDocumentation?: boolean;
+}
+
+interface EventTimeline {
+  events: TimelineEvent[];
+  milestones: TimelineMilestone[];
+  periods: TimelinePeriod[];
+  annotations: TimelineAnnotation[];
+}
+
+interface ChangeTrendAnalysis {
+  frequency: ChangeFrequency[];
+  patterns: ChangePattern[];
+  hotspots: ChangeHotspot[];
+  userDistribution: UserChangeDistribution;
+}
+
+interface ComplianceReport {
+  period: DateRange;
+  eventCoverage: EventCoverage;
+  violations: ComplianceViolation[];
+  riskAreas: RiskAssessment[];
+  recommendations: ComplianceRecommendation[];
+}
+
+interface IntegrityValidationResult {
+  isValid: boolean;
+  gaps: EventGap[];
+  inconsistencies: EventInconsistency[];
+  recommendations: ValidationRecommendation[];
+}
+
+type AccountEventType =
+  | 'ACCOUNT_CREATED'
+  | 'ACCOUNT_MODIFIED'
+  | 'BALANCE_CHANGED'
+  | 'STATUS_CHANGED'
+  | 'PERMISSIONS_MODIFIED'
+  | 'RECONCILIATION_PERFORMED'
+  | 'PERIOD_CLOSED'
+  | 'AUDIT_PERFORMED'
+  | 'POLICY_VIOLATION'
+  | 'SYSTEM_CHANGE'
+  | 'SECURITY_EVENT';
+*/

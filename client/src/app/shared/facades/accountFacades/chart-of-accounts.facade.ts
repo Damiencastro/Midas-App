@@ -46,6 +46,34 @@ export interface AccountResponseDTO extends CreateAccountDTO {
   version: number;
 }
 
+enum AccountStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive'
+}
+export interface AccountFilter {
+  categories?: AccountCategory[];
+  subcategories?: string[];
+  statuses?: AccountStatus[];
+  balanceRange?: {
+    min?: number;
+    max?: number;
+  };
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+  tags?: string[];
+  depth?: number;
+  parentId?: string;
+}
+
+interface AccountSearchResult {
+  account: AccountResponseDTO;
+  relevance: number;
+  matchedFields: string[];
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -299,3 +327,81 @@ export class ChartOfAccountsFacade implements OnDestroy {
 // - Reference updates
 // - Historical record preservation
 // - Special permissions
+
+
+                                          //-------------------------------------------//
+                                          /* * * * * Creation & Setup Methods * * * * */
+                                          //------------------------------------------//
+
+  // createAccount(accountData: CreateAccountDTO): Observable<AccountResponseDTO>
+  // createChildAccount(parentId: string, accountData: CreateAccountDTO): Observable<AccountResponseDTO>
+  // importAccounts(accounts: AccountImportDTO[]): Observable<ImportResult>
+  // createAccountTemplate(templateData: AccountTemplateDTO): Observable<AccountTemplateDTO>
+
+                                          //---------------------------------------------//
+                                          /* * * * * Retrieval & Search Methods * * * * */
+                                          //--------------------------------------------//
+
+  // getAccount(id: string): Observable<AccountResponseDTO>
+  // getAccounts(filter?: AccountFilter): Observable<AccountResponseDTO[]>
+  // searchAccounts(query: string): Observable<AccountSearchResult[]>
+  // getAccountHierarchy(): Observable<AccountHierarchyNode[]>
+  // getAccountsByCategory(category: AccountCategory): Observable<AccountResponseDTO[]>
+  // getInactiveAccounts(): Observable<AccountResponseDTO[]>
+  // getRecentlyModifiedAccounts(days: number): Observable<AccountResponseDTO[]>
+
+                                          //--------------------------------------------------//
+                                          /* * * * * Updates & Modifications Methods * * * * */
+                                          //-------------------------------------------------//
+
+  // updateAccount(id: string, updates: UpdateAccountDTO): Observable<AccountResponseDTO>
+  // updateAccountStatus(id: string, status: AccountStatus): Observable<void>
+  // updateAccountHierarchy(changes: AccountHierarchyChange[]): Observable<void>
+  // mergeAccounts(sourceId: string, targetId: string): Observable<AccountMergeResult>
+  // splitAccount(accountId: string, splitConfig: AccountSplitConfig): Observable<AccountSplitResult>
+
+                                          //------------------------------------------//
+                                          /* * * * * Balance & Status Methods * * * * */
+                                          //------------------------------------------//
+  // reconcileAccount(id: string, reconciliationData: ReconciliationDTO): Observable<ReconciliationResult>
+  // freezeAccount(id: string, reason: string): Observable<void>
+  // unfreezeAccount(id: string): Observable<void>
+  // closeAccount(id: string, closureData: AccountClosureDTO): Observable<void>
+  // reopenAccount(id: string): Observable<void>
+
+                                          //----------------------------------------------------//
+                                          /* * * * * Validation & Verification Methods * * * * */
+                                          //---------------------------------------------------//
+
+  // validateAccountNumber(number: string): Observable<ValidationResult>
+  // validateAccountStructure(accountData: CreateAccountDTO): Observable<ValidationResult>
+  // verifyAccountBalance(id: string): Observable<BalanceVerificationResult>
+  // checkAccountDependencies(id: string): Observable<AccountDependencyResult>
+
+                                          //------------------------------------------//
+                                          /* * * * * History & Audit Methods * * * * */
+                                          //------------------------------------------//
+
+    // getAccountHistory(id: string, options?: HistoryOptions): Observable<AccountHistoryEntry[]>
+    // getAccountModificationLog(id: string): Observable<ModificationLogEntry[]>
+    // getAccountBalanceHistory(id: string, dateRange: DateRange): Observable<BalanceHistoryEntry[]>
+    // getAccountReconciliationHistory(id: string): Observable<ReconciliationHistoryEntry[]>
+
+                                          //---------------------------------------------//
+                                          /* * * * * Export & Reporting Methods * * * * */
+                                          //--------------------------------------------//
+
+  // exportAccounts(filter?: AccountFilter, format?: ExportFormat): Observable<ExportResult>
+  // generateAccountReport(reportConfig: AccountReportConfig): Observable<AccountReport>
+  // generateTrialBalance(options?: TrialBalanceOptions): Observable<TrialBalance>
+  // generateAccountActivity(id: string, dateRange: DateRange): Observable<ActivityReport>
+
+                                          //----------------------------------//
+                                          /* * * * * Utility Methods * * * * */
+                                          //----------------------------------//
+  // validateAccountsChart(): Observable<ValidationResult>
+  // generateNextAccountNumber(category: AccountCategory, parent?: string): Observable<string>
+  // checkAccountNumberAvailability(number: string): Observable<boolean>
+  // calculateAccountDepth(id: string): Observable<number>
+
+                                          
