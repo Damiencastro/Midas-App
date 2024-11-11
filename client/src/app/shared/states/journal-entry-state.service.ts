@@ -60,8 +60,10 @@ import { query } from "@angular/fire/firestore";
       this.filterSubject.next(filter);
     }
 
-    getEntryByPostRef(postRef: string): Observable<JournalEntry> {
-      throw new Error("Method not implemented.");
+    getEntryByPostRef(postRef: string): Observable<JournalEntry | undefined> {
+      return this.journalEntries$.pipe(
+        map(journalEntries => journalEntries.find(entry => entry.postReference === postRef)),
+      );
       //This should return the journal entry that corresponds to the account creation post reference, which is that postRef: string
       // Should just need to search the journalEntries for a transaction that has that postRef
   }

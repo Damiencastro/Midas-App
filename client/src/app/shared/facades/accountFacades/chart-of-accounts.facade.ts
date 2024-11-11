@@ -2,12 +2,13 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, merge } from 'rxjs';
 import { takeUntil, map, tap } from 'rxjs/operators';
-import { Account, AccountCategory, AccountFilter, AccountSubcategories, NormalSide } from '../../dataModels/financialModels/account-ledger.model';
+import { AccountLedger, AccountCategory, AccountFilter, AccountSubcategories, NormalSide } from '../../dataModels/financialModels/account-ledger.model';
 import { ErrorHandlingService } from '../../services/error-handling.service';
-import { EventBusService, EventType } from '../../services/event-bus.service';
+import { EventBusService } from '../../services/event-bus.service';
 import { AccountingStateService } from '../../states/accounting-state.service';
 import { AuthStateService } from '../../states/auth-state.service';
 import { EventLogService } from '../../services/event-log.service';
+import { AccountCreationEvent, EventType } from '../../dataModels/loggingModels/event-logging.model';
 
 
 type SubcategoryMap = {
@@ -27,6 +28,7 @@ export interface CreateAccountDTO {
   subcategory: AccountSubcategories[AccountCategory];
   normalSide: NormalSide;
   createdBy: string;
+  postRef: string;
 }
 
 export interface UpdateAccountDTO {
@@ -50,22 +52,7 @@ enum AccountStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive'
 }
-export interface AccountFilter {
-  categories?: AccountCategory[];
-  subcategories?: string[];
-  statuses?: AccountStatus[];
-  balanceRange?: {
-    min?: number;
-    max?: number;
-  };
-  dateRange?: {
-    start: Date;
-    end: Date;
-  };
-  tags?: string[];
-  depth?: number;
-  parentId?: string;
-}
+
 
 interface AccountSearchResult {
   account: AccountResponseDTO;
@@ -86,7 +73,7 @@ export class ChartOfAccountsFacade implements OnDestroy {
     private errorHandlingService: ErrorHandlingService,
     private eventBus: EventBusService,
     private authState: AuthStateService,
-    private accountingEventLog: EventLogService,
+    private eventLog: EventLogService,
     private router: Router,
     // private accountingEventLog: AccountingEventLogService
   ) {}
@@ -110,23 +97,24 @@ export class ChartOfAccountsFacade implements OnDestroy {
     const accountNumber = this.createAccountNumber(accountData.category, accountData.subcategory);
     
     const accountCreated = this.accountingStateService.createAccount(accountData, accountNumber, accountData.createdBy).pipe(
-      tap((account: Account) => {
+      tap((account: AccountLedger) => {
         this.eventBus.emit({
           type: EventType.ACCOUNT_CREATED,
           payload: account
         });
-        this.accountingEventLog.logEvent({
+        this.eventLog.logEvent(EventType.ACCOUNT_CREATED, {
           type: EventType.ACCOUNT_CREATED,
-          id: account.accountNumber,
+          payload: null,
+          accountId: account.accountNumber,
           userId: accountData.createdBy,
-          timestamp: new Date(),
-          details: account
-        });
+          dateCreated: new Date(),
+          postRef: accountData.postRef,
+        } as AccountCreationEvent);
       })
     );
 
     return accountCreated.pipe(
-      map((account: Account) => {
+      map((account: AccountLedger) => {
         return  {
           id: account.accountNumber,
           createdAt: account.createdAt,
@@ -137,13 +125,14 @@ export class ChartOfAccountsFacade implements OnDestroy {
           description: account.description, 
           category: account.category, 
           subcategory: account.subcategory, 
-          normalSide: account.normalSide
+          normalSide: account.normalSide,
+          postRef: accountData.postRef
         }
       })
     )
   }
 
-  getAllAccountsWhere(filter: AccountFilter | null): Observable<Account[]> {
+  getAllAccountsWhere(filter: AccountFilter | null): Observable<AccountLedger[]> {
     return this.accountingStateService.filteredAccounts$;
   }
 

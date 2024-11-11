@@ -1,14 +1,9 @@
 import { Injectable } from "@angular/core";
 import { EventType } from "./event-bus.service"
 import { FirestoreLogService } from "./firestoreService/log-firestore.service";
+import { AccountAccessEvent } from "../dataModels/loggingModels/event-logging.model";
 
-export interface EventLog {
-    type: EventType
-    id: string;
-    userId: string;
-    timestamp: Date;
-    details: any;
-}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -17,21 +12,31 @@ export class EventLogService {
         private firestoreLogService: FirestoreLogService
     ) { }
 
-    logEvent(eventLog: EventLog) {
-        // Log the event
-        this.firestoreLogService.logEvent(eventLog);
-        console.log(`Event logged: ${eventLog.type}`);
-
-    }
-
-    logAccountAccess(accountId: string, userId: string) {
-        const eventLog: EventLog = {
-            type: EventType.ACCOUNT_ACCESS,
-            id: accountId,
-            userId: userId,
-            timestamp: new Date(),
-            details: {}
+    logEvent(eventType: EventType, payload: any) {
+        switch(eventType) {
+            case EventType.ACCOUNT_ACCESS:
+                this.logAccountAccess(payload as AccountAccessEvent);
+                break;
+            case EventType.ACCOUNT_CREATED:
+                this.logAccountCreationEvent(payload);
+                break;
+            case EventType.ACCOUNT_DEACTIVATED:
+                this.logAccountDeactivation(payload);
+                break;
         }
-        this.logEvent(eventLog);
     }
+
+    logAccountAccess(payload: AccountAccessEvent) {
+        throw new Error("Method not implemented.");
+    }
+
+    logAccountCreationEvent(payload: any) {
+        throw new Error("Method not implemented.");
+    }
+
+    logAccountDeactivation(payload: any) {
+        throw new Error("Method not implemented.");
+    }
+
+
 }

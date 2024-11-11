@@ -9,6 +9,10 @@ import { Auth } from "@angular/fire/auth";
 import { doc } from "@angular/fire/firestore";
 import { UserModel } from "../../dataModels/userModels/user.model";
 import { AccountFirestoreService } from "../../services/firestoreService/account-firestore.service";
+import { PermissionType } from "../../dataModels/userModels/permissions.model";
+import { EventType } from "../../services/event-bus.service";
+import { AccountAccessEvent } from "../../dataModels/loggingModels/event-logging.model";
+import { EventLogService } from "../../services/event-log.service";
 
 
 
@@ -49,6 +53,7 @@ export interface PermissionCheckResult {
 
 @Injectable({ providedIn: 'root' })
 export class UserSecurityFacade {
+  
     
     
   // Role-Based Authorization
@@ -71,7 +76,8 @@ export class UserSecurityFacade {
     constructor(    private userAdminFirestore: UserAdminFirestoreService,
                     private errorHandling: ErrorHandlingService,
                     private authState: AuthStateService,
-                    private accountFirestore: AccountFirestoreService) 
+                    private accountFirestore: AccountFirestoreService,
+                    private eventLogging: EventLogService) 
     {}
 
 
@@ -141,27 +147,34 @@ export class UserSecurityFacade {
                                 /* * * * * Access Management Methods * * * * */
                                 //-------------------------------------------//
 
-    grantAccess(accountId: string, userId: string): Observable<void> {
-        throw new Error("Method not implemented.");
-        // event log the access grant
-        // 
+    grantAccess(accountId: string, userId: string): Promise<void> {
+        return this.accountFirestore.addAuthorizedUser(accountId, userId);
     }
+
+    revokeAccess(accountId: string, userId: string): Promise<void> {
+        return this.accountFirestore.removeAuthorizedUser(accountId, userId);
+    }
+
+    getAccountAccessList(accountId: string): Promise<string[]> {
+        return this.accountFirestore.getAuthorizedUsers(accountId);
+      }
 
                                 //--------------------------------------------//
                                 /* * * * * Access Validation Methods * * * * */
                                 //-------------------------------------------//
 
-    validateAccess(user: UserModel, accountId: string): boolean {
-        const authorizedUsers = this.accountFirestore.getAuthorizedUsers(accountId).pipe(
-            
-            catchError((error) => this.errorHandling.handleError(error, false))
-        );
-        // check if user id is included in the string of authorizedUserIds
-
-        //if authorized, log successful attempt and pass true
-
-        //if not authorized, log failed attempt and pass false
-        throw new Error("Method not implemented.");
+    validateAccess(user: UserModel, accountId: string): Promise<boolean> {
+        return this.accountFirestore.getAuthorizedUsers(accountId).then((authorizedUserIds: string[]) => {
+           const authorized = authorizedUserIds.includes(user.id);
+           if(authorized) {
+               this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, {
+                accountId: accountId,
+                userId: user.id,
+                authorized: true} as AccountAccessEvent);
+               return true;
+           }
+           return authorized;
+        });
     }
 
     validatePermissions(permissionType: PermissionType, accountId: string): boolean {

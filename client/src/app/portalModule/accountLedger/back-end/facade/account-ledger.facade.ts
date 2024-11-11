@@ -9,6 +9,7 @@ import { AccountLedgerStateService } from "../state-service/account-ledger-state
 import { JournalEntryStateService } from "../../../../shared/states/journal-entry-state.service";
 import { UserSecurityFacade } from "../../../../shared/facades/userFacades/user-security.facade";
 import { PermissionType } from "../../../../shared/dataModels/userModels/permissions.model";
+import { AccountAccessEvent } from "../../../../shared/dataModels/loggingModels/event-logging.model";
 
 @Injectable({
     providedIn: 'root'
@@ -90,7 +91,12 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
               currentBalance: runningBalance // Update current balance from calculations
             } as AccountLedger;
           }),
-          tap(() => this.eventLogService.logAccountAccess(accountId, user.id)),
+          tap(() => this.eventLogService.logAccountAccess({
+            accountId,
+            userId: user.id,
+            dateAccessed: new Date(),
+            authorized: true
+          } as AccountAccessEvent)),
           catchError(error => this.errorHandling.handleError(
             'getAccountLedger',
             {} as AccountLedger,
@@ -131,7 +137,7 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
   
     
     // Helper methods
-    private canAccessAccount(user: any, accountId: string): boolean {
+    private canAccessAccount(user: any, accountId: string): Promise<boolean> {
       // Implement access control logic
       return this.securityFacade.validateAccess(user, accountId);
     }
@@ -148,7 +154,7 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
   
 //   // AL-002: View Ledger Entry via Post Reference
 //   getEntryByPostRef(postRef: string): Observable<JournalEntry>;
-    getEntryByPostRef(postRef: string): Observable<JournalEntry> {
+    getEntryByPostRef(postRef: string): Observable<JournalEntry | undefined> {
         return this.journalEntryState.getEntryByPostRef(postRef); 
     }
 
@@ -158,27 +164,28 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
     }
 
 //   // AL-003: Filter Ledger Transactions
-//   filterTransactions(accountId: string, criteria: FilterCriteria): Observable<LedgerEntry[]>;
     filterTransactions(accountId: string, criteria: LedgerFilter): Observable<LedgerEntry[]> {
-        return this.accountLedgerState.filterTransactions(accountId, criteria);
+      return this.getAccountEntries(accountId, criteria);
     }
 
 //   // AL-004: Manage Account Access
 //   grantAccess(accountId: string, userId: string, permissions: AccountPermissions): Observable<void>;
-    grantAccess(accountId: string, userId: string): Observable<void> {
+    grantAccess(accountId: string, userId: string): Promise<void> {
         const permitted = this.securityFacade.validatePermissions(PermissionType.GRANT_ACCOUNT_ACCESS, accountId);
-        //if (!permitted) { throw error} else
-        // return this.securityFacde.grantAccess(accountId, userId, permissions);
-        return this.securityFacade.grantAccess(accountId, userId);
-        throw new Error("Method not implemented.");
-
+        if (!permitted) { throw new Error } else{
+          return this.securityFacade.grantAccess(accountId, userId, );
+        }
     }
 
-//   revokeAccess(accountId: string, userId: string): Observable<void>;
-        //const permitted = securityFacade.validatePermissions(PermissionType.REVOKE_ACCESS, accountId);
-        //if (!permitted) { throw error} else
-        // return this.securityFacde.revokeAccess(accountId, userId);
-//   getAccountAccessList(accountId: string): Observable<AccountAccess[]>;
+    revokeAccess(accountId: string, userId: string): Promise<void>{
+        const permitted = this.securityFacade.validatePermissions(PermissionType.REVOKE_ACCOUNT_ACCESS, accountId);
+        if (!permitted) { throw new Error } else {
+          return this.securityFacade.revokeAccess(accountId, userId);
+        }
+    }
+    getAccountAccessList(accountId: string): Promise<string[]>{
+        return this.securityFacade.getAccountAccessList(accountId);
+    }
 
 //   // AL-005: View Account Event Log
 //   getEventLog(accountId: string, filter?: EventLogFilter): Observable<EventLog[]>;

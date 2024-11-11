@@ -98,6 +98,7 @@ export  enum JournalEntryStatus {
     
     // For ordering in statements
     order?: string;
+    authorizedUsers: string[];
     
     // Status
     isActive: boolean;

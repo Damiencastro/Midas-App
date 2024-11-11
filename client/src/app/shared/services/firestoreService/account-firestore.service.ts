@@ -3,11 +3,13 @@ import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, se
 import { BehaviorSubject, Observable, Subject, catchError, map, take, takeUntil } from 'rxjs';
 import { AccountLedger, AccountFilter, GeneralLedger } from '../../dataModels/financialModels/account-ledger.model';
 import { ErrorHandlingService } from '../error-handling.service';
+import { getDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountFirestoreService implements OnDestroy {
+    
 
   private accountsSubject = new BehaviorSubject<AccountLedger[]>([]);
 
@@ -50,6 +52,109 @@ export class AccountFirestoreService implements OnDestroy {
     });
    }
 
+   async addAuthorizedUser(accountId: string, userId: string): Promise<void> {
+    try {
+      // Get reference to the account document
+      const accountRef = doc(collection(this.firestore, 'generalLedger'), accountId);
+      
+      // Get the current document data
+      const accountDoc = await getDoc(accountRef);
+      
+      if (!accountDoc.exists()) {
+        throw new Error(`Account ${accountId} not found`);
+      }
+      
+      const accountData = accountDoc.data() as AccountLedger;
+      
+      // Create or update the authorizedUsers array
+      const currentAuthorizedUsers = accountData.authorizedUsers || [];
+      
+      // Check if user is already authorized
+      if (currentAuthorizedUsers.includes(userId)) {
+        return; // User is already authorized
+      }
+      
+      // Add the new user to the array
+      const updatedAuthorizedUsers = [...currentAuthorizedUsers, userId];
+      
+      // Update the document in Firestore
+      await updateDoc(accountRef, {
+        authorizedUsers: updatedAuthorizedUsers,
+        updatedAt: serverTimestamp()
+      });
+  
+      // Update the local BehaviorSubject
+      const currentAccounts = this.accountsSubject.getValue();
+      const updatedAccounts = currentAccounts.map(account => 
+        account.accountNumber === accountId 
+          ? { ...account, authorizedUsers: updatedAuthorizedUsers }
+          : account
+      );
+      this.accountsSubject.next(updatedAccounts);
+      
+    } catch (error) {
+      this.errorHandlingService.handleError('Error occurred adding authorized user', undefined);
+    }
+  }
+
+  async removeAuthorizedUser(accountId: string, userId: string): Promise<void> {
+    try {
+      const accountRef = doc(collection(this.firestore, 'generalLedger'), accountId);
+      
+      // Get the current document data
+      const accountDoc = await getDoc(accountRef);
+      
+      if (!accountDoc.exists()) {
+        throw new Error(`Account ${accountId} not found`);
+      }
+      
+      const accountData = accountDoc.data() as AccountLedger;
+      
+      // Get current authorized users array
+      const currentAuthorizedUsers = accountData.authorizedUsers || [];
+      
+      // Check if user is actually in the authorized list
+      if (!currentAuthorizedUsers.includes(userId)) {
+        return; // User is not in the authorized list, nothing to remove
+      }
+      
+      // Remove the user from the array
+      const updatedAuthorizedUsers = currentAuthorizedUsers.filter(id => id !== userId);
+      
+      // Update the document in Firestore
+      await updateDoc(accountRef, {
+        authorizedUsers: updatedAuthorizedUsers,
+        updatedAt: serverTimestamp()
+      });
+  
+      // Update the local BehaviorSubject
+      const currentAccounts = this.accountsSubject.getValue();
+      const updatedAccounts = currentAccounts.map(account => 
+        account.accountNumber === accountId 
+          ? { ...account, authorizedUsers: updatedAuthorizedUsers }
+          : account
+      );
+      this.accountsSubject.next(updatedAccounts);
+      
+    } catch (error) {
+      this.errorHandlingService.handleError('Error removing user from account', undefined);
+      throw error;
+    }
+  }
+
+  getAuthorizedUsers(accountId: string): Promise<string[]> {
+    const accountRef = doc(collection(this.firestore, 'generalLedger'), accountId);
+
+    const authorizedUsers = getDoc(accountRef).then(doc => {
+      if (!doc.exists()) {
+        return [];
+      }
+      const accountData = doc.data() as AccountLedger;
+      return accountData.authorizedUsers || [];
+    });
+    return authorizedUsers;
+  }
+
   //  getAllCurrentBalances(): Observable<AccountBalance[]> {
   //   return this.accounts$.pipe(
   //     map(accounts => {
@@ -67,9 +172,7 @@ export class AccountFirestoreService implements OnDestroy {
     this.destroySubject.complete();
   }
 
-  getAuthorizedUsers(accountId: string): Observable<string[]> {
-    throw new Error('Method not implemented.');
-  }
+  
 
 
    
