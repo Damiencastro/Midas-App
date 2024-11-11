@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormControl, Validators,  } from '@angular/form
 import { Auth } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { UserService } from '../../shared/userService/data-access/user.service';
-import { UserRole } from '../../shared/dataModels/userProfileModel/userRole.model';
+import { UserRole } from '../../shared/dataModels/userModels/userRole.model';
 
 
 @Component({

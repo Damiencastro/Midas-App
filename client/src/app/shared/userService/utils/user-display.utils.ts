@@ -1,5 +1,5 @@
-import { UserModel } from "../../dataModels/userProfileModel/user.model";
-import { UserRole } from "../../dataModels/userProfileModel/userRole.model";
+import { UserModel } from "../../dataModels/userModels/user.model";
+import { UserRole } from "../../dataModels/userModels/userRole.model";
 import { UserService } from "../data-access/user.service";
 
 export class UserDisplayUtils {

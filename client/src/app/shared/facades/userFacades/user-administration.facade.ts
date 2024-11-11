@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { UserFirestoreService } from "../../services/firestoreService/user-firestore.service";
 import { EventBusService, EventType } from "../../services/event-bus.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
-import { UserApplication, UserModel } from "../../dataModels/userProfileModel/user.model";
+import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
 import { UserProfileStateService } from "../../states/user-profile-state.service";
 import { AuthStateService } from "../../states/auth-state.service";
 import { UserAdminFirestoreService } from "../../services/firestoreService/user-admin-firestore.service";

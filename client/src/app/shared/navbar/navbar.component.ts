@@ -7,7 +7,7 @@ import { LoginComponent } from '../../userModule/login/login.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { UserModel } from '../dataModels/userProfileModel/user.model';
+import { UserModel } from '../dataModels/userModels/user.model';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { UserService } from '../userService/data-access/user.service';

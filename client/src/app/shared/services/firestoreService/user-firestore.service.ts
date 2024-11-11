@@ -4,7 +4,7 @@ import { User as FirebaseUser, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
 import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError } from 'rxjs';
 
-import { UserModel } from '../../dataModels/userProfileModel/user.model';
+import { UserModel } from '../../dataModels/userModels/user.model';
 import { UserDisplayUtils } from '../../userService/utils/user-display.utils';
 import { AuthStateService } from '../../states/auth-state.service';
 import { SecurityStatus } from '../../facades/userFacades/user-security.facade';

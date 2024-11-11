@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { UserModel } from "../../dataModels/userProfileModel/user.model";
+import { UserModel } from "../../dataModels/userModels/user.model";
 import { UserProfileStateService } from "../../states/user-profile-state.service";
 import { SecurityStatus } from "./user-security.facade";
 

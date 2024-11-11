@@ -21,6 +21,7 @@ import { timeStamp } from "console";
 
     private destroySubject = new Subject<void>();
     private readonly destroy$ = this.destroySubject.asObservable();
+    currentBalances$: any;
     
 
     constructor(
@@ -112,3 +113,17 @@ import { timeStamp } from "console";
       return this.accountingFirestoreService.deactivateAccount(accountId);
     }
   }
+
+    //Possible method?
+  // refreshBalances(): Observable<AccountBalance[]> {
+  //   this.loadingSubject.next(true);
+
+  //   return this.accountFirestore.getAllCurrentBalances().pipe(
+  //     tap(balances => {
+  //       const balanceMap = new Map<string, number>();
+  //       (balances as AccountBalance[]).forEach(b => balanceMap.set(b.accountId, b.balance));
+  //       this.accountState.current.next(balanceMap);
+  //     }),
+  //     tap(() => this.loadingSubject.next(false))
+  //   );
+  // }

@@ -1,16 +1,15 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, Subject, catchError, map, take, takeUntil } from 'rxjs';
-import { Account, AccountFilter, GeneralLedger } from '../../dataModels/financialModels/account-ledger.model';
+import { AccountLedger, AccountFilter, GeneralLedger } from '../../dataModels/financialModels/account-ledger.model';
 import { ErrorHandlingService } from '../error-handling.service';
-import { AccountBalance } from '../../facades/accountFacades/account-balance.facade';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountFirestoreService implements OnDestroy {
 
-  private accountsSubject = new BehaviorSubject<Account[]>([]);
+  private accountsSubject = new BehaviorSubject<AccountLedger[]>([]);
 
   readonly accounts$ = this.accountsSubject.asObservable();
 
@@ -29,16 +28,16 @@ export class AccountFirestoreService implements OnDestroy {
       takeUntil(this.destroySubject);
       const accounts = snapshot.docs.map(doc => ({
         ...doc.data()
-      }) as Account);
+      }) as AccountLedger);
       catchError(error => {
-        this.errorHandlingService.handleError(error, [] as Account[]);
+        this.errorHandlingService.handleError(error, [] as AccountLedger[]);
         return [];
       });
       this.accountsSubject.next(accounts);
     });
    }
 
-   createAccount(account: Account): Promise<Account> {
+   createAccount(account: AccountLedger): Promise<AccountLedger> {
     const accountDocRef = doc(collection(this.firestore, 'generalLedger'), account.accountNumber);
     return setDoc(accountDocRef, account).then(() => { return account });
    }
@@ -51,21 +50,25 @@ export class AccountFirestoreService implements OnDestroy {
     });
    }
 
-   getAllCurrentBalances(): Observable<AccountBalance[]> {
-    return this.accounts$.pipe(
-      map(accounts => {
-        return accounts.map(account => ({
-          accountId: account.accountNumber,
-          balance: account.currentBalance
-        } as AccountBalance));
-      })
-    );
-   }
+  //  getAllCurrentBalances(): Observable<AccountBalance[]> {
+  //   return this.accounts$.pipe(
+  //     map(accounts => {
+  //       return accounts.map(account => ({
+  //         accountId: account.accountNumber,
+  //         balance: account.currentBalance
+  //       } as AccountBalance));
+  //     })
+  //   );
+  //  }
    
 
    ngOnDestroy() {
     this.destroySubject.next();
     this.destroySubject.complete();
+  }
+
+  getAuthorizedUsers(accountId: string): Observable<string[]> {
+    throw new Error('Method not implemented.');
   }
 
 

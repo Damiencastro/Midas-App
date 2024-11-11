@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
-import { UserApplication, UserApplicationWithMetaData } from "../dataModels/userProfileModel/user.model";
+import { UserApplication, UserApplicationWithMetaData } from "../dataModels/userModels/user.model";
 import { Subject, catchError, interval, map, switchMap, tap } from "rxjs";
 import { ApplicationFirestoreService } from "../services/firestoreService/application-firestore.service";
 import { ErrorHandlingService } from "../services/error-handling.service";
-import { UserRole } from "../dataModels/userProfileModel/userRole.model";
+import { UserRole } from "../dataModels/userModels/userRole.model";
 
 
 @Injectable({

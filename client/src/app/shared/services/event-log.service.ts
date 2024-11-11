@@ -23,4 +23,15 @@ export class EventLogService {
         console.log(`Event logged: ${eventLog.type}`);
 
     }
+
+    logAccountAccess(accountId: string, userId: string) {
+        const eventLog: EventLog = {
+            type: EventType.ACCOUNT_ACCESS,
+            id: accountId,
+            userId: userId,
+            timestamp: new Date(),
+            details: {}
+        }
+        this.logEvent(eventLog);
+    }
 }

@@ -38,8 +38,8 @@ import {
   combineLatest
 } from 'rxjs';
 import { UserDisplayUtils } from '../utils/user-display.utils';
-import { UserApplication, UserModel } from '../../dataModels/userProfileModel/user.model';
-import { UserRole } from '../../dataModels/userProfileModel/userRole.model';
+import { UserApplication, UserModel } from '../../dataModels/userModels/user.model';
+import { UserRole } from '../../dataModels/userModels/userRole.model';
 import { UserFirestoreService } from '../../services/firestoreService/user-firestore.service';
 import { userInfo } from 'os';
 // Make sure you have this import at the top of your file

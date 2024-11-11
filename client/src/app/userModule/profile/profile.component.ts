@@ -7,7 +7,7 @@ import { LoginComponent } from '../login/login.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { UserModel } from '../../shared/dataModels/userProfileModel/user.model';
+import { UserModel } from '../../shared/dataModels/userModels/user.model';
 import { UserService } from '../../shared/userService/data-access/user.service';
 import { Auth, getAuth } from '@angular/fire/auth';
 

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Auth, authState, getAuth, signInWithEmailAndPassword } from "@angular/fire/auth";
 import { BehaviorSubject, map, distinctUntilChanged, catchError, Subject, Observable, of, from, switchMap, tap } from "rxjs";
-import { UserModel } from "../dataModels/userProfileModel/user.model";
+import { UserModel } from "../dataModels/userModels/user.model";
 import { ErrorHandlingService } from "../services/error-handling.service";
 import { User as FirebaseUser } from 'firebase/auth';
 import { SecurityStatus } from "../facades/userFacades/user-security.facade";
@@ -20,6 +20,8 @@ interface AuthState {
     private readonly authStateSubject = new Subject<AuthState>();
     private readonly userProfileSubject = new BehaviorSubject<UserModel | null>(null);
     private userSecurityStatusSubject = new BehaviorSubject<SecurityStatus | null>(null);
+
+    readonly userProfile$ = this.userProfileSubject.asObservable();
 
     
 

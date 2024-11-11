@@ -1,9 +1,11 @@
-import { BehaviorSubject, Subject, combineLatest, distinctUntilChanged, map } from "rxjs";
+import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distinctUntilChanged, from, map, of } from "rxjs";
 import { JournalEntry, JournalEntryStatus } from "../dataModels/financialModels/account-ledger.model";
 import { Injectable } from "@angular/core";
 import { JournalEntryFirestoreService } from "../services/firestoreService/journal-firestore.service";
 import { ErrorHandlingService } from "../services/error-handling.service";
 import { FilteringService } from "../services/filter.service";
+import { Firestore, collection, getDocs, where } from "firebase/firestore";
+import { query } from "@angular/fire/firestore";
 
   export interface JournalFilter{
     id?: string;
@@ -16,6 +18,7 @@ import { FilteringService } from "../services/filter.service";
 
   @Injectable({ providedIn: 'root' })
   export class JournalEntryStateService {
+    
     private readonly journalEntriesSubject = new BehaviorSubject<JournalEntry[]>([] as JournalEntry[]);
     private filterSubject = new Subject<JournalFilter>();
     private readonly journalEntries$ = this.journalEntriesSubject.asObservable();
@@ -27,7 +30,8 @@ import { FilteringService } from "../services/filter.service";
     constructor(
       private journalEntryFirestoreService: JournalEntryFirestoreService,
       private errorHandlingService: ErrorHandlingService,
-      private filterService: FilteringService
+      private filterService: FilteringService,
+      private firestore: Firestore
     ) {
       this.initializeJournalEntries(journalEntryFirestoreService, errorHandlingService);
     }
@@ -54,6 +58,37 @@ import { FilteringService } from "../services/filter.service";
 
     updateFilters(filter: JournalFilter) {
       this.filterSubject.next(filter);
+    }
+
+    getEntryByPostRef(postRef: string): Observable<JournalEntry> {
+      throw new Error("Method not implemented.");
+      //This should return the journal entry that corresponds to the account creation post reference, which is that postRef: string
+      // Should just need to search the journalEntries for a transaction that has that postRef
+  }
+
+    getJournalEntriesForAccount(accountId: string): Observable<JournalEntry[]> {
+      //TODO: Hide firestore access behind journalEntryFirestoreService
+      const journalEntriesRef = collection(this.firestore, 'journalEntries');
+      
+      // Query for entries that have a transaction for this account
+      return from(
+        getDocs(
+          query(journalEntriesRef, 
+            where('transactions', 'array-contains-any', [{ accountId }])
+          )
+        )
+      ).pipe(
+        map(snapshot => 
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as JournalEntry))
+        ),
+        catchError(error => {
+          console.error('Error fetching journal entries:', error);
+          return of([]);
+        })
+      );
     }
     
   }

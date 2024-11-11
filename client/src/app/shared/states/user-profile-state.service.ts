@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, map, distinctUntilChanged, Subject, switchMap, of, filter, takeUntil, catchError, tap, empty } from "rxjs";
-import { UserApplication, UserApplicationWithMetaData, UserModel } from "../dataModels/userProfileModel/user.model";
+import { UserApplication, UserApplicationWithMetaData, UserModel } from "../dataModels/userModels/user.model";
 import { AuthStateService } from "./auth-state.service";
 import { UserFirestoreService } from "../services/firestoreService/user-firestore.service";
 import { FirebaseApp } from "@angular/fire/app";
 import { serverTimestamp } from "firebase/firestore";
-import { UserRole } from "../dataModels/userProfileModel/userRole.model";
+import { UserRole } from "../dataModels/userModels/userRole.model";
 import { ErrorHandlingService } from "../services/error-handling.service";
 import { UserAdminFirestoreService } from "../services/firestoreService/user-admin-firestore.service";
 import { SecurityStatus } from "../facades/userFacades/user-security.facade";

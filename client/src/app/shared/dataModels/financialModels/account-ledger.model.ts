@@ -72,8 +72,14 @@ export  enum JournalEntryStatus {
       'NON_OPERATING_EXPENSE'
     ]
   }
+
+  export interface AccountLedgerReference {
+    journalEntryId: string;
+    date: Date;
+    postReference: string;
+  }
   
-  export interface Account {
+  export interface AccountLedger {
     accountName: string;
     accountNumber: string;
     description: string;
@@ -88,7 +94,7 @@ export  enum JournalEntryStatus {
     totalCredits?: number;
     
     // All entries affecting this account
-    entries?: LedgerEntry[];
+    entriesReference?: AccountLedgerReference[];
     
     // For ordering in statements
     order?: string;
@@ -105,6 +111,35 @@ export  enum JournalEntryStatus {
     updatedBy: string[];
     version: number;
     versionHistory: AccountVersionHistory[];
+    documentId?: string;
+  }
+
+  
+  
+  export interface LedgerFilter {
+    dateRange?: {
+      start?: Date;
+      end?: Date;
+    };
+    entryTypes?: ('DEBIT' | 'CREDIT')[];
+    amountRange?: {
+      min: number;
+      max: number;
+    };
+    statusFilter?: EntryStatus[];
+    documentTypes?: DocumentType[];
+  }
+  
+  export type AccountStatus = 'ACTIVE' | 'INACTIVE' | 'FROZEN';
+  export type AccountType = 'ASSET' | 'LIABILITY' | 'EQUITY' | 'REVENUE' | 'EXPENSE';
+  export type EntryStatus = 'POSTED' | 'PENDING' | 'REJECTED' | 'REVERSED';
+  export type DocumentType = 'INVOICE' | 'RECEIPT' | 'CONTRACT' | 'OTHER';
+  
+  export interface DocumentReference {
+    id: string;
+    type: DocumentType;
+    filename: string;
+    uploadedAt: Date;
   }
 
   export interface AccountFilter {
@@ -119,7 +154,7 @@ export  enum JournalEntryStatus {
     accountId: string;
     version: number;
     changes: {
-      field: keyof Account;
+      field: keyof AccountLedger;
       oldValue: any;
       newValue: any;
     }[];
@@ -132,13 +167,14 @@ export  enum JournalEntryStatus {
   // ----------------
   export interface JournalEntry {
     id: string;
-    entryNumber: string;
+    postReference: string;
     date: Date;
     description: string;
     status: JournalEntryStatus;
     
     // Double-entry transactions
     transactions: JournalTransaction[];
+    accounts: string[];
     
     // Balancing
     totalDebits: number;
@@ -217,7 +253,7 @@ export  enum JournalEntryStatus {
     closedBy?: string;
   }
   
-  interface LedgerEntry {
+  export interface LedgerEntry {
     journalEntryId: string;
     date: Date;
     description: string;
@@ -226,9 +262,10 @@ export  enum JournalEntryStatus {
     runningBalance: number;
     
     // For audit trail
-    postedAt: Date;
-    postedBy: string;
+    postedAt?: Date;
+    postedBy?: string;
   }
+  
   
   // ----------------
   // Financial Statements

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { UserApplication } from "../../dataModels/userProfileModel/user.model";
+import { UserApplication } from "../../dataModels/userModels/user.model";
 import { Firestore, doc, setDoc } from "@angular/fire/firestore";
 import { Observable, Subject, from, map, switchMap } from "rxjs";
 import { SecurityStatus } from "../../facades/userFacades/user-security.facade";
