@@ -1,19 +1,20 @@
 export enum EventType {
-    SYSTEM_ERROR = 'SYSTEM_ERROR',
-    ACCOUNT_CREATED = 'ACCOUNT_CREATED',
-    ACCOUNT_UPDATED = 'ACCOUNT_UPDATED',
-    ACCOUNT_DELETED = 'ACCOUNT_DELETED',
-    JOURNAL_ENTRY_CREATED = 'JOURNAL_ENTRY_CREATED',
-    JOURNAL_ENTRY_APPROVED = 'JOURNAL_ENTRY_APPROVED',
-    USER_LOGGED_IN = 'USER_LOGGED_IN',
-    USER_LOGGED_OUT = 'USER_LOGGED_OUT',
-    ACCOUNT_BALANCE_UPDATED = "ACCOUNT_BALANCE_UPDATED",
-    JOURNAL_ENTRY_SUBMITTED = "JOURNAL_ENTRY_SUBMITTED",
-    JOURNAL_ENTRY_REJECTED = "JOURNAL_ENTRY_REJECTED",
-    USER_APPLICATION_SUBMITTED = "USER_APPLICATION_SUBMITTED",
-    ACCOUNT_MODIFICATION_REQUESTED = "ACCOUNT_MODIFICATION_REQUESTED",
-    ACCOUNT_DEACTIVATED = "ACCOUNT_DEACTIVATED",
-    ACCOUNT_ACCESS = "ACCOUNT_ACCESS"
+  SYSTEM_ERROR = 'SYSTEM_ERROR',
+  ACCOUNT_CREATED = 'ACCOUNT_CREATED',
+  ACCOUNT_UPDATED = 'ACCOUNT_UPDATED',
+  ACCOUNT_DELETED = 'ACCOUNT_DELETED',
+  JOURNAL_ENTRY_CREATED = 'JOURNAL_ENTRY_CREATED',
+  JOURNAL_ENTRY_APPROVED = 'JOURNAL_ENTRY_APPROVED',
+  USER_LOGGED_IN = 'USER_LOGGED_IN',
+  USER_LOGGED_OUT = 'USER_LOGGED_OUT',
+  ACCOUNT_BALANCE_UPDATED = "ACCOUNT_BALANCE_UPDATED",
+  JOURNAL_ENTRY_SUBMITTED = "JOURNAL_ENTRY_SUBMITTED",
+  JOURNAL_ENTRY_REJECTED = "JOURNAL_ENTRY_REJECTED",
+  USER_APPLICATION_SUBMITTED = "USER_APPLICATION_SUBMITTED",
+  ACCOUNT_MODIFICATION_REQUESTED = "ACCOUNT_MODIFICATION_REQUESTED",
+  ACCOUNT_DEACTIVATED = "ACCOUNT_DEACTIVATED",
+  ACCOUNT_ACCESS = "ACCOUNT_ACCESS",
+  ACCOUNT_ACCESS_EVENT_LOG = "ACCOUNT_ACCESS_EVENT_LOG"
 }
 
 export interface Event {
@@ -21,6 +22,13 @@ export interface Event {
     payload: any;
     timestamp?: Date;
     source?: string;
+    detail?: EventMetadata;
+}
+
+export interface EventMetadata {
+    id: string;
+    timestamp: Date;
+    source: string;
 }
 
 export interface AccountEvent extends Event{
@@ -56,4 +64,21 @@ export interface JournalEntryEvent extends Event {
 
 export interface UserEvent extends Event {
     userId: string;
+}
+
+export interface EventLog {
+    events: Event[];
+}
+
+export interface AccountEventLog extends EventLog {
+    accountId: string;
+}
+
+export interface EventLogFilter {
+    startDate?: Date;
+    endDate?: Date;
+    type?: EventType;
+    source?: string;
+    userId?: string;
+    accountId?: string;
 }

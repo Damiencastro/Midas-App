@@ -1,13 +1,15 @@
 import { Injectable } from "@angular/core";
-import { EventType } from "./event-bus.service"
 import { FirestoreLogService } from "./firestoreService/log-firestore.service";
-import { AccountAccessEvent } from "../dataModels/loggingModels/event-logging.model";
+import { AccountAccessEvent, AccountEventLog, EventMetadata, EventType } from "../dataModels/loggingModels/event-logging.model";
+import { Observable } from "rxjs";
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class EventLogService {
+    
+    
     constructor(
         private firestoreLogService: FirestoreLogService
     ) { }
@@ -38,5 +40,15 @@ export class EventLogService {
         throw new Error("Method not implemented.");
     }
 
+    getAccountEventLog(accountId: string, filter: any): Observable<AccountEventLog> {
+        throw new Error("Method not implemented.");
+    }
 
+    getEventDetails(eventId: string): Observable<EventMetadata> {
+        throw new Error("Method not implemented.");
+    }
+
+    logAccountEventLogAccess(arg0: AccountAccessEvent): void {
+        throw new Error("Method not implemented.");
+    }
 }

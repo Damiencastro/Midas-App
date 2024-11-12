@@ -22,6 +22,10 @@ interface AuthState {
     private userSecurityStatusSubject = new BehaviorSubject<SecurityStatus | null>(null);
 
     readonly userProfile$ = this.userProfileSubject.asObservable();
+    readonly userId$ = this.userProfile$.pipe(
+        map(user => user?.id),
+        distinctUntilChanged()
+    );
 
     
 

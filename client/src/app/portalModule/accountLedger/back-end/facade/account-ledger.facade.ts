@@ -9,7 +9,7 @@ import { AccountLedgerStateService } from "../state-service/account-ledger-state
 import { JournalEntryStateService } from "../../../../shared/states/journal-entry-state.service";
 import { UserSecurityFacade } from "../../../../shared/facades/userFacades/user-security.facade";
 import { PermissionType } from "../../../../shared/dataModels/userModels/permissions.model";
-import { AccountAccessEvent } from "../../../../shared/dataModels/loggingModels/event-logging.model";
+import { AccountAccessEvent, AccountEventLog, EventLog, EventLogFilter, EventMetadata, EventType } from "../../../../shared/dataModels/loggingModels/event-logging.model";
 
 @Injectable({
     providedIn: 'root'
@@ -188,8 +188,44 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
     }
 
 //   // AL-005: View Account Event Log
-//   getEventLog(accountId: string, filter?: EventLogFilter): Observable<EventLog[]>;
-//   getEventDetails(eventId: string): Observable<EventDetail>;
+  getEventLog(accountId: string, filter?: EventLogFilter): Observable<AccountEventLog>{
+    const eventLog = this.eventLogService.getAccountEventLog(accountId, filter);
+    eventLog.pipe(
+      
+      catchError(error => this.errorHandling.handleError(
+        'getEventLog',
+        {} as AccountEventLog,
+      )),
+      tap(() => this.eventLogService.logAccountEventLogAccess({
+        accountId,
+        userId: this.authState.userId$ ? this.authState.userId$ : 'ERROR',
+        dateAccessed: new Date(),
+        authorized: true,
+        type: EventType.ACCOUNT_ACCESS_EVENT_LOG,
+        payload: null
+      } as AccountAccessEvent)),
+    );
+    return eventLog;
+    
+  }
+  getEventDetails(eventId: string): Observable<EventMetadata>{
+    const eventDetails = this.eventLogService.getEventDetails(eventId);
+    eventDetails.pipe(
+      catchError(error => this.errorHandling.handleError(
+        'getEventDetails',
+        {} as EventMetadata,
+      )),
+      tap((eventMetadata) => this.eventLogService.logEventDetailsAccess({
+        accountId: eventMetadata.id,
+        userId: this.authState.userId$ ? this.authState.userId$ : 'ERROR',
+        dateAccessed: new Date(),
+        authorized: true,
+        type: EventType.EVENT_DETAILS_ACCESS,
+        payload: null
+      } as AccountAccessEvent)),
+    )
+    return eventDetails;
+  }
 
 //   // AL-006: Navigate to Account Reporting
 //   getRelatedReports(accountId: string): Observable<ReportLink[]>;
