@@ -10,6 +10,8 @@ import { Observable } from "rxjs";
 export class EventLogService {
     
     
+    
+    
     constructor(
         private firestoreLogService: FirestoreLogService
     ) { }
@@ -51,4 +53,12 @@ export class EventLogService {
     logAccountEventLogAccess(arg0: AccountAccessEvent): void {
         throw new Error("Method not implemented.");
     }
+
+    logEventDetailsAccess(eventDetails: AccountAccessEvent): void {
+        throw new Error("Method not implemented.");
+    }
+
+    logError(type: EventType, payload: any) {
+        throw new Error("Method not implemented.");
+      }
 }

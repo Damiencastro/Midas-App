@@ -1,7 +1,7 @@
 // account-creation.component.ts
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Account, AccountCategory } from '../../../../shared/dataModels/financialModels/account-ledger.model';
+import { AccountLedger, AccountCategory } from '../../../../shared/dataModels/financialModels/account-ledger.model';
 @Component({
   selector: 'account-creation-card',
   template: `
@@ -209,7 +209,7 @@ export class AccountCreationCard implements OnInit {
     dateAdded: new FormControl('', Validators.required),
     comments: new FormControl('')
   });
-  @Output() accountCreated = new EventEmitter<Account>();
+  @Output() accountCreated = new EventEmitter<AccountLedger>();
 
   
   subcategoriesMap = {

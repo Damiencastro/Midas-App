@@ -5,14 +5,14 @@ import { UserAdminFirestoreService } from "../../services/firestoreService/user-
 import { UserAdminFacade } from "./user-administration.facade";
 import { AuthStateService } from "../../states/auth-state.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
-import { Auth } from "@angular/fire/auth";
+import { Auth, User as FirebaseUser } from "@angular/fire/auth";
 import { doc } from "@angular/fire/firestore";
-import { UserModel } from "../../dataModels/userModels/user.model";
+import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
 import { AccountFirestoreService } from "../../services/firestoreService/account-firestore.service";
 import { PermissionType } from "../../dataModels/userModels/permissions.model";
-import { EventType } from "../../services/event-bus.service";
-import { AccountAccessEvent } from "../../dataModels/loggingModels/event-logging.model";
+import { AccountAccessEvent, EventType } from "../../dataModels/loggingModels/event-logging.model";
 import { EventLogService } from "../../services/event-log.service";
+import { UserProfileFacade } from "./user-profile.facade";
 
 
 
@@ -54,6 +54,7 @@ export interface PermissionCheckResult {
 @Injectable({ providedIn: 'root' })
 export class UserSecurityFacade {
   
+  
     
     
   // Role-Based Authorization
@@ -77,7 +78,8 @@ export class UserSecurityFacade {
                     private errorHandling: ErrorHandlingService,
                     private authState: AuthStateService,
                     private accountFirestore: AccountFirestoreService,
-                    private eventLogging: EventLogService) 
+                    private eventLogging: EventLogService,
+                    private userProfileFacade: UserProfileFacade) 
     {}
 
 
@@ -108,6 +110,11 @@ export class UserSecurityFacade {
             catchError((error) => this.errorHandling.handleError(error, false)),
             tap((success) => { if(success) { this.authState.login(username, password) }})
     )
+    }
+
+    requestSystemAccess(user: UserApplication): Promise<void> {
+        this.userProfileFacade.createProfile(user, this.authState.user$);
+        return this.userAdminFirestore.submitApplication(user, this.authState.user$);
     }
 
 

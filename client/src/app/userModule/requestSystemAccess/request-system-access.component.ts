@@ -5,6 +5,9 @@ import { Auth } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, map } from 'rxjs';
 import { UserService } from '../../shared/userService/data-access/user.service';
 import { UserRole } from '../../shared/dataModels/userModels/userRole.model';
+import { AuthStateService } from '../../shared/states/auth-state.service';
+import { UserAdminFacade } from '../../shared/facades/userFacades/user-administration.facade';
+import { UserSecurityFacade } from '../../shared/facades/userFacades/user-security.facade';
 
 
 @Component({
@@ -33,7 +36,7 @@ export class RequestSystemAccessComponent {
 
 
 
-  constructor(private formbuilder: FormBuilder, private router: Router, private auth: Auth) {
+  constructor(private formbuilder: FormBuilder, private router: Router, private authState: AuthStateService, private adminFacade: UserAdminFacade, private securityFacade: UserSecurityFacade) {
     this.formValue = new FormGroup({
       username: new FormControl("",),
       password: new FormControl("", [Validators.required, Validators.minLength(8)]),
@@ -54,7 +57,35 @@ export class RequestSystemAccessComponent {
     
     this.errorSubject.next(null);
     
-    this.userService.application({
+    // this.userService.application({
+    //   id: this.currentId,
+    //   username: '',
+    //   firstname: this.formValue.value.firstname,
+    //   lastname: this.formValue.value.lastname,
+    //   phone: this.formValue.value.phone,
+    //   street: this.formValue.value.street,
+    //   zip: this.formValue.value.zip,
+    //   state: this.formValue.value.state,
+    //   password: this.formValue.value.password,
+    //   requestedRole: this.formValue.value.role,
+    //   role: UserRole.Guest,
+    //   status: 'pending',
+    //   dateRequested: new Date(),
+    //   notificationFilter: {
+    //     'category': 'all',
+    //     'priority': 'all',
+    //     'type': 'all'
+    //   }
+      
+    // }).then(() => {
+    //   console.log('User created successfully');
+    // }).catch((error) => {
+    //   console.error('User creation failed:', error);
+    //   this.errorSubject.next(this.getErrorMessage(error));
+    // })
+
+    const userName = this.adminFacade.generateUsername(this.formValue.value.firstname, this.formValue.value.lastname, new Date());
+    this.securityFacade.requestSystemAccess({
       id: this.currentId,
       username: '',
       firstname: this.formValue.value.firstname,
@@ -72,16 +103,8 @@ export class RequestSystemAccessComponent {
         'category': 'all',
         'priority': 'all',
         'type': 'all'
-      }
-      
-    }).then(() => {
-      console.log('User created successfully');
-    }).catch((error) => {
-      console.error('User creation failed:', error);
-      this.errorSubject.next(this.getErrorMessage(error));
-    })
-
-
+      },
+    });
     //Make a dialog box pop up for 5-10 seconds that says "Your application has been submitted. You will receive an email when your account has been approved. Your username is: ..."
     
   }

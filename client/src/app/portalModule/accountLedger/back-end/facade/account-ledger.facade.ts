@@ -237,7 +237,22 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
 //   recalculateBalances(accountId: string): Observable<void>;
 
 //   // AL-008: View Related Journal Entries
-//   getRelatedEntries(accountId: string): Observable<RelatedEntry[]>;
+  getRelatedEntries(accountId: string): Observable<JournalEntry[]>{
+    const journalEntries = this.journalEntryState.getJournalEntriesForAccount(accountId);
+    journalEntries.pipe(
+      catchError(error => this.errorHandling.handleError(
+        'getRelatedEntries',
+        {} as JournalEntry[],
+      )),
+      tap(() => this.eventLogService.logAccountAccess({
+        accountId,
+        userId: this.authState.userId$ ? this.authState.userId$ : 'ERROR',
+        dateAccessed: new Date(),
+        authorized: true
+      } as AccountAccessEvent)),
+    )
+    return journalEntries;
+  }
 //   getEntryRelationships(entryId: string): Observable<EntryRelationship[]>;
 //   getTransactionChain(entryId: string): Observable<TransactionChain>;
 

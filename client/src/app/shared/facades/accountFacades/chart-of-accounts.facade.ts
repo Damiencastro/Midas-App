@@ -4,7 +4,6 @@ import { Observable, Subject, merge } from 'rxjs';
 import { takeUntil, map, tap } from 'rxjs/operators';
 import { AccountLedger, AccountCategory, AccountFilter, AccountSubcategories, NormalSide } from '../../dataModels/financialModels/account-ledger.model';
 import { ErrorHandlingService } from '../../services/error-handling.service';
-import { EventBusService } from '../../services/event-bus.service';
 import { AccountingStateService } from '../../states/accounting-state.service';
 import { AuthStateService } from '../../states/auth-state.service';
 import { EventLogService } from '../../services/event-log.service';
@@ -71,7 +70,6 @@ export class ChartOfAccountsFacade implements OnDestroy {
   constructor(
     private accountingStateService: AccountingStateService,
     private errorHandlingService: ErrorHandlingService,
-    private eventBus: EventBusService,
     private authState: AuthStateService,
     private eventLog: EventLogService,
     private router: Router,
@@ -98,10 +96,6 @@ export class ChartOfAccountsFacade implements OnDestroy {
     
     const accountCreated = this.accountingStateService.createAccount(accountData, accountNumber, accountData.createdBy).pipe(
       tap((account: AccountLedger) => {
-        this.eventBus.emit({
-          type: EventType.ACCOUNT_CREATED,
-          payload: account
-        });
         this.eventLog.logEvent(EventType.ACCOUNT_CREATED, {
           type: EventType.ACCOUNT_CREATED,
           payload: null,

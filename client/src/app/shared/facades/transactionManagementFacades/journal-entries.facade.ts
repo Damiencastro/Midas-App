@@ -1,14 +1,14 @@
-import { Inject, Injectable, forwardRef, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap, finalize } from 'rxjs/operators';
-import { EventBusService, EventType } from '../../services/event-bus.service';
 import { ErrorHandlingService } from '../../services/error-handling.service';
-import { AccountBalanceFacade } from '../accountFacades/account-balance.facade';
 import { JournalEntry } from '../../dataModels/financialModels/account-ledger.model';
-import { UserFirestoreService } from '../../services/firestoreService/user-firestore.service';
-import { Auth, getAuth } from '@angular/fire/auth';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
+import { EventLogService } from '../../services/event-log.service';
+import { EventType } from '../../dataModels/loggingModels/event-logging.model';
+import { AuthStateService } from '../../states/auth-state.service';
+import { AccountFirestoreService } from '../../services/firestoreService/account-firestore.service';
 
 interface JournalTransaction {
   accountId: string;
@@ -44,10 +44,10 @@ export class JournalEntryFacade {
   );
 
   constructor(
-    @Inject(forwardRef(() => AccountBalanceFacade))
-    private accountBalanceFacade: AccountBalanceFacade,
     private errorHandling: ErrorHandlingService,
-    private eventBus: EventBusService
+    private eventLog: EventLogService,
+    private authState: AuthStateService,
+    private accountService: AccountFirestoreService
   ) {}
 
   /* id: string;
@@ -94,10 +94,7 @@ export class JournalEntryFacade {
     return this.validateJournalEntry(newEntry).pipe(
       switchMap(() => this.saveJournalEntry(newEntry)),
       tap(() => {
-        this.eventBus.emit({
-          type: EventType.JOURNAL_ENTRY_CREATED,
-          payload: newEntry
-        });
+        this.eventLog
       }),
     //   catchError(this.errorHandling.handleError('createJournalEntry')),
       finalize(() => this.loadingSubject.next(false))
@@ -128,10 +125,7 @@ export class JournalEntryFacade {
         return this.saveJournalEntry(updatedEntry);
       }),
       tap(() => {
-        this.eventBus.emit({
-          type: EventType.JOURNAL_ENTRY_SUBMITTED,
-          payload: { entryId }
-        });
+        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_SUBMITTED, { entryId });
       }),
     //   catchError(this.errorHandling.handleError('submitForApproval')),
       finalize(() => this.loadingSubject.next(false))
@@ -144,6 +138,8 @@ export class JournalEntryFacade {
   approveEntry(entryId: string): Observable<void> {
     this.loadingSubject.next(true);
 
+    const currentUserId = this.authState.getUid$;
+
     return this.getJournalEntry(entryId).pipe(
       switchMap(entry => {
         if (!entry) {
@@ -153,7 +149,7 @@ export class JournalEntryFacade {
         const updatedEntry = {
           ...entry,
           status: JournalEntryStatus.APPROVED,
-          approvedBy: 'current-user-id', // You'd get this from your auth service
+          approvedBy: currentUserId, // You'd get this from your auth service
           approvedAt: new Date()
         };
 
@@ -162,10 +158,7 @@ export class JournalEntryFacade {
         );
       }),
       tap(() => {
-        this.eventBus.emit({
-          type: EventType.JOURNAL_ENTRY_APPROVED,
-          payload: { entryId }
-        });
+        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_APPROVED, { entryId, approvedBy: currentUserId });
       }),
     //   catchError(this.errorHandling.handleError('approveEntry')),
       finalize(() => this.loadingSubject.next(false))
@@ -193,10 +186,7 @@ export class JournalEntryFacade {
         return this.saveJournalEntry(updatedEntry);
       }),
       tap(() => {
-        this.eventBus.emit({
-          type: EventType.JOURNAL_ENTRY_REJECTED,
-          payload: { entryId, reason }
-        });
+        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_REJECTED, { entryId, reason });
       }),
     //   catchError(this.errorHandling.handleError('rejectEntry')),
       finalize(() => this.loadingSubject.next(false))
@@ -223,7 +213,7 @@ export class JournalEntryFacade {
     const errors: string[] = [];
 
     // Check required fields
-    if (!entry.entryNumber) errors.push('Entry number is required');
+    if (!entry.id) errors.push('Entry number is required');
     if (!entry.date) errors.push('Date is required');
     if (!entry.description) errors.push('Description is required');
     if (!entry.transactions?.length) errors.push('At least one transaction is required');
@@ -244,29 +234,9 @@ export class JournalEntryFacade {
   }
 
   private postToAccounts(entry: JournalEntry): Observable<void> {
-    const balanceUpdates = entry.transactions.map(transaction => {
-      if (transaction.debitAmount > 0) {
-        return this.accountBalanceFacade.updateBalance({
-          accountId: transaction.accountId,
-          amount: transaction.debitAmount,
-          type: 'DEBIT',
-          reference: entry.entryNumber,
-          date: entry.date
-        });
-      } else {
-        return this.accountBalanceFacade.updateBalance({
-          accountId: transaction.accountId,
-          amount: transaction.creditAmount,
-          type: 'CREDIT',
-          reference: entry.entryNumber,
-          date: entry.date
-        });
-      }
-    });
-
-    return combineLatest(balanceUpdates).pipe(
-      map(() => void 0)
-    );
+    const returnVal = this.accountService.postJournalEntry(entry);
+    
+    return returnVal;
   }
 
   // These methods would interact with your Firestore service

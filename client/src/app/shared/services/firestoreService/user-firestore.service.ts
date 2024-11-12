@@ -4,7 +4,7 @@ import { User as FirebaseUser, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
 import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError } from 'rxjs';
 
-import { UserModel } from '../../dataModels/userModels/user.model';
+import { UserApplication, UserModel } from '../../dataModels/userModels/user.model';
 import { UserDisplayUtils } from '../../userService/utils/user-display.utils';
 import { AuthStateService } from '../../states/auth-state.service';
 import { SecurityStatus } from '../../facades/userFacades/user-security.facade';
@@ -13,6 +13,7 @@ import { SecurityStatus } from '../../facades/userFacades/user-security.facade';
   providedIn: 'root'
 })
 export class UserFirestoreService implements OnDestroy{
+    
 
   private userCollectionLoadingSubject = new BehaviorSubject<boolean>(false);              
   private userCollectionErrorSubject = new BehaviorSubject<any | null>(null);
@@ -138,6 +139,11 @@ export class UserFirestoreService implements OnDestroy{
     )
   }
 
+  createProfile(user: UserApplication): any {
+    const profileDocRef = doc(collection(this.firestore, 'users'), user.id);
+    return setDoc(profileDocRef, user);
+  }
+
   private getUid(username: string): Observable<string> {
     const uidSubject = new BehaviorSubject<string>('');
     onSnapshot(collection(this.firestore, 'users'), (snapshot) => {
@@ -149,4 +155,6 @@ export class UserFirestoreService implements OnDestroy{
     });
     return uidSubject.asObservable();
   }
+
+
 }

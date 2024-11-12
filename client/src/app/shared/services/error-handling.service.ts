@@ -3,7 +3,8 @@ import { Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FirebaseError } from "firebase/app";
 import { BehaviorSubject, EMPTY, Observable, ObservableInput, delay, filter, mergeMap, of, throwError } from "rxjs";
-import { EventBusService, EventType } from "./event-bus.service";
+import { EventLogService } from "./event-log.service";
+import { EventType } from "../dataModels/loggingModels/event-logging.model";
 
 interface SystemError {
     id: string;
@@ -23,7 +24,7 @@ export class ErrorHandlingService {
 
   constructor(
     private snackBar: MatSnackBar,
-    private eventBus: EventBusService
+    private eventLog: EventLogService
   ) {
     // Subscribe to errors to show them in UI
     this.errors$.pipe(
@@ -68,10 +69,7 @@ export class ErrorHandlingService {
       this.errorSubject.next(systemError);
 
       // Notify other parts of the system
-      this.eventBus.emit({
-        type: EventType.SYSTEM_ERROR,
-        payload: systemError
-      });
+      this.eventLog.logError(EventType.SYSTEM_ERROR, systemError);
 
       // Return fallback value if provided, otherwise empty
       return of(fallbackValue);

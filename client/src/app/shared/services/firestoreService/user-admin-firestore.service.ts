@@ -5,6 +5,7 @@ import { Observable, Subject, from, map, switchMap } from "rxjs";
 import { SecurityStatus } from "../../facades/userFacades/user-security.facade";
 import { DocumentSnapshot, collection, getDoc, onSnapshot } from "firebase/firestore";
 import { ErrorHandlingService } from "../error-handling.service";
+import { User as FirebaseUser } from "firebase/auth";
 
 
 @Injectable({
@@ -18,7 +19,7 @@ export class UserAdminFirestoreService {
     ) {}
     
     // Submit a new user application
-    submitApplication(userApplication: UserApplication): Promise<void> {
+    submitApplication(userApplication: UserApplication, userAuth: Observable<FirebaseUser | null> ): Promise<void> {
         const appDocRef = doc(this.firestore, 'applications', userApplication.id);
         this.mapUserToUid(userApplication.username, userApplication.id);
         return setDoc(appDocRef, userApplication);

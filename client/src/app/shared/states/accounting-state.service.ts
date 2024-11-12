@@ -1,8 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, combineLatest, map, distinctUntilChanged, shareReplay, Subject, takeUntil, tap, catchError, Observable, of, switchMap, from } from "rxjs";
-import { Account, AccountFilter, NormalSide } from "../dataModels/financialModels/account-ledger.model";
+import { AccountLedger, AccountFilter, NormalSide } from "../dataModels/financialModels/account-ledger.model";
 import { ErrorHandlingService } from "../services/error-handling.service";
-import { EventBusService } from "../services/event-bus.service";
 import { AccountFirestoreService } from "../services/firestoreService/account-firestore.service";
 import { FilteringService } from "../services/filter.service";
 import { AccountResponseDTO, CreateAccountDTO } from "../facades/accountFacades/chart-of-accounts.facade";
@@ -12,7 +11,7 @@ import { timeStamp } from "console";
   
   @Injectable({ providedIn: 'root' })
   export class AccountingStateService {
-    private readonly accountsSubject = new BehaviorSubject<Account[]>([]);
+    private readonly accountsSubject = new BehaviorSubject<AccountLedger[]>([]);
     private selectedAccountSubject = new Subject<string>();
     private filterSubject = new Subject<AccountFilter>();
 
@@ -27,7 +26,6 @@ import { timeStamp } from "console";
     constructor(
       private accountingFirestoreService: AccountFirestoreService,
       private errorHandlingService: ErrorHandlingService,
-      private eventBus: EventBusService,
       private filterService: FilteringService
 
     ) {
@@ -38,7 +36,7 @@ import { timeStamp } from "console";
       this.accountingFirestoreService.accounts$.pipe(
         takeUntil(this.destroy$),
         catchError(error => {
-          return this.errorHandlingService.handleError(error, [] as Account[]);
+          return this.errorHandlingService.handleError(error, [] as AccountLedger[]);
         }),
         tap(accounts => this.accountsSubject.next(accounts)),
         
@@ -48,7 +46,7 @@ import { timeStamp } from "console";
     
       
     readonly selectedAccount$ = this.selectedAccountSubject.pipe(
-      catchError(error => {return this.errorHandlingService.handleError(error, [] as Account[])}),
+      catchError(error => {return this.errorHandlingService.handleError(error, [] as AccountLedger[])}),
       distinctUntilChanged()
     );
 
@@ -73,7 +71,7 @@ import { timeStamp } from "console";
 
     }
 
-    getAccountsStartingWith(basenum: string): Observable<Account[]> {
+    getAccountsStartingWith(basenum: string): Observable<AccountLedger[]> {
       return this.accounts$.pipe(
         map(accounts => accounts.filter(account => account.accountNumber.startsWith(basenum))),
         distinctUntilChanged()
@@ -84,10 +82,10 @@ import { timeStamp } from "console";
       account: CreateAccountDTO, 
       accNum: Observable<string>, 
       userId: string
-    ): Observable<Account> {
+    ): Observable<AccountLedger> {
       return combineLatest([accNum, userId]).pipe(
         switchMap(([accNum, userId]) => {
-          const newAccount: Account = {
+          const newAccount: AccountLedger = {
             accountName: account.accountName,
             description: account.description,
             category: account.category,
@@ -101,6 +99,7 @@ import { timeStamp } from "console";
             updatedAt: new Date(Date.now()),
             updatedBy: [userId],
             versionHistory: [],
+            authorizedUsers: [userId],
           };
           
           // Convert Promise to Observable

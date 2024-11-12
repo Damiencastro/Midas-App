@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, map, distinctUntilChanged, Subject, switchMap, of, filter, takeUntil, catchError, tap, empty } from "rxjs";
+import { BehaviorSubject, map, distinctUntilChanged, Subject, switchMap, of, filter, takeUntil, catchError, tap, empty, Observable, interval } from "rxjs";
 import { UserApplication, UserApplicationWithMetaData, UserModel } from "../dataModels/userModels/user.model";
 import { AuthStateService } from "./auth-state.service";
 import { UserFirestoreService } from "../services/firestoreService/user-firestore.service";
@@ -9,10 +9,11 @@ import { UserRole } from "../dataModels/userModels/userRole.model";
 import { ErrorHandlingService } from "../services/error-handling.service";
 import { UserAdminFirestoreService } from "../services/firestoreService/user-admin-firestore.service";
 import { SecurityStatus } from "../facades/userFacades/user-security.facade";
-
+import { User as FirebaseUser } from "firebase/auth";
   
   @Injectable({ providedIn: 'root' })
   export class UserProfileStateService {
+    
     private readonly userProfileSubject = new Subject<UserModel>();
 
     private readonly destroy$ = new Subject<void>();
@@ -92,9 +93,14 @@ import { SecurityStatus } from "../facades/userFacades/user-security.facade";
       distinctUntilChanged()
     );
 
-    submitApplication(userApp: UserApplication): Promise<void> {
-        return this.userAdminService.submitApplication(userApp);
+    createProfile(user: UserApplication, userAuth$: Observable<FirebaseUser | null>) {
+        // associate UserApplication data with the UserAuth's uid
+        return userAuth$.pipe(
+            switchMap(userAuth => {
+                user.id = userAuth?.uid || '';
+                return this.firestoreService.createProfile(user);
+            })
+        );
     }
-
     
   }

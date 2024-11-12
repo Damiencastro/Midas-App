@@ -5,7 +5,9 @@ import { ErrorHandlingService } from "../../../../shared/services/error-handling
 import { query } from "@angular/fire/firestore";
 import { AccountLedgerFirestoreService } from "../firestore-service/account-ledger-firestore.service";
 import { AccountLedger, AccountLedgerReference, JournalEntry, LedgerEntry, LedgerFilter, NormalSide } from "../../../../shared/dataModels/financialModels/account-ledger.model";
-import { EventLoggingService } from "../../../../shared/eventLogging/event-logging.service";
+import { EventLogService } from "../../../../shared/services/event-log.service";
+import { EventType } from "../../../../shared/dataModels/loggingModels/event-logging.model";
+
 
 @Injectable({ providedIn: 'root' })
 export class AccountLedgerStateService implements OnDestroy {
@@ -27,7 +29,7 @@ export class AccountLedgerStateService implements OnDestroy {
   constructor(
     private firestore: Firestore,
     private errorHandling: ErrorHandlingService,
-    private eventLogging: EventLoggingService,
+    private eventLogging: EventLogService,
     private accountLedgerFirestoreService: AccountLedgerFirestoreService,
   ) {
   }
@@ -40,7 +42,7 @@ export class AccountLedgerStateService implements OnDestroy {
       tap((ledger: AccountLedger) => {
         this.ledgerSubject.next(ledger);
         this.loadingSubject.next(false);
-        this.eventLogging.logEvent('ACCOUNT_LEDGER_LOADED', { accountId });
+        this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, null);
       }),
       catchError(error => this.errorHandling.handleError(
         'getAccountLedger',

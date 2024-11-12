@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { UserFirestoreService } from "../../services/firestoreService/user-firestore.service";
-import { EventBusService, EventType } from "../../services/event-bus.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
 import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
 import { UserProfileStateService } from "../../states/user-profile-state.service";
@@ -14,6 +13,7 @@ import { Observable, Subject, map, switchMap } from "rxjs";
     providedIn: 'root'
 })
 export class UserAdminFacade {
+    
 
 // **Business Purpose**: Orchestrates new user registration and approval process.
 
@@ -21,7 +21,6 @@ export class UserAdminFacade {
         private userProfileState: UserProfileStateService,
         private authStateService: AuthStateService,
         private errorHandling: ErrorHandlingService,
-        private eventBus: EventBusService,
         private userAdminService: UserAdminFirestoreService
     ) {}
                                                         //------------------------------------------//

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { Account } from "../../../shared/dataModels/financialModels/account-ledger.model";
+import { AccountLedger } from "../../../shared/dataModels/financialModels/account-ledger.model";
 
 @Component({
     selector: 'account-event-card',
@@ -8,10 +8,10 @@ import { Account } from "../../../shared/dataModels/financialModels/account-ledg
     `,
 })
 export class AccountEventCard implements OnInit {
-    @Input() accounts: Account[] | null = [];
-    @Output() selectedAccount = new EventEmitter<Account>();
-    @Output() editAccount = new EventEmitter<Account>();
-    @Output() viewHistory = new EventEmitter<Account>();
+    @Input() accounts: AccountLedger[] | null = [];
+    @Output() selectedAccount = new EventEmitter<AccountLedger>();
+    @Output() editAccount = new EventEmitter<AccountLedger>();
+    @Output() viewHistory = new EventEmitter<AccountLedger>();
 
     constructor() {}
 
@@ -20,11 +20,11 @@ export class AccountEventCard implements OnInit {
     }
 
     // Add these methods to handle the events
-    handleEditAccount(account: Account): void {
+    handleEditAccount(account: AccountLedger): void {
         this.editAccount.emit(account);
     }
 
-    handleViewHistory(account: Account): void {
+    handleViewHistory(account: AccountLedger): void {
         this.viewHistory.emit(account);
     }
 }

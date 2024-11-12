@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ChartOfAccountsCard } from '../ui/chart-of-accounts.card';
-import { Account } from '../../../shared/dataModels/financialModels/account-ledger.model';
+import { AccountLedger } from '../../../shared/dataModels/financialModels/account-ledger.model';
 import { AccountFilter } from '../../../shared/dataModels/financialModels/account-ledger.model';
 import { BehaviorSubject, Subject, map } from 'rxjs';
 import { Router } from '@angular/router';
@@ -26,7 +26,7 @@ export class ChartOfAccountsComponent implements OnInit {
 
   //Create subjects to hold the most up to date information from chart of account service
   filterSubject = new BehaviorSubject<AccountFilter | null>(null);
-  accountsSubject = new Subject<Account[] | null>();
+  accountsSubject = new Subject<AccountLedger[] | null>();
   filter$ = this.filterSubject.asObservable();
   accounts$ = this.accountsSubject.asObservable();
   accountFacade = inject(ChartOfAccountsFacade);
@@ -48,7 +48,7 @@ export class ChartOfAccountsComponent implements OnInit {
     })
   }
   
-  selectedAccount(account: Account) {
+  selectedAccount(account: AccountLedger) {
     // this.accountSelected.emit(account);
     this.accountFacade.selectAccount(account.accountNumber);
     this.router.navigate(['/admin/account', account.accountNumber]);

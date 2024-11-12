@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { AccountFirestoreService } from "../../../../shared/services/firestoreService/account-firestore.service";
-import { Account } from "../../../../shared/dataModels/financialModels/account-ledger.model";
+import { AccountLedger } from "../../../../shared/dataModels/financialModels/account-ledger.model";
 
 @Component({
     selector: 'app-account-creation',
@@ -14,7 +14,7 @@ import { Account } from "../../../../shared/dataModels/financialModels/account-l
 export class AccountCreationComponent{
     accountFirestoreService = inject(AccountFirestoreService)
 
-    handleAccountCreation(newAccount: Account) {
+    handleAccountCreation(newAccount: AccountLedger) {
         console.log(newAccount);
         this.accountFirestoreService.createAccount(newAccount);
     }

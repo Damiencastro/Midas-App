@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, Subject, catchError, map, take, takeUntil } from 'rxjs';
-import { AccountLedger, AccountFilter, GeneralLedger } from '../../dataModels/financialModels/account-ledger.model';
+import { AccountLedger, AccountFilter, GeneralLedger, JournalEntry } from '../../dataModels/financialModels/account-ledger.model';
 import { ErrorHandlingService } from '../error-handling.service';
 import { getDoc } from 'firebase/firestore';
 
@@ -9,6 +9,7 @@ import { getDoc } from 'firebase/firestore';
   providedIn: 'root'
 })
 export class AccountFirestoreService implements OnDestroy {
+  
     
 
   private accountsSubject = new BehaviorSubject<AccountLedger[]>([]);
@@ -172,7 +173,9 @@ export class AccountFirestoreService implements OnDestroy {
     this.destroySubject.complete();
   }
 
-  
+  postJournalEntry(journalEntry: JournalEntry): Observable<void> {
+    throw new Error('Method not implemented.');
+  }
 
 
    

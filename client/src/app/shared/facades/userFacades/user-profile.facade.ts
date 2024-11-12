@@ -1,13 +1,16 @@
 import { Injectable } from "@angular/core";
-import { UserModel } from "../../dataModels/userModels/user.model";
+import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
 import { UserProfileStateService } from "../../states/user-profile-state.service";
 import { SecurityStatus } from "./user-security.facade";
+import { User } from "firebase/auth";
+import { Observable } from "rxjs";
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserProfileFacade{
+    
 
     constructor(
         private userProfileState: UserProfileStateService,
@@ -17,6 +20,9 @@ export class UserProfileFacade{
                                 /* * * * * Personal Info Methods * * * * */
                                 //----------------------------------------//
     // // Basic Info
+    createProfile(user: UserApplication, user$: Observable<User | null>) {
+        return this.userProfileState.createProfile(user, user$);
+    }
     // updatePersonalInfo(userId: string, info: PersonalInfoUpdate): Observable<void>;
     // getPersonalInfo(userId: string): Observable<PersonalInfo>;
     // validatePersonalInfo(info: PersonalInfo): Observable<ValidationResult>;
