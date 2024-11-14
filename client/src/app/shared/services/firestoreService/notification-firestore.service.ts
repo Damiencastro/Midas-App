@@ -1,21 +1,119 @@
-import { Injectable } from "@angular/core";
-import { Firestore, onSnapshot, collection, QuerySnapshot } from "firebase/firestore";
-import { BehaviorSubject, map, switchMap } from "rxjs";
-import { Notification } from "../../states/notification-state.service";
+import { Injectable } from '@angular/core';
+import { 
+  Firestore, 
+  collection, 
+  doc, 
+  onSnapshot, 
+  setDoc, 
+  updateDoc, 
+  serverTimestamp,
+  deleteDoc
+} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import { ErrorHandlingService } from '../error-handling.service';
+import { Notification } from '../../dataModels/messageModel/message.model';
 
-@Injectable({ providedIn: 'root' })
-export class NotificationService {
-  private readonly notificationsSubject = new BehaviorSubject<Notification[]>([]);
+@Injectable({
+  providedIn: 'root'
+})
+export class NotificationFirestoreService {
+  private readonly COLLECTION_NAME = 'notifications';
+  
+  constructor(
+    private firestore: Firestore,
+    private errorHandlingService: ErrorHandlingService
+  ) {}
 
-  constructor(firestore: Firestore) {
-    onSnapshot(collection(firestore, 'notifications'), (snapshot) => {
-      const notifications = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data()
-      }) as Notification);
-      this.notificationsSubject.next(notifications);
+  getUserNotifications(userId: string): Observable<Notification[]> {
+    return new Observable(subscriber => {
+      const userNotificationsRef = collection(
+        this.firestore, 
+        this.COLLECTION_NAME, 
+        userId, 
+        'userNotifications'
+      );
+
+      const unsubscribe = onSnapshot(
+        userNotificationsRef,
+        (snapshot) => {
+          const notifications = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as Notification));
+          subscriber.next(notifications);
+        },
+        error => {
+          this.errorHandlingService.handleError('Failed to get notifications', error);
+          subscriber.error(error);
+        }
+      );
+
+      return () => unsubscribe();
     });
   }
 
-  readonly notifications$ = this.notificationsSubject.asObservable();
+  async createNotification(
+    userId: string, 
+    notificationId: string, 
+    notification: Notification
+  ): Promise<void> {
+    try {
+      const notificationRef = doc(
+        this.firestore, 
+        this.COLLECTION_NAME, 
+        userId, 
+        'userNotifications',
+        notificationId
+      );
+
+      await setDoc(notificationRef, {
+        ...notification,
+        createdAt: serverTimestamp()
+      });
+    } catch (error) {
+      this.errorHandlingService.handleError('Failed to create notification', error);
+      throw error;
+    }
+  }
+
+  async updateNotification(
+    userId: string, 
+    notificationId: string, 
+    changes: Partial<Notification>
+  ): Promise<void> {
+    try {
+      const notificationRef = doc(
+        this.firestore,
+        this.COLLECTION_NAME,
+        userId,
+        'userNotifications',
+        notificationId
+      );
+
+      await updateDoc(notificationRef, {
+        ...changes,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      this.errorHandlingService.handleError('Failed to update notification', error);
+      throw error;
+    }
+  }
+
+  async deleteNotification(userId: string, notificationId: string): Promise<void> {
+    try {
+      const notificationRef = doc(
+        this.firestore,
+        this.COLLECTION_NAME,
+        userId,
+        'userNotifications',
+        notificationId
+      );
+
+      await deleteDoc(notificationRef);
+    } catch (error) {
+      this.errorHandlingService.handleError('Failed to delete notification', error);
+      throw error;
+    }
+  }
 }
