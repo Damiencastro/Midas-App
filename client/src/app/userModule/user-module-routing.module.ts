@@ -8,46 +8,52 @@ import { ProfileComponent } from "./profile/profile.component";
 import { RequestSystemAccessComponent } from "./requestSystemAccess/request-system-access.component";
 import { SplashScreenComponent } from "./shared/splash-screen-component/splash-screen-component.component";
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
+import { ChangePasswordComponent } from "./change-password/change-password.component"; // Add this import
 
 const routes: Routes = [
-    {
-        path: 'calendar',
-        component: CalendarComponent
-    },
-    {
-        path: 'forgot-password',
-        component: ForgotPasswordComponent
-    },
-    {
-        path: 'inbox',
-        component: InboxComponent
-    },
-    {
-        path: 'login',
-        component: LoginComponent
-    },
-    {
-        path: 'profile',
-        component: ProfileComponent
-    },
-    {
-        path: 'request-system-access',
-        component: RequestSystemAccessComponent
-    },
-    {
-        path: 'home',
-        component: SplashScreenComponent
-    },
-    {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'home',
-    },
+  {
+    path: 'calendar',
+    component: CalendarComponent
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent
+  },
+  {
+    path: 'inbox',
+    component: InboxComponent
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent
+  },
+  {
+    path: 'request-system-access',
+    component: RequestSystemAccessComponent
+  },
+  {
+    path: 'home',
+    component: SplashScreenComponent
+  },
+  {
+    path: 'change-password', // Add this route
+    component: ChangePasswordComponent,
+    canActivate: [AuthGuardService] // Protect the route
+  },
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'home',
+  },
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
 
-export class UserModuleRoutingModule {}
+export class UserModuleRoutingModule { }
